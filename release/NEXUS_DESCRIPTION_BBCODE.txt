@@ -1,0 +1,77 @@
+[size=5][b]The Long Drive — XInput Controller Support[/b][/size]
+
+[b]Play The Long Drive with an XInput controller, from walking and driving to menus, object handling, and text entry.[/b] Xbox button prompts, toggle sprint and crouch, adjustable steering response, and an on-screen keyboard bring the controls together in one mod.
+
+[b]Version 0.3.4 beta • For game v2024.11.26b[/b]
+
+[size=4][b]Features[/b][/size]
+
+• [b]Walking and driving controls:[/b] analog movement, camera, steering, and independent throttle/brake triggers, plus clutch, ignition, shifting, handbrake, lights, and horn.
+• [b]Object handling:[/b] pick up, move, rotate, mount, detach, and adjust object distance. Rotation has its own speed setting.
+• [b]Controller UI:[/b] navigate menus with the D-pad or left stick, or use the right stick as a virtual pointer. Includes scrolling and an on-screen keyboard for text fields and the in-game computer.
+• [b]Xbox button prompts:[/b] controller sprites appear in interaction prompts, the Controls page, and custom panels. Keyboard/mouse labels return when the controller disconnects.
+• [b]Uncommon-actions menu:[/b] press View/Back for survival actions, tools, direct gears, camera functions, and system actions. Hold A for continuous actions, or use X to toggle supported holds.
+• [b]Toggle sprint and crouch:[/b] click LS to toggle sprint; stopping movement cancels it. B toggles crouch.
+• [b]Adjustable response:[/b] camera speed, object movement and rotation, pointer speed, deadzones, camera inversion, and steering stick sensitivity save automatically.
+• [b]Compact driving hints:[/b] seated controls appear at the bottom of the screen. No diagnostic overlay in the top-left corner.
+
+All 68 named game actions have controller routes. Survival also includes the native Defecate action, subject to the game's 30% bowel-meter requirement. Actions retain the game's normal restrictions.
+
+[size=4][b]Requirements[/b][/size]
+
+• The Long Drive [b]v2024.11.26b[/b]. The tested build reports 2024.11.26b_test.
+• An [b]XInput-compatible controller[/b].
+• [url=https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.5]BepInEx 5.4.23.5 Windows x64[/url], installed separately. Use this Windows loader on both Windows and Linux/Proton.
+
+[size=4][b]Installation[/b][/size]
+
+1. Close the game. Install BepInEx beside the [b]TheLongDrive.exe you actually launch[/b]. Linux/Proton users must configure the override below before launching.
+2. Launch once to generate BepInEx configuration, then close the game.
+3. Open BepInEx/config/BepInEx.cfg. Under [Chainloader], set HideManagerGameObject = true and save. This game can otherwise destroy the plugin manager.
+4. Extract this mod into the same game folder. The plugin should be at BepInEx/plugins/LongDrive.Controller/LongDrive.Controller.dll.
+5. Connect your controller and launch. Press [b]View/Back[/b] for uncommon actions, then [b]Start[/b] for controller settings.
+
+[b]Linux / Proton / Faugus[/b]
+
+For Steam, add WINEDLLOVERRIDES="winhttp=n,b" %command% to the game's launch options, preserving any existing wrappers and overrides.
+
+For Faugus or another Proton launcher, point it at the executable in the folder where you installed the mod. Add the environment variable [b]WINEDLLOVERRIDES[/b] with the value [b]winhttp=n,b[/b]. Installing into one game copy will not enable the mod in another. Different Proton prefixes can also have separate settings and saves.
+
+See the [url=https://docs.bepinex.dev/articles/advanced/proton_wine.html]official BepInEx Proton guide[/url] for the equivalent winecfg setup.
+
+Use XInput mode on controllers that offer multiple modes. Avoid running a simultaneous controller-to-keyboard mapping that produces duplicate input.
+
+[size=4][b]Quick controls[/b][/size]
+
+• [b]Move / look:[/b] LS / RS
+• [b]Sprint / crouch / jump:[/b] LS click / B / A
+• [b]Use, enter, exit / pick up or drop:[/b] X / Y
+• [b]Primary / secondary:[/b] RT / LT
+• [b]Rotate held object:[/b] hold LB + RB and move RS
+• [b]Steer / throttle / brake:[/b] LS / RT / LT
+• [b]Ignition / handbrake:[/b] hold B / A while driving
+• [b]Shift down / up / clutch:[/b] LB / RB / LS click
+• [b]Pause / uncommon actions:[/b] Start / View
+• [b]Controller settings:[/b] View, then Start
+
+The included [b]CONTROLS.md[/b] covers modifiers, inventory slots, menu navigation, the action menu, and text entry.
+
+Steering sensitivity defaults to [b]1.00[/b]. Lower values make small corrections gentler; higher values respond sooner. Full stick travel always reaches full steering lock.
+
+[size=4][b]Compatibility and current limits[/b][/size]
+
+This is a [b]beta[/b] tested interactively on Linux/Proton with an 8BitDo Ultimate 2 Wireless Controller in XInput mode. Windows x64 is targeted by the same plugin but has not yet been independently verified. Other game versions are unsupported; other controllers and every vehicle, menu, multiplayer/VR activity, and third-party mod menu have not been exhaustively tested.
+
+Controller bindings are currently fixed. Settings adjust sensitivity and response; button remapping is not included. Free stick movement uses LS/RS text because the supplied stick images depict clicks. Multiplayer and VR actions require their respective game contexts.
+
+[size=4][b]Updating, uninstalling, and support[/b][/size]
+
+Close the game before updating and replace the existing plugin DLL. Keep only one copy installed. To uninstall, remove BepInEx/plugins/LongDrive.Controller; keep BepInEx if other mods need it.
+
+If the mod does not load, check the executable path, BepInEx installation, HideManagerGameObject setting, and Proton override. Look for [b]The Long Drive Controller 0.3.4[/b] in BepInEx/LogOutput.log.
+
+When reporting a problem, include the game/mod version, OS and Proton version, controller model/mode, Steam Input setup, the failed action, and the log. After reconnecting or changing contexts, release all controls to neutral before continuing.
+
+[size=4][b]Credits[/b][/size]
+
+An unofficial mod for The Long Drive. Uses BepInEx and its HarmonyX runtime dependency; both remain separate from this download. Xbox-style button sprites are Creative Commons assets supplied for the mod with no attribution requirement.

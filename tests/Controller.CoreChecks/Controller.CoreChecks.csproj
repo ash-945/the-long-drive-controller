@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../src/LongDrive.Controller/Pad.cs" Link="Pad.cs" />
+    <Compile Include="../../src/LongDrive.Controller/Actions.cs" Link="Actions.cs" />
+  </ItemGroup>
+</Project>

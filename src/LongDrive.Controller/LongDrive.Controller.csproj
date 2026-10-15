@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <NoStdLib>true</NoStdLib>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>LongDrive.Controller</AssemblyName>
+    <Version>0.3.4</Version>
+    <GameDir Condition="'$(GameDir)' == ''">$(TLD_GAME_DIR)</GameDir>
+    <ManagedDir>$(GameDir)/TheLongDrive_Data/Managed</ManagedDir>
+    <LoaderDir>$(MSBuildProjectDirectory)/../../.tools/bepinex/BepInEx/core</LoaderDir>
+    <EnableNETAnalyzers>false</EnableNETAnalyzers>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets/Xbox/*.png" LogicalName="LongDrive.Controller.Xbox.%(Filename)%(Extension)" />
+    <Reference Include="$(ManagedDir)/mscorlib.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/netstandard.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/System.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/System.Core.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/UnityEngine*.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/Assembly-CSharp.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/Assembly-CSharp-firstpass.dll" Private="false" />
+    <Reference Include="$(ManagedDir)/Unity.TextMeshPro.dll" Private="false" />
+    <Reference Include="$(LoaderDir)/BepInEx.dll" Private="false" />
+    <Reference Include="$(LoaderDir)/0Harmony.dll" Private="false" />
+  </ItemGroup>
+  <Target Name="CheckReferences" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(ManagedDir)/Assembly-CSharp.dll')" Text="Set GameDir to the v2024.11.26b game folder." />
+    <Error Condition="!Exists('$(LoaderDir)/BepInEx.dll')" Text="Extract the official BepInEx 5 Windows x64 release into .tools/bepinex first." />
+  </Target>
+</Project>

@@ -1,0 +1,15 @@
+0.3.4 BETA - INITIAL NEXUS PACKAGE
+- Controller routes for all 68 named game actions, with direct bindings for
+  common actions and an uncommon-actions menu for the rest.
+- Controller menu navigation, virtual pointer, and on-screen text keyboard.
+- Embedded Xbox button sprites in prompts, Controls rows, and custom menus.
+- Sprint and crouch toggles; sprint cancels when movement stops.
+- Independent camera, object rotation, pointer, and steering response settings.
+- Compact seated driving hints; no top-left diagnostic overlay.
+- Hold A for continuous menu actions, or use X for supported toggled holds.
+- Survival is the first menu page; native Defecate action added with its
+  30% bowel-meter requirement.
+
+Release packaging adds player-facing installation, controls, troubleshooting,
+requirements, credits, and a file/hash manifest. Gameplay version remains
+0.3.4; no new gameplay changes were made for this package.

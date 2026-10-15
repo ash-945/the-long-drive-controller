@@ -1,0 +1,16 @@
+The Long Drive - XInput Controller Support
+
+The Long Drive belongs to its respective creators. This is an unofficial mod.
+
+Xbox-style button graphics are supplied Creative Commons assets requiring
+no attribution, as confirmed by the mod author. This package does not assign
+an additional license to those assets.
+
+Required loader: BepInEx 5.4.23.5 Windows x64 (downloaded separately).
+https://github.com/BepInEx/BepInEx
+
+Runtime patching uses the HarmonyX assembly provided by BepInEx.
+https://github.com/BepInEx/HarmonyX
+
+No game files, decompiled game source, BepInEx loader binaries, HarmonyX
+binaries, personal saves, or user configuration files are included.

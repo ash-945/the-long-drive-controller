@@ -1,0 +1,86 @@
+THE LONG DRIVE - XINPUT CONTROLLER SUPPORT
+Version 0.3.4 beta | Game v2024.11.26b
+
+REQUIREMENTS
+- The Long Drive v2024.11.26b (tested build reports 2024.11.26b_test).
+- An XInput-compatible controller.
+- BepInEx 5.4.23.5 Windows x64, installed separately:
+  https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.5
+Use the Windows x64 loader on both Windows and Linux/Proton.
+This package is a BepInEx plugin, not a standalone game or launcher.
+
+MANUAL INSTALLATION - WINDOWS AND LINUX/PROTON
+1. Close the game. Find the folder containing the TheLongDrive.exe you
+   actually launch. Install the BepInEx Windows x64 files in that folder.
+   If BepInEx is already installed, keep your existing plugins/configuration.
+2. Linux/Proton: configure the winhttp override below before the first launch.
+3. Launch once to generate BepInEx configuration, then close the game.
+4. Open BepInEx/config/BepInEx.cfg in a text editor. Under [Chainloader], set:
+
+   HideManagerGameObject = true
+
+   Save the file. This game can destroy the visible BepInEx manager otherwise.
+   Change that setting in your existing file; do not replace other settings.
+5. Extract this mod archive into the folder beside TheLongDrive.exe. The DLL
+   must end up at:
+   BepInEx/plugins/LongDrive.Controller/LongDrive.Controller.dll
+6. Connect your controller and launch the game. Press View/Back for the
+   uncommon-actions menu; then Start for controller settings.
+
+LINUX / PROTON / STEAM
+In the game's Steam launch options, add:
+
+WINEDLLOVERRIDES="winhttp=n,b" %command%
+
+Preserve existing launch wrappers and other DLL overrides if you use them.
+BepInEx's official Proton guide:
+https://docs.bepinex.dev/articles/advanced/proton_wine.html
+
+FAUGUS AND OTHER PROTON LAUNCHERS
+Point the launcher at TheLongDrive.exe inside the folder where you installed
+BOTH BepInEx and this plugin. Add an environment variable with:
+  Name:  WINEDLLOVERRIDES
+  Value: winhttp=n,b
+The same executable in another game folder will not load this installation.
+Different Proton prefixes can have separate settings and saves.
+
+CONTROLLER SETUP
+Use XInput mode if your device offers multiple modes. Avoid a simultaneous
+controller-to-keyboard mapping; duplicate mappings can cause double input.
+Steam Input configuration depends on your device; keep one XInput route.
+
+SETTINGS
+View/Back, then Start opens controller settings. View also opens them while
+native game Settings is open. Up/down selects; left/right adjusts; A increases
+or toggles; Y restores defaults; B, Start, or View closes.
+
+Adjust camera speed, object rotation speed, object movement/lean speed,
+pointer speed, stick/trigger deadzones, camera Y inversion, and steering
+stick sensitivity. Settings save automatically to:
+BepInEx/config/ashley.thelongdrive.controller.cfg
+
+Steering sensitivity: 0.25-2.00, default 1.00. Lower is gentler around the
+center. Full stick travel always reaches full steering lock.
+
+UPDATING / REMOVAL
+Close the game before updating. Replace the old plugin DLL; do not install
+multiple copies of this plugin. Existing controller settings are preserved.
+To uninstall, remove BepInEx/plugins/LongDrive.Controller. Optionally delete
+the mod's configuration file. Keep BepInEx if other mods depend on it.
+
+TROUBLESHOOTING
+No controller menu: check BepInEx/LogOutput.log for
+"Loading [The Long Drive Controller 0.3.4]".
+No BepInEx log: check loader installation and, on Proton, the winhttp override.
+Plugin loads but no controls: check XInput mode, focus, and the Chainloader
+setting above. After reconnecting or leaving menus, release sticks, triggers,
+and buttons to neutral before resuming gameplay.
+For a report, include game/mod versions, OS/Proton, controller model/mode,
+Steam Input setup, the exact action that failed, and BepInEx/LogOutput.log.
+
+COMPATIBILITY
+Tested interactively on Linux/Proton with an 8BitDo Ultimate 2 Wireless
+Controller in XInput mode. Windows x64 is targeted but not yet independently
+verified. Other game versions, every vehicle/menu, multiplayer, VR, and
+third-party mod menus have not been exhaustively tested. Bindings are fixed;
+the settings screen adjusts response and sensitivity rather than remapping.
