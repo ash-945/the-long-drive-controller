@@ -1,8 +1,8 @@
-# The Long Drive controller support — test build 0.3.4
+# The Long Drive — XInput Controller Support
 
 Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), XInput controllers, Windows x64 and Linux running the Windows game under Proton. The original game assemblies and keyboard bindings are not modified on disk.
 
-## What changed
+## Features
 
 - Sprint toggles with LS click while moving, and switches off when movement stops, crouching, entering another context, or disconnecting.
 - Crouch toggles with B. Click again to stand. LB+B remains lean and does not toggle crouch.
@@ -12,11 +12,9 @@ Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), XInput controllers
 - Object rotation defaults to 120 degrees/second before game weight/zoom effects, independently of mouse sensitivity. LB no longer slows every rotation.
 - An on-screen keyboard handles normal menu text fields and the in-game computer, including its musical keyboard. Gameplay and underlying menu inputs are suppressed while custom panels are open.
 
-The earlier timed UI verification has been removed. Opening a menu never schedules automatic navigation or closure.
-
 Steering stick sensitivity is adjustable in View → Start, from 0.25 to 2.00 (default 1.00). Lower values give finer small steering corrections; higher values turn sooner. Full stick travel always reaches full steering lock. It also applies to the optional stick pointer-steering mode.
 
-The top-left diagnostic overlay has been removed. A smaller driving hint panel appears at the bottom while seated, covering steering, pedals, ignition, handbrake, clutch, shifting, lights, horn, and exit. It hides with the HUD, menus, sleep, death, and controller disconnection.
+A compact driving hint panel appears at the bottom while seated, covering steering, pedals, ignition, handbrake, clutch, shifting, lights, horn, and exit. It hides with the HUD, menus, sleep, death, and controller disconnection.
 
 ## Controls
 
@@ -53,12 +51,16 @@ The text keyboard opens when an editable field is focused, or when using the in-
 
 ## Installation
 
-1. Close the game. Install the official **BepInEx 5.4.23.5 Windows x64** release alongside `TheLongDrive.exe` (also use the Windows loader under Proton): https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.5
-2. Extract `dist/ControllerPrototype-0.3.4.zip` into the game folder. Set `HideManagerGameObject = true` under `[Chainloader]` in `BepInEx/config/BepInEx.cfg`; this game otherwise destroys the visible plugin manager during startup. The local installer applies this setting and backs up the prior configuration.
-3. On Windows, start normally. Under Proton, include `WINEDLLOVERRIDES="winhttp=n,b" %command%` in Steam launch options, preserving existing wrapper/options. Official guide: https://docs.bepinex.dev/articles/advanced/proton_wine.html
-4. Start with an XInput controller and no simultaneous controller-to-keyboard mapping. The tested local device is an 8BitDo Ultimate 2 Wireless Controller on XInput slot 0 under Proton Experimental. Record Steam Input settings when testing other setups.
+Requires **BepInEx 5.4.23.5 Windows x64**, installed separately on Windows and Linux/Proton. Download it from the [official BepInEx release](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.5).
 
-The local working test copy is `.local/test-game`, with its own prefix/settings/saves in `.local/proton-smoke`. Reopen it with `python3 tools/launch.py`. The supplied game folder is unchanged. Configuration lives in the test copy's `BepInEx/config/ashley.thelongdrive.controller.cfg`; the new rotation setting is `ObjectRotationDegreesPerSecond`.
+1. Install BepInEx beside the `TheLongDrive.exe` you launch. On Proton, configure the override below first. Launch once to generate configuration, then close the game.
+2. In `BepInEx/config/BepInEx.cfg`, set `HideManagerGameObject = true` under `[Chainloader]`.
+3. Extract the mod download into that game folder. The plugin belongs at `BepInEx/plugins/LongDrive.Controller/LongDrive.Controller.dll`.
+4. Connect an XInput controller and launch. Avoid simultaneous controller-to-keyboard mappings that cause duplicate input.
+
+On Steam with Proton, add `WINEDLLOVERRIDES="winhttp=n,b" %command%` to the launch options, preserving existing wrappers and overrides. In Faugus or another Proton launcher, set the environment variable `WINEDLLOVERRIDES` to `winhttp=n,b` and select the executable in the modded game folder. See the [official Proton setup guide](https://docs.bepinex.dev/articles/advanced/proton_wine.html).
+
+Configuration is saved in `BepInEx/config/ashley.thelongdrive.controller.cfg` inside your game installation. See the [installation and troubleshooting guide](release/INSTALL.txt) and [controller reference](release/CONTROLS.md) for details. Source checkouts need to be built before installation; generated downloads are not committed to this repository.
 
 ## Verification and limits
 
@@ -68,13 +70,8 @@ Every named action has an implementation route; individual activities, multiplay
 
 For problems, collect `BepInEx/LogOutput.log` and describe the exact control/context. View is available for menu recovery even while the gameplay neutral gate is blocked. Remove the plugin DLL to disable the mod; keep BepInEx if other mods need it.
 
-## Build
+## Development
 
-Requires Python 3, .NET SDK 8, and the official loader extracted into `.tools/bepinex`:
+The repository contains the C# plugin, controller graphics, Python build/package tools, and automated core checks. Building requires Python 3, .NET SDK 8, a compatible game installation, and the official BepInEx loader. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and build commands.
 
-```sh
-python3 tools/build.py "/path/to/The Long Drive.v2024.11.26b.Test"
-python3 tools/install.py "/path/to/game" --with-loader
-```
-
-The build uses the system SDK or `.tools/dotnet/dotnet`, compiles against local game references, runs the checks, and packages only our plugin/docs/hash manifest. Game files, decompiled source, and loader binaries are not redistributed. Loader sources/licenses: https://github.com/BepInEx/BepInEx and https://github.com/BepInEx/HarmonyX.
+Game files, decompiled game source, loader binaries, generated packages, saves, and personal settings are excluded from version control. BepInEx and HarmonyX are separate dependencies: [BepInEx](https://github.com/BepInEx/BepInEx), [HarmonyX](https://github.com/BepInEx/HarmonyX).
