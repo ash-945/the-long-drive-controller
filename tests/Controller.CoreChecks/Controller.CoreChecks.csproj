@@ -6,6 +6,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="../../src/LongDrive.Controller/Pad.cs" Link="Pad.cs" />
+    <Compile Include="../../src/LongDrive.Controller/BindingHints.cs" Link="BindingHints.cs" />
+    <Compile Include="../../src/LongDrive.Controller/Bindings.cs" Link="Bindings.cs" />
     <Compile Include="../../src/LongDrive.Controller/Actions.cs" Link="Actions.cs" />
   </ItemGroup>
 </Project>

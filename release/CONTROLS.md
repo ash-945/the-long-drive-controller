@@ -1,4 +1,6 @@
-# XInput controller reference — 0.3.4 beta
+# XInput controller reference — 0.4.0 beta
+
+The tables below describe default bindings. Gameplay assignments can be changed independently for on-foot/driving in the Bindings page of controller settings; current in-game hints follow your saved bindings.
 
 Xbox button names are used. LS and RS mean the left and right sticks; a stick click means pressing the stick inward. View may be labelled Back or Select on your controller.
 
@@ -63,3 +65,7 @@ In controller settings, up/down selects and left/right adjusts. A increases or t
 Editable text fields and the in-game computer use the controller keyboard. D-pad/LS selects keys; A types, X deletes, Y changes case, LB switches symbols, RB inserts space, Start finishes, and B cancels. RS moves the in-game computer cursor. Letter/number keys also operate its music mode.
 
 After reconnecting or changing contexts, release all controls to neutral before resuming gameplay. Controller prompts return to keyboard/mouse labels on disconnect. Free stick movement remains labelled LS/RS because the supplied stick sprites depict clicks.
+
+## Rebinding
+
+LB/RB switches settings pages. On Bindings, X switches profile; LT/RT changes category. Select with D-pad/LS and press A. Release all controls, press the desired control or combination (up to three), and release to save. Start cancels capture, View closes, RS click clears the selected binding, and Y asks before resetting the current profile. Confirm an occupied-control swap with A or cancel with B. Start/View and menu navigation remain fixed.

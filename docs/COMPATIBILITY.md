@@ -8,13 +8,13 @@ Loader: official BepInEx 5.4.23.5 Windows x64, for both native Windows and the W
 
 Controller backend: XInputGetState, trying XInput 1.4, 1.3, then 9.1.0 DLL entry points within the Windows process. Both platforms use the same plugin DLL. Linux host input drivers and Proton's translation path still require device testing. The active controller is the first connected XInput slot; device loss forces neutral rearming before another slot can take over.
 
-## Current coverage (0.3.2)
+## Current coverage (0.4.0)
 
 See [ACTIONS.md](ACTIONS.md) for all 68 named actions with their exact direct bindings and action-menu pages. Automated checks compare names and ordinals against the installed Assembly-CSharp metadata. Normal computer text input and music keys also receive a local controller keyboard adapter; desktop input is not synthesized.
 
 The controller action state is sampled once per frame, so multiple game consumers cannot retoggle sprint/crouch. Sprint cancels on movement stop or crouch; crouch persists after releasing B. Object rotation uses a separate native rate adapter, rather than a per-frame camera delta, and no longer receives an automatic LB slowdown. Normal mouse sensitivity is not changed.
 
-Prompt replacement is limited to presentation sites in mainscript, vehicle help, and controls rows. Native binding-name comparisons used by gameplay retain their original semantics. Runtime logging confirmed 94 rewritten presentation sites. While connected, clicking a controls-row binding opens the action catalog rather than the native keyboard rebinding capture. Controller assignments are currently fixed; sensitivity settings are editable in the permanent controller settings panel.
+Prompt replacement is limited to presentation sites in mainscript, vehicle help, and controls rows. Native binding-name comparisons used by gameplay retain their original semantics. Runtime logging confirmed 94 rewritten presentation sites. While connected, clicking a controls-row binding opens its editable controller binding rather than the native keyboard rebinding capture. Controller assignments are editable on the Bindings page beside Sensitivity. Native Controls binding rows open their matching binding entry. Menu navigation and Start/View recovery remain fixed.
 
 ## Menu recovery and testing incident
 
@@ -31,3 +31,9 @@ The user confirmed the first prototype and most of 0.2.0 work on Proton, and rep
 The user confirmed 0.3.1 icons and seated driving hints look good. Sixteen supplied Xbox PNGs are embedded in the plugin; TMP handles inline icons, and legacy Unity UI Text prompts receive a TMP visual replacement. Keyboard labels return on controller disconnect. Movement-stick names remain text because the supplied stick icons depict clicks. The top-left diagnostic overlay and its settings entry are removed.
 
 Driving hints are now smaller. Steering stick sensitivity adjusts the response curve after the deadzone, retaining neutral and full lock. Default 1.00 preserves the existing linear response. It affects ordinary stick steering and optional pointer-steering, without changing walking or look sensitivity. All 529 core checks pass; hands-on validation of the new size and steering setting is pending.
+
+## Editable bindings (0.4.0)
+
+A shared profile now drives gameplay input and presentation, including native interaction/vehicle help, Controls rows, custom action labels, mouse-axis help, settings toggle descriptions, and the seated driving panel. All 68 named actions support independent on-foot/driving assignments with button, trigger, stick direction, or up to three-control combinations. Occupied controls require swap confirmation. Saved profiles are validated atomically. Steering response follows resolved actions after remapping.
+
+Build and 1,420 core checks pass. In-game launch, page rendering, real controller capture, disk persistence, and visual prompt refresh after edits are pending hands-on testing: the user elected to test later. No launch was performed for 0.4.0. Source-level geometry review also corrected glyph-button padding so compact tabs and binding labels have sufficient line height.

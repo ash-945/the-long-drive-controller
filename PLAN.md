@@ -1,6 +1,6 @@
 # The Long Drive: complete controller support
 
-Status: expanded test build 0.3.2, 2026-10-15. All 68 named game actions have controller routes; controller prompts, an action catalog, text keyboard, and sensitivity settings are implemented. The build compiles and loads under Proton, with 529 core checks passing. Sprint and crouch use toggles; stopping movement cancels sprint. See README.md, docs/ACTIONS.md, docs/COMPATIBILITY.md, and docs/TESTING.md for current scope and remaining hands-on checks. Full release validation is not yet complete.
+Status: editable-bindings test build 0.4.0, 2026-10-15. All 68 named game actions have editable on-foot/driving profiles on a Bindings page beside Sensitivity. Gameplay and hints share the saved profiles. Build and 1,420 core checks pass; the local test copy is updated. In-game verification of 0.4.0 is pending at the user’s request to test later. See docs/BINDINGS.md and docs/TESTING.md.
 
 ## Goal and release boundary
 

@@ -9,6 +9,7 @@ namespace LongDrive.Controller
         private static inputscript.oneInput[] source;
         private static readonly Dictionary<inputscript.oneInput, GameAction> lookup = new Dictionary<inputscript.oneInput, GameAction>();
         private static bool lastConnected, lastDriving;
+        private static int lastRevision = -1;
 
         public static string Get(inputscript.oneInput input)
         {
@@ -26,10 +27,11 @@ namespace LongDrive.Controller
             return lookup.TryGetValue(input, out var action) ? ControllerGlyphs.Tmp(ActionCatalog.Hint(action, plugin.Driving)) : input.GetName();
         }
 
-        public static void Refresh(Plugin plugin)
+        public static void Refresh(Plugin plugin, bool force = false)
         {
-            if (lastConnected == plugin.ControllerConnected && lastDriving == plugin.Driving) return;
+            if (!force && lastRevision == ActionCatalog.Bindings.Revision && lastConnected == plugin.ControllerConnected && lastDriving == plugin.Driving) return;
             if (settingsscript.s == null || mainscript.s == null || !menuhandler.isStarted()) return;
+            lastRevision = ActionCatalog.Bindings.Revision;
             lastConnected = plugin.ControllerConnected;
             lastDriving = plugin.Driving;
             mainscript.s.RefreshHelpTexts();
@@ -64,7 +66,7 @@ namespace LongDrive.Controller
     [HarmonyPatch(typeof(mainscript), "Mouse")]
     internal static class MousePromptPatch
     {
-        private static void Postfix(ref string __result) { if (Plugin.Instance != null && Plugin.Instance.ControllerConnected) __result = "RS"; }
+        private static void Postfix(ref string __result) { if (Plugin.Instance != null && Plugin.Instance.ControllerConnected) __result = ControllerGlyphs.Tmp(BindingHints.Look(ActionCatalog.Bindings, Plugin.Instance.Driving)); }
     }
     [HarmonyPatch(typeof(mainscript), "Szamok")]
     internal static class GearPromptPatch
@@ -88,7 +90,7 @@ namespace LongDrive.Controller
         private static bool Prefix(controlsKey __instance)
         {
             if (Plugin.Instance == null || !Plugin.Instance.ControllerConnected || __instance.actionId < 0 || __instance.actionId >= ActionCatalog.Count) return true;
-            Plugin.Instance.ShowAction((GameAction)__instance.actionId);
+            Plugin.Instance.ShowControllerBinding((GameAction)__instance.actionId);
             return false;
         }
     }

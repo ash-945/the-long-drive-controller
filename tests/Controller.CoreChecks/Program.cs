@@ -185,6 +185,7 @@ internal static class Program
         Check(latch.Value(GameAction.looklean) == 1, "held modifier resumes after action menu closes");
         latch.Tick(neutral, "driving", true, 4);
         Check(!latch.Held(GameAction.looklean) && latch.Value(GameAction.looklean) == 0, "context transition clears held modifiers");
+        BindingChecks.Run(Check);
         if (args.Length < 1) throw new Exception("Pass the installed game's Assembly-CSharp.dll to verify the actual action inventory.");
         using var stream = File.OpenRead(args[0]);
         using var pe = new PEReader(stream);
@@ -217,7 +218,7 @@ internal static class Program
                     report.Append("| " + action + " | " + ActionCatalog.Label(action) + " | " + ActionCatalog.Hint(action, false) + " | " + ActionCatalog.Hint(action, true) + " |\n");
                 report.Append("\n");
             }
-            File.WriteAllText(args[1], report.ToString());
+            File.WriteAllText(args[1], report.ToString().TrimEnd() + "\n");
         }
     }
 }

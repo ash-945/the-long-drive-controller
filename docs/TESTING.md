@@ -49,3 +49,11 @@ Hold A on Hum, Urinate, Smoke, Zoom, or Voice chat in a supported native context
 ## 0.3.4 Survival menu
 
 Confirm Survival is page 1 and Tools is page 2. Select the eighth Survival entry, Defecate, with A: below 30% bowel meter it shows a message; at or above 30% it calls the native player action once. X must not toggle this one-shot action. Verify the bowel meter, spawned item, and sound in game.
+
+## 0.4.0 binding profiles
+
+Open controller settings and switch to Bindings with LB/RB. Check all nine categories in both on-foot/driving profiles (X changes context, LT/RT category). Select with D-pad/LS and A. Confirm A does not capture itself: release first, press the desired control/chord, and release to finish. Try B, a trigger, stick direction, LB+button, and three buttons. Start cancels; View closes; disconnect/focus loss must discard capture. Invalid oversized chords should permit retry.
+
+Try assigning Jump to X: confirm the swap with Use, then verify both actions and both native prompt labels. Change a driving pedal and ignition; verify seated hints, vehicle help, and native Controls rows update. Change camera and steering axes; sensitivity must follow steering rather than the old physical stick. Test longer chords for wrapping in driving hints. Test clearing, swap cancellation, reset cancellation, reset confirmation, and persistence after restarting. Sensitivity defaults must not reset bindings. UI navigation/Start/View remain fixed.
+
+Automated coverage includes every named action in both contexts, analog values, configuration round trips, atomic rejection of malformed/duplicate mappings, swapping, toggle behavior, nested chord suppression, capture gating and recovery, dynamic driving/mouse hints, and steering response after axis swaps. Runtime screenshots with --capture only record user-opened screens and gameplay; they never navigate or open/close menus.
