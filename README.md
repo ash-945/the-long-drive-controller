@@ -8,7 +8,7 @@ Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), XInput controllers
 - Crouch toggles with B. Click again to stand. LB+B remains lean and does not toggle crouch.
 - All 68 named game actions are reachable through direct controls or the View action menu. The menu contains only uncommon actions. Hold A for continuous actions, or use X to toggle a hold.
 - Interaction prompts, vehicle help, and the Controls page display Xbox button sprites where available while a controller is connected. The normal keyboard/mouse labels return when it disconnects.
-- The controller settings screen exposes camera, object rotation, object movement/lean, menu pointer speed, deadzones, and inversion. Values save automatically.
+- The controller settings screen exposes camera, object rotation, object movement/lean, menu pointer speed, deadzones, inversion, and separate on-foot/driving bindings. Values save automatically.
 - Object rotation defaults to 120 degrees/second before game weight/zoom effects, independently of mouse sensitivity. LB no longer slows every rotation.
 - An on-screen keyboard handles normal menu text fields and the in-game computer, including its musical keyboard. Gameplay and underlying menu inputs are suppressed while custom panels are open.
 
@@ -47,6 +47,8 @@ The menu hides during an A hold and returns on release. In the action menu, use 
 
 In controller settings, up/down selects a value and left/right adjusts it. A increases or toggles; Y restores defaults; B, Start, or View closes. The screen does not require neutral sticks to reopen. Gameplay still requires neutral after a context change or reconnect to prevent accidental actions.
 
+The settings window has **Sensitivity** and **Bindings** pages; switch with LB/RB or the tabs. On Bindings, X switches on-foot/driving profiles, LT/RT changes action categories, and D-pad/LS selects an action. Press A, release all controls, press a button/trigger/stick direction or up to three controls together, then release to save. Start cancels capture; View closes the window. B can be assigned during capture. Occupied bindings require confirmation before swapping; unbound actions transfer their former control as Unbound. RS click clears the selected binding; Y asks before resetting the current profile. Mouse buttons are available for tabs, rebind, clear, confirm, and cancel. Changes save automatically and update interaction prompts, native Controls rows, action labels, and driving hints immediately. Gameplay waits for neutral after edits. Clicking a native Controls binding row opens its entry in this page.
+
 The text keyboard opens when an editable field is focused, or when using the in-game computer. D-pad/LS selects keys; A types, X deletes, Y changes case, LB switches symbols, RB inserts space, Start finishes, and B cancels. RS moves the in-game computer cursor. Its letter/number keys also operate the computer's music mode.
 
 ## Installation
@@ -64,9 +66,11 @@ Configuration is saved in `BepInEx/config/ashley.thelongdrive.controller.cfg` in
 
 ## Verification and limits
 
+Version 0.4.0 passes 1,420 automated checks and has been tested interactively under Linux/Proton, including the new Bindings page. Native Windows and exhaustive device/activity coverage remain unverified.
+
 The core checks compare all action names/ordinals with the actual installed game's metadata and exercise action edges, menu queues, modifiers, toggle behavior, safe input gating, trigger independence, and rotation rate calculations. Runtime testing confirms Proton loading, controller detection, rewritten prompt paths, and rendered action/keyboard panels. See [testing](docs/TESTING.md), [integration details](docs/COMPATIBILITY.md), and [action inventory](docs/ACTIONS.md).
 
-Every named action has an implementation route; individual activities, multiplayer/VR, native Windows, and every menu/device combination still require hands-on validation. Developer-only/debug shortcuts outside the game's 68 bindable actions are not part of this mapping. The 16 supplied Xbox PNGs are embedded in the plugin and appear inline in interaction prompts, Controls rows, and custom panels. Stick movement remains text because the supplied stick images depict clicks. Arbitrary third-party mod menus are not yet covered. Remapping controller assignments is a later feature; the current settings screen adjusts sensitivity and input behavior.
+Every named action has an implementation route; individual activities, multiplayer/VR, native Windows, and every menu/device combination still require hands-on validation. Developer-only/debug shortcuts outside the game's 68 bindable actions are not part of this mapping. The 16 supplied Xbox PNGs are embedded in the plugin and appear inline in interaction prompts, Controls rows, and custom panels. Stick movement remains text because the supplied stick images depict clicks. Arbitrary third-party mod menus are not yet covered. The Bindings page supports all 68 named game actions, including analog directions and combinations of up to three controls. Start/View and menu-navigation buttons remain fixed for recovery.
 
 For problems, collect `BepInEx/LogOutput.log` and describe the exact control/context. View is available for menu recovery even while the gameplay neutral gate is blocked. Remove the plugin DLL to disable the mod; keep BepInEx if other mods need it.
 

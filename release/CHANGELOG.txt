@@ -1,3 +1,16 @@
+0.4.0 BETA - EDITABLE CONTROLLER BINDINGS
+- New Bindings page beside Sensitivity, with separate on-foot/driving profiles.
+- All 68 named actions accept buttons, triggers, stick directions, and up to
+  three-control combinations. Start/View and menu navigation remain fixed.
+- Capture waits for release before listening; occupied inputs require swap
+  confirmation. Clear/reset and automatic persistent saving are included.
+- Prompts, Controls rows, action labels, mouse-axis help, and driving hints use
+  the same bindings as gameplay. Long driving hints wrap automatically.
+- Native Controls binding rows open the corresponding editable entry.
+- Steering sensitivity follows the assigned steering axis.
+- Build and 1,420 core checks pass. Tested interactively under Linux/Proton
+  and confirmed working by the user before release packaging.
+
 0.3.4 BETA - INITIAL NEXUS PACKAGE
 - Controller routes for all 68 named game actions, with direct bindings for
   common actions and an uncommon-actions menu for the rest.

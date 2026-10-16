@@ -66,69 +66,8 @@ namespace LongDrive.Controller
             for (int i = 0; i < Groups.Length; i++) if (Array.IndexOf(Groups[i], action) >= 0) return i;
             throw new ArgumentOutOfRangeException(nameof(action));
         }
-        public static string Hint(GameAction action, bool driving)
-        {
-            if (driving && (int)action < 4) return "View > Movement";
-            switch (action)
-            {
-                case GameAction.forward: return "LS Up";
-                case GameAction.back: return "LS Down";
-                case GameAction.left: return "LS Left";
-                case GameAction.right: return "LS Right";
-                case GameAction.lookup: return "RS Up";
-                case GameAction.lookdown: return "RS Down";
-                case GameAction.lookleft: return "RS Left";
-                case GameAction.lookright: return "RS Right";
-                case GameAction.use: return "X";
-                case GameAction.pickup: return "Y";
-                case GameAction.equiprecenter: return "RS Click";
-            }
-            if (!driving)
-            {
-                switch (action)
-                {
-                    case GameAction.run: return "LS Click (toggle)";
-                    case GameAction.jump: return "A";
-                    case GameAction.duck: return "B (toggle)";
-                    case GameAction.lmb: return "RT";
-                    case GameAction.rmb: return "LT";
-                    case GameAction.mmb: return "LB + RB";
-                    case GameAction.mountdismount: return "RB";
-                    case GameAction.reload: return "LB + X";
-                    case GameAction.push: return "LB + A";
-                    case GameAction.looklean: return "LB + B";
-                    case GameAction.glue: return "LB + Y";
-                    case GameAction.target: return "LB + RS Click";
-                    case GameAction.scrollup: return "LB + D-pad Up";
-                    case GameAction.scrolldown: return "LB + D-pad Down";
-                    case GameAction.inventory1: return "D-pad Up";
-                    case GameAction.inventory2: return "D-pad Right";
-                    case GameAction.inventory3: return "D-pad Down";
-                    case GameAction.inventory4: return "D-pad Left";
-                }
-            }
-            else
-            {
-                switch (action)
-                {
-                    case GameAction.gas: return "RT";
-                    case GameAction.brake: return "LT";
-                    case GameAction.steerleft: return "LS Left";
-                    case GameAction.steerright: return "LS Right";
-                    case GameAction.clutch: return "LS Click";
-                    case GameAction.handbrake: return "A";
-                    case GameAction.ignition: return "B";
-                    case GameAction.shiftup: return "RB";
-                    case GameAction.shiftdown: return "LB";
-                    case GameAction.lights: return "D-pad Up";
-                    case GameAction.horn: return "D-pad Down";
-                    case GameAction.scrollup: return "D-pad Right";
-                    case GameAction.scrolldown: return "D-pad Left";
-                }
-            }
-            int menuPage = MenuPage(action);
-            return menuPage >= 0 ? "View > " + MenuPages[menuPage] : "On-foot / driving controls";
-        }
+        internal static readonly ControllerBindings Bindings = new ControllerBindings();
+        public static string Hint(GameAction action, bool driving) => Bindings.Hint(action, driving);
         public static bool CanHold(GameAction a)
         {
             switch (a)
@@ -157,7 +96,9 @@ namespace LongDrive.Controller
         private float pulseEnd;
         private bool pendingSprint;
         private bool pendingCrouch;
-        private Buttons previousButtons;
+        private readonly ControllerBindings bindings;
+        private readonly float[] physical = new float[ActionCatalog.Count], previousPhysical = new float[ActionCatalog.Count];
+        public ActionState(ControllerBindings bindings = null) { this.bindings = bindings ?? ActionCatalog.Bindings; }
         private string lastContext;
         public bool Sprint { get; private set; }
         public bool Crouched { get; private set; }
@@ -188,11 +129,12 @@ namespace LongDrive.Controller
             Sprint = false;
             pendingSprint = false;
             Crouched = pendingCrouch = false;
+            Array.Clear(physical, 0, physical.Length); Array.Clear(previousPhysical, 0, previousPhysical.Length);
         }
         private void Set(GameAction a, float value) { values[(int)a] = Math.Max(values[(int)a], value); }
         private void Set(GameAction a, bool value) { if (value) Set(a, 1); }
 
-        public void Tick(PadState pad, string context, bool enabled, float now, GameAction? menuHold = null)
+        public void Tick(PadState pad, string context, bool enabled, float now, GameAction? menuHold = null, float steeringSensitivity = 1)
         {
             Array.Copy(values, before, values.Length);
             Array.Clear(values, 0, values.Length);
@@ -206,51 +148,34 @@ namespace LongDrive.Controller
                     Set(menuHold.Value, true);
                 Sprint = false;
                 if (context == "walking" && Crouched) Set(GameAction.duck, true);
-                previousButtons = pad.Buttons;
+                bindings.Evaluate(pad, context == "driving", physical);
+                Array.Copy(physical, previousPhysical, physical.Length);
                 return;
             }
             bool driving = context == "driving";
-            bool modifier = !driving && pad.Held(Buttons.LB);
-            Buttons beforeButtons = previousButtons;
-            bool click = pad.Held(Buttons.LS) && (previousButtons & Buttons.LS) == 0;
-            previousButtons = pad.Buttons;
-            if (!driving && !modifier && click) { Sprint = !Sprint; pendingSprint = false; if (Sprint) Crouched = false; }
-            if (pendingSprint && !driving && (pad.LX != 0 || pad.LY != 0)) { Sprint = !Sprint; pendingSprint = false; }
-            if (pad.LX == 0 && pad.LY == 0) Sprint = false;
-            // Crouch uses an edge, not the held face button. Modifier+B remains lean.
-            bool crouchClick = !driving && !modifier && pad.Held(Buttons.B) && (beforeButtons & Buttons.B) == 0;
-            if (crouchClick || pendingCrouch && !driving)
-            { Crouched = !Crouched; pendingCrouch = false; Sprint = false; }
-            if (driving || Crouched) Sprint = false;
-            Set(GameAction.lookup, Math.Max(0, pad.RY)); Set(GameAction.lookdown, Math.Max(0, -pad.RY));
-            Set(GameAction.lookleft, Math.Max(0, -pad.RX)); Set(GameAction.lookright, Math.Max(0, pad.RX));
-            Set(GameAction.use, !modifier && pad.Held(Buttons.X));
-            Set(GameAction.pickup, !modifier && pad.Held(Buttons.Y));
-            Set(GameAction.equiprecenter, !modifier && pad.Held(Buttons.RS));
+            Array.Copy(physical, previousPhysical, physical.Length);
+            bindings.Evaluate(pad, driving, physical);
             if (driving)
             {
-                Set(GameAction.steerleft, Math.Max(0, -pad.LX)); Set(GameAction.steerright, Math.Max(0, pad.LX));
-                Set(GameAction.gas, pad.RT); Set(GameAction.brake, pad.LT);
-                Set(GameAction.clutch, pad.Held(Buttons.LS)); Set(GameAction.handbrake, pad.Held(Buttons.A));
-                Set(GameAction.ignition, pad.Held(Buttons.B)); Set(GameAction.shiftup, pad.Held(Buttons.RB));
-                Set(GameAction.shiftdown, pad.Held(Buttons.LB)); Set(GameAction.lights, pad.Held(Buttons.Up));
-                Set(GameAction.horn, pad.Held(Buttons.Down)); Set(GameAction.scrollup, pad.Held(Buttons.Right));
-                Set(GameAction.scrolldown, pad.Held(Buttons.Left));
+                physical[(int)GameAction.steerleft] = PadMath.SteeringInput(physical[(int)GameAction.steerleft], steeringSensitivity);
+                physical[(int)GameAction.steerright] = PadMath.SteeringInput(physical[(int)GameAction.steerright], steeringSensitivity);
             }
-            else
+            bool modifier = !driving && bindings.RunModifierHeld(pad);
+            bool runDown = physical[(int)GameAction.run] > .2f && previousPhysical[(int)GameAction.run] <= .2f;
+            bool crouchDown = physical[(int)GameAction.duck] > .2f && previousPhysical[(int)GameAction.duck] <= .2f;
+            bool moving = physical[(int)GameAction.forward] > 0 || physical[(int)GameAction.back] > 0 || physical[(int)GameAction.left] > 0 || physical[(int)GameAction.right] > 0;
+            if (!driving && !modifier && runDown) { Sprint = !Sprint; pendingSprint = false; if (Sprint) Crouched = false; }
+            if (pendingSprint && !driving && moving) { Sprint = !Sprint; pendingSprint = false; }
+            if (!moving) Sprint = false;
+            if (!driving && (crouchDown || pendingCrouch))
+            { Crouched = !Crouched; pendingCrouch = false; Sprint = false; }
+            if (driving || Crouched) Sprint = false;
+            for (int i = 0; i < physical.Length; i++)
+                if (driving || i != (int)GameAction.run && i != (int)GameAction.duck) Set((GameAction)i, physical[i]);
+            if (!driving)
             {
-                Set(GameAction.forward, Math.Max(0, pad.LY)); Set(GameAction.back, Math.Max(0, -pad.LY));
-                Set(GameAction.left, Math.Max(0, -pad.LX)); Set(GameAction.right, Math.Max(0, pad.LX));
-                Set(GameAction.lmb, pad.RT); Set(GameAction.rmb, pad.LT);
-                Set(GameAction.run, Sprint || modifier && pad.Held(Buttons.LS));
-                Set(GameAction.jump, !modifier && pad.Held(Buttons.A)); Set(GameAction.duck, Crouched);
-                Set(GameAction.mountdismount, !modifier && pad.Held(Buttons.RB));
-                Set(GameAction.mmb, modifier && pad.Held(Buttons.RB)); Set(GameAction.reload, modifier && pad.Held(Buttons.X));
-                Set(GameAction.push, modifier && pad.Held(Buttons.A)); Set(GameAction.looklean, modifier && pad.Held(Buttons.B));
-                Set(GameAction.glue, modifier && pad.Held(Buttons.Y)); Set(GameAction.target, modifier && pad.Held(Buttons.RS));
-                Set(GameAction.scrollup, modifier && pad.Held(Buttons.Up)); Set(GameAction.scrolldown, modifier && pad.Held(Buttons.Down));
-                Set(GameAction.inventory1, !modifier && pad.Held(Buttons.Up)); Set(GameAction.inventory2, !modifier && pad.Held(Buttons.Right));
-                Set(GameAction.inventory3, !modifier && pad.Held(Buttons.Down)); Set(GameAction.inventory4, !modifier && pad.Held(Buttons.Left));
+                Set(GameAction.run, Sprint || modifier && physical[(int)GameAction.run] > .2f);
+                Set(GameAction.duck, Crouched);
             }
             for (int i = 0; i < held.Length; i++) if (held[i]) Set((GameAction)i, 1);
             if (pulse.HasValue)

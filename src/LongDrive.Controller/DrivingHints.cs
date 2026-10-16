@@ -4,13 +4,9 @@ namespace LongDrive.Controller
 {
     internal static class DrivingHints
     {
-        private static readonly string[] Rows =
-        {
-            "LS: Steer     RT: Throttle     LT: Brake     RS: Look",
-            "B: Ignition (hold)     A: Handbrake     LS Click: Clutch",
-            "LB / RB: Shift down / up     View > Gears: Select gear",
-            "D-pad Up: Lights     D-pad Down: Horn     X: Use / exit"
-        };
+        private static string[] rows;
+        private static int revision = -1;
+        private static bool pointerSteer, pointerPedals;
         private static GUIStyle textStyle;
         public static void Draw(Plugin plugin)
         {
@@ -21,14 +17,27 @@ namespace LongDrive.Controller
             var before = GUI.matrix;
             float scale = Mathf.Min(Screen.width / 1280f, Screen.height / 720f);
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, Vector3.one * scale);
-            float width = 480, height = 98;
+            bool steer = inputscript.i != null && inputscript.i.mouseSteer;
+            bool pedals = inputscript.i != null && inputscript.i.mousePedal;
+            if (rows == null || revision != ActionCatalog.Bindings.Revision || steer != pointerSteer || pedals != pointerPedals)
+            {
+                rows = BindingHints.DrivingRows(ActionCatalog.Bindings, steer, pedals);
+                revision = ActionCatalog.Bindings.Revision; pointerSteer = steer; pointerPedals = pedals;
+            }
+            float width = 480, height = 14;
+            foreach (string row in rows) height += Mathf.Max(21, ControllerGlyphs.MeasureHeight(row, width - 20, textStyle));
             var area = new Rect((Screen.width / scale - width) / 2, Screen.height / scale - height - 12, width, height);
             var color = GUI.color;
             GUI.color = new Color(.035f, .045f, .055f, .78f);
             GUI.DrawTexture(area, Texture2D.whiteTexture);
             GUI.color = color;
-            for (int i = 0; i < Rows.Length; i++)
-                ControllerGlyphs.Label(new Rect(area.x + 10, area.y + 7 + i * 21, width - 20, 21), Rows[i], textStyle);
+            float y = area.y + 7;
+            foreach (string row in rows)
+            {
+                float rowHeight = Mathf.Max(21, ControllerGlyphs.MeasureHeight(row, width - 20, textStyle));
+                ControllerGlyphs.Label(new Rect(area.x + 10, y, width - 20, rowHeight), row, textStyle);
+                y += rowHeight;
+            }
             GUI.matrix = before;
         }
     }

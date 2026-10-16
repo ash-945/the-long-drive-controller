@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LongDrive.Controller
 {
-    [BepInPlugin(Id, "The Long Drive Controller", "0.3.4")]
+    [BepInPlugin(Id, "The Long Drive Controller", "0.4.0")]
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ashley.thelongdrive.controller";
@@ -25,10 +25,14 @@ namespace LongDrive.Controller
         internal readonly ControllerKeyboard Keyboard = new ControllerKeyboard();
         private ConfigEntry<float> deadzone, triggerThreshold, lookSpeed, pointerSpeed, manipulationSpeed, rotationSpeed, steeringSensitivity;
         private ConfigEntry<bool> invertY;
+        private ConfigEntry<string> walkingBindings, drivingBindings;
         private bool reportedRuntime;
         private bool captureRequested;
         private bool firstSample;
-        private bool capturedActions, capturedSettings, capturedKeyboard;
+        private bool capturedActions, capturedKeyboard;
+        private readonly System.Collections.Generic.HashSet<string> capturedSettings = new System.Collections.Generic.HashSet<string>();
+        private int capturedBindingRevision = -1;
+        private float bindingCaptureAfter;
         internal static int AxisCalls, ButtonCalls, LookCalls;
 
         private void Awake()
@@ -45,9 +49,13 @@ namespace LongDrive.Controller
             pointerSpeed = Config.Bind("UI", "PointerSpeed", 850f, new ConfigDescription("Virtual cursor pixels per second.", new AcceptableValueRange<float>(100, 2000)));
             steeringSensitivity = Config.Bind("Input", "SteeringStickSensitivity", 1f, new ConfigDescription("Steering stick response: lower gives finer small corrections; higher responds sooner. Full stick travel always reaches full steering. Does not affect walking or camera sensitivity.", new AcceptableValueRange<float>(.25f, 2f)));
             invertY = Config.Bind("Input", "InvertLookY", false, "Invert controller look independently of the mouse.");
+            walkingBindings = Config.Bind("Bindings", "OnFoot", "", "Saved controller bindings for on-foot gameplay. Edit using the Bindings page in controller settings.");
+            drivingBindings = Config.Bind("Bindings", "Driving", "", "Saved controller bindings for driving. Edit using the Bindings page in controller settings.");
+            if (!ActionCatalog.Bindings.TryLoad(walkingBindings.Value, false)) Logger.LogWarning("Invalid on-foot bindings; using defaults.");
+            if (!ActionCatalog.Bindings.TryLoad(drivingBindings.Value, true)) Logger.LogWarning("Invalid driving bindings; using defaults.");
             menus = new MenuControls();
             ControllerGlyphs.Load(Logger);
-            Logger.LogInfo("Controller 0.3.4; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
+            Logger.LogInfo("Controller 0.4.0; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
             if (!supported) { Logger.LogError("Unsupported game version. Controller hooks disabled."); return; }
             patches = new Harmony(Id);
             patches.PatchAll(typeof(Plugin).Assembly);
@@ -111,9 +119,8 @@ namespace LongDrive.Controller
                 menus.Release(); SuppressTransition();
             }
             var actionPad = current;
-            if (context == "driving") actionPad.LX = PadMath.SteeringInput(actionPad.LX, steeringSensitivity.Value);
             Actions.Tick(actionPad, context, InGameplay && current.Connected && !CustomPanel, Time.unscaledTime,
-                InGameplay && raw.Connected && Application.isFocused ? actionMenu.HeldAction(raw) : null);
+                InGameplay && raw.Connected && Application.isFocused ? actionMenu.HeldAction(raw) : null, steeringSensitivity.Value);
         }
 
         private void Update()
@@ -142,7 +149,11 @@ namespace LongDrive.Controller
             if (captureRequested)
             {
                 if (actionMenu.Open && !capturedActions) { capturedActions = true; Capture("controller-actions.png"); }
-                if (controllerSettings.Open && !capturedSettings) { capturedSettings = true; Capture("controller-settings.png"); }
+                if (controllerSettings.Open && capturedSettings.Add(controllerSettings.CaptureState)) Capture("controller-" + controllerSettings.CaptureState + ".png");
+                if (capturedBindingRevision != ActionCatalog.Bindings.Revision)
+                { capturedBindingRevision = ActionCatalog.Bindings.Revision; bindingCaptureAfter = Time.unscaledTime + .5f; }
+                if (bindingCaptureAfter > 0 && Time.unscaledTime >= bindingCaptureAfter && InGameplay && !CustomPanel)
+                { bindingCaptureAfter = 0; Capture("controller-bindings-gameplay.png"); }
                 if (Keyboard.Open && !capturedKeyboard) { capturedKeyboard = true; Capture("controller-keyboard.png"); }
             }
             if (context != "menu" && !CustomPanel) menus.Release();
@@ -182,6 +193,15 @@ namespace LongDrive.Controller
             else menus.Release();
         }
 
+        internal void SaveBindings()
+        {
+            walkingBindings.Value = ActionCatalog.Bindings.Serialize(false);
+            drivingBindings.Value = ActionCatalog.Bindings.Serialize(true);
+            Actions.Clear(); SuppressTransition();
+            Logger.LogInfo("Controller bindings saved; revision=" + ActionCatalog.Bindings.Revision);
+            PromptNames.Refresh(this, true);
+        }
+
         internal bool Defecate(out string message)
         {
             var player = mainscript.s == null ? null : mainscript.s.player;
@@ -198,6 +218,11 @@ namespace LongDrive.Controller
 
         internal void ShowAction(GameAction action) { actionMenu.Show(action); menus.Release(); SuppressTransition(); }
         internal void ShowControllerSettings() { actionMenu.Close(); controllerSettings.Show(); previousRaw = raw; menus.Release(); SuppressTransition(); }
+        internal void ShowControllerBinding(GameAction action)
+        {
+            actionMenu.Close(); controllerSettings.ShowBinding(action, Driving);
+            previousRaw = raw; menus.Release(); SuppressTransition();
+        }
         internal bool UiDown(Buttons b) => Application.isFocused && raw.Held(b) && !previousRaw.Held(b);
         internal int SettingCount => 8;
         internal string SettingText(int index)
@@ -289,12 +314,12 @@ namespace LongDrive.Controller
             if (!InGameplay || !Driving || !current.Connected || CustomPanel || !input.mouseSteer) return;
             float dt = Mathf.Min(Time.unscaledDeltaTime, .05f);
             float before = input.currentMouseSteer;
-            input.currentMouseSteer = Mathf.Clamp(before + PadMath.SteeringInput(current.RX, steeringSensitivity.Value) * dt * 1.2f, -1, 1);
+            input.currentMouseSteer = Mathf.Clamp(before + PadMath.SteeringInput(Actions.Value(GameAction.lookright) - Actions.Value(GameAction.lookleft), steeringSensitivity.Value) * dt * 1.2f, -1, 1);
             input.steer = Mathf.Clamp(input.steer + input.currentMouseSteer - before, -1, 1);
             if (input.mousePedal)
             {
                 before = input.currentMouseGas;
-                input.currentMouseGas = Mathf.Clamp(before + current.RY * dt, -1, 1);
+                input.currentMouseGas = Mathf.Clamp(before + (Actions.Value(GameAction.lookup) - Actions.Value(GameAction.lookdown)) * dt, -1, 1);
                 input.throttle = Mathf.Clamp01(input.throttle + Mathf.Max(0, input.currentMouseGas) - Mathf.Max(0, before));
                 input.brake = Mathf.Clamp01(input.brake + Mathf.Max(0, -input.currentMouseGas) - Mathf.Max(0, -before));
             }

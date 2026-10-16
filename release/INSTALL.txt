@@ -1,5 +1,5 @@
 THE LONG DRIVE - XINPUT CONTROLLER SUPPORT
-Version 0.3.4 beta | Game v2024.11.26b
+Version 0.4.0 beta | Game v2024.11.26b
 
 REQUIREMENTS
 - The Long Drive v2024.11.26b (tested build reports 2024.11.26b_test).
@@ -8,6 +8,12 @@ REQUIREMENTS
   https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.5
 Use the Windows x64 loader on both Windows and Linux/Proton.
 This package is a BepInEx plugin, not a standalone game or launcher.
+
+REQUIRED GAME-SPECIFIC SETTING
+In BepInEx/config/BepInEx.cfg, under [Chainloader], you MUST set:
+  HideManagerGameObject = true
+If left false, the log can say the plugin loaded, then the game immediately
+destroys it. See the installation steps below to generate this file first.
 
 MANUAL INSTALLATION - WINDOWS AND LINUX/PROTON
 1. Close the game. Find the folder containing the TheLongDrive.exe you
@@ -54,6 +60,15 @@ View/Back, then Start opens controller settings. View also opens them while
 native game Settings is open. Up/down selects; left/right adjusts; A increases
 or toggles; Y restores defaults; B, Start, or View closes.
 
+LB/RB switches between Sensitivity and Bindings. On Bindings, X switches
+on-foot/driving profiles, LT/RT changes category, and A begins capture. Release
+all controls, press a button/trigger/stick direction or combination (up to three
+controls), then release to save. Start cancels capture; View closes. B can be
+assigned during capture. Occupied bindings require swap confirmation. RS click
+clears a binding; Y asks before restoring defaults for the current profile.
+Gameplay hints update from saved bindings. The native Controls rows also open
+the corresponding binding entry. Sensitivity defaults do not reset bindings.
+
 Adjust camera speed, object rotation speed, object movement/lean speed,
 pointer speed, stick/trigger deadzones, camera Y inversion, and steering
 stick sensitivity. Settings save automatically to:
@@ -70,7 +85,7 @@ the mod's configuration file. Keep BepInEx if other mods depend on it.
 
 TROUBLESHOOTING
 No controller menu: check BepInEx/LogOutput.log for
-"Loading [The Long Drive Controller 0.3.4]".
+"Loading [The Long Drive Controller 0.4.0]".
 No BepInEx log: check loader installation and, on Proton, the winhttp override.
 Plugin loads but no controls: check XInput mode, focus, and the Chainloader
 setting above. After reconnecting or leaving menus, release sticks, triggers,
@@ -82,5 +97,5 @@ COMPATIBILITY
 Tested interactively on Linux/Proton with an 8BitDo Ultimate 2 Wireless
 Controller in XInput mode. Windows x64 is targeted but not yet independently
 verified. Other game versions, every vehicle/menu, multiplayer, VR, and
-third-party mod menus have not been exhaustively tested. Bindings are fixed;
-the settings screen adjusts response and sensitivity rather than remapping.
+third-party mod menus have not been exhaustively tested. Gameplay bindings are editable in the Bindings page; Start/View and menu
+navigation remain fixed for recovery.

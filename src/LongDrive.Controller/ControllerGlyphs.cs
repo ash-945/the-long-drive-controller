@@ -98,11 +98,19 @@ namespace LongDrive.Controller
             GUI.backgroundColor = selected ? new Color(.2f, .85f, .4f) : new Color(.22f, .27f, .32f);
             bool clicked = GUI.Button(area, GUIContent.none, style);
             GUI.backgroundColor = Color.white;
-            Label(new Rect(area.x + style.padding.left, area.y + style.padding.top, area.width - style.padding.horizontal, area.height - style.padding.vertical), text, style);
+            // Compact tabs and binding rows need a complete glyph line even when
+            // the skin's normal button padding would leave too little vertical room.
+            int fontSize = style.fontSize > 0 ? style.fontSize : 17;
+            float line = Mathf.Max(style.lineHeight, fontSize * 1.45f);
+            float top = Mathf.Min(style.padding.top, Mathf.Max(0, (area.height - line) / 2));
+            float bottom = Mathf.Min(style.padding.bottom, Mathf.Max(0, area.height - top - line));
+            Label(new Rect(area.x + style.padding.left, area.y + top, area.width - style.padding.horizontal, area.height - top - bottom), text, style);
             return clicked;
         }
 
-        public static void Label(Rect area, string text, GUIStyle style)
+        public static float MeasureHeight(string text, float width, GUIStyle style) => Label(new Rect(0, 0, width, 100000), text, style, false);
+
+        public static float Label(Rect area, string text, GUIStyle style, bool draw = true)
         {
             // Use fixed inline boxes with preserved aspect ratios, then wrap normal text at
             // spaces. Font labels and game settings are never parsed as controller commands.
@@ -118,7 +126,7 @@ namespace LongDrive.Controller
                 {
                     float width = iconHeight * image.width / image.height;
                     if (x > area.x && x + width > area.xMax) { x = area.x; y += line; }
-                    if (y + line <= area.yMax + 1) GUI.DrawTexture(new Rect(x, y + (line - iconHeight) / 2, width, iconHeight), image, ScaleMode.ScaleToFit, true);
+                    if (draw && y + line <= area.yMax + 1) GUI.DrawTexture(new Rect(x, y + (line - iconHeight) / 2, width, iconHeight), image, ScaleMode.ScaleToFit, true);
                     x += width + 2;
                     continue;
                 }
@@ -129,13 +137,14 @@ namespace LongDrive.Controller
                     float width = labelStyle.CalcSize(new GUIContent(token)).x;
                     bool space = string.IsNullOrWhiteSpace(token);
                     if (!space && x > area.x && x + width > area.xMax) { x = area.x; y += line; }
-                    if (!space && y + line <= area.yMax + 1)
+                    if (draw && !space && y + line <= area.yMax + 1)
                     {
                         GUI.Label(new Rect(x, y, width + 1, line), token, labelStyle);
                     }
                     if (x > area.x || !space) x += width;
                 }
             }
+            return y + line - area.y;
         }
 
         public static void Verify(ManualLogSource log)

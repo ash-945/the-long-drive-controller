@@ -2,7 +2,7 @@
 
 **Play The Long Drive with an XInput controller, from walking and driving to menus, object handling, and text entry.** Xbox button prompts, toggle sprint and crouch, adjustable steering response, and an on-screen keyboard bring the controls together in one mod.
 
-**Version 0.3.4 beta • For game v2024.11.26b**
+**Version 0.4.0 beta • For game v2024.11.26b**
 
 ## Features
 
@@ -27,7 +27,7 @@ All 68 named game actions have controller routes. Survival also includes the nat
 
 1. Close the game. Install BepInEx beside the **TheLongDrive.exe you actually launch**. Linux/Proton users must configure the override below before launching.
 2. Launch once to generate BepInEx configuration, then close the game.
-3. Open `BepInEx/config/BepInEx.cfg`. Under `[Chainloader]`, set `HideManagerGameObject = true` and save. This game can otherwise destroy the plugin manager.
+3. **Required for this game:** open `BepInEx/config/BepInEx.cfg`. Under `[Chainloader]`, set `HideManagerGameObject = true` and save. This game can otherwise destroy the plugin manager.
 4. Extract this mod into the same game folder. The plugin should be at `BepInEx/plugins/LongDrive.Controller/LongDrive.Controller.dll`.
 5. Connect your controller and launch. Press **View/Back** for uncommon actions, then **Start** for controller settings.
 
@@ -60,18 +60,20 @@ Steering sensitivity defaults to **1.00**. Lower values make small corrections g
 
 ## Compatibility and current limits
 
-This is a **beta** tested interactively on Linux/Proton with an 8BitDo Ultimate 2 Wireless Controller in XInput mode. Windows x64 is targeted by the same plugin but has not yet been independently verified. Other game versions are unsupported; other controllers and every vehicle, menu, multiplayer/VR activity, and third-party mod menu have not been exhaustively tested.
+This is a **beta**, tested interactively on Linux/Proton with an 8BitDo Ultimate 2 Wireless Controller in XInput mode, including the new 0.4.0 binding settings. Windows x64 is targeted by the same plugin but has not yet been independently verified. Other game versions are unsupported; other controllers and every vehicle, menu, multiplayer/VR activity, and third-party mod menu have not been exhaustively tested.
 
-Controller bindings are currently fixed. Settings adjust sensitivity and response; button remapping is not included. Free stick movement uses LS/RS text because the supplied stick images depict clicks. Multiplayer and VR actions require their respective game contexts.
+Gameplay bindings are editable on a Bindings page beside Sensitivity, with separate on-foot/driving profiles. Use LB/RB to switch settings pages, X to switch profiles, LT/RT to change categories, and A to capture a control or combination. Release all controls first, then press and release the new input. Occupied bindings require confirmation before swapping. Start/View and menu navigation remain fixed for recovery. Free stick movement uses LS/RS text because the supplied stick images depict clicks. Multiplayer and VR actions require their respective game contexts.
 
 ## Updating, uninstalling, and support
 
 Close the game before updating and replace the existing plugin DLL. Keep only one copy installed. To uninstall, remove `BepInEx/plugins/LongDrive.Controller`; keep BepInEx if other mods need it.
 
-If the mod does not load, check the executable path, BepInEx installation, `HideManagerGameObject` setting, and Proton override. Look for **The Long Drive Controller 0.3.4** in `BepInEx/LogOutput.log`.
+If the mod does not load, check the executable path, BepInEx installation, `HideManagerGameObject` setting, and Proton override. Look for **The Long Drive Controller 0.4.0** in `BepInEx/LogOutput.log`.
 
 When reporting a problem, include the game/mod version, OS and Proton version, controller model/mode, Steam Input setup, the failed action, and the log. After reconnecting or changing contexts, release all controls to neutral before continuing.
 
 ## Credits
 
 An unofficial mod for The Long Drive. Uses BepInEx and its HarmonyX runtime dependency; both remain separate from this download. Xbox-style button sprites are Creative Commons assets supplied for the mod with no attribution requirement.
+
+[Source code and development](https://github.com/ash-945/the-long-drive-controller)
