@@ -8,8 +8,8 @@
   the same bindings as gameplay. Long driving hints wrap automatically.
 - Native Controls binding rows open the corresponding editable entry.
 - Steering sensitivity follows the assigned steering axis.
-- Build and 1,420 core checks pass. In-game validation is pending; the user
-  chose to test later. This build has not been uploaded to Nexus.
+- Build and 1,420 core checks pass. Tested interactively under Linux/Proton
+  and confirmed working by the user before release packaging.
 
 0.3.4 BETA - INITIAL NEXUS PACKAGE
 - Controller routes for all 68 named game actions, with direct bindings for

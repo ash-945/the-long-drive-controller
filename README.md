@@ -66,7 +66,7 @@ Configuration is saved in `BepInEx/config/ashley.thelongdrive.controller.cfg` in
 
 ## Verification and limits
 
-The 0.4.0 rebinding changes pass automated checks and are awaiting in-game verification. Earlier builds have been tested interactively under Proton.
+Version 0.4.0 passes 1,420 automated checks and has been tested interactively under Linux/Proton, including the new Bindings page. Native Windows and exhaustive device/activity coverage remain unverified.
 
 The core checks compare all action names/ordinals with the actual installed game's metadata and exercise action edges, menu queues, modifiers, toggle behavior, safe input gating, trigger independence, and rotation rate calculations. Runtime testing confirms Proton loading, controller detection, rewritten prompt paths, and rendered action/keyboard panels. See [testing](docs/TESTING.md), [integration details](docs/COMPATIBILITY.md), and [action inventory](docs/ACTIONS.md).
 

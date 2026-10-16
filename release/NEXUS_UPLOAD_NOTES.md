@@ -2,7 +2,7 @@
 
 **Mod name:** The Long Drive - XInput Controller Support
 
-**Summary:** Adds XInput controller gameplay and menu support, Xbox button prompts, an on-screen keyboard, toggle sprint/crouch, driving hints, and adjustable steering sensitivity. For v2024.11.26b.
+**Summary:** XInput gameplay and menu support with editable bindings, Xbox prompts, an on-screen keyboard, toggle sprint/crouch, driving hints, and steering sensitivity. For v2024.11.26b.
 
 **Version:** 0.4.0
 
@@ -10,7 +10,7 @@
 
 **Main download name:** XInput Controller Support 0.4.0 Beta
 
-**File description:** For The Long Drive v2024.11.26b. Includes the controller plugin, installation instructions, controls reference, credits, changelog, and hash manifest. Requires BepInEx 5.4.23.5 Windows x64 separately. Linux/Proton users must configure the winhttp override. Manual installation supported.
+**File description:** 0.4.0 adds editable on-foot/driving bindings with matching hints. For The Long Drive v2024.11.26b. Includes the controller plugin, installation instructions, controls reference, credits, changelog, and hash manifest. Requires BepInEx 5.4.23.5 Windows x64 separately. Linux/Proton users must configure the winhttp override. Manual installation supported.
 
 **External requirement:** BepInEx 5.4.23.5 Windows x64 — https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.5
 
@@ -21,3 +21,7 @@ Use the archive named LongDrive-XInput-Controller-Support-0.4.0-Beta.zip. Do not
 The mod author confirmed that the supplied controller sprites are Creative Commons assets requiring no attribution. No broader license or redistribution permissions for the original mod code have been chosen on the author's behalf. Set Nexus permissions to the author's preferences during upload.
 
 Suggested images: a native interaction prompt with button sprites, the seated driving hints, controller settings showing steering sensitivity, and the uncommon-actions menu. Capture new images from 0.4.0; existing captures may show older layouts.
+
+**Source:** https://github.com/ash-945/the-long-drive-controller
+
+**Installation reminder:** HideManagerGameObject=true is required under [Chainloader] in BepInEx.cfg. A successful plugin-loading message alone does not prove it stayed active.

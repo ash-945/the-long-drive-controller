@@ -9,6 +9,12 @@ REQUIREMENTS
 Use the Windows x64 loader on both Windows and Linux/Proton.
 This package is a BepInEx plugin, not a standalone game or launcher.
 
+REQUIRED GAME-SPECIFIC SETTING
+In BepInEx/config/BepInEx.cfg, under [Chainloader], you MUST set:
+  HideManagerGameObject = true
+If left false, the log can say the plugin loaded, then the game immediately
+destroys it. See the installation steps below to generate this file first.
+
 MANUAL INSTALLATION - WINDOWS AND LINUX/PROTON
 1. Close the game. Find the folder containing the TheLongDrive.exe you
    actually launch. Install the BepInEx Windows x64 files in that folder.
