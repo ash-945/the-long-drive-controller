@@ -14,3 +14,5 @@ https://github.com/BepInEx/HarmonyX
 
 No game files, decompiled game source, BepInEx loader binaries, HarmonyX
 binaries, personal saves, or user configuration files are included.
+
+The mod software license and copyright notice are included in LICENSE.

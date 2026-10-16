@@ -18,7 +18,7 @@
 
 Use the archive named LongDrive-XInput-Controller-Support-0.4.0-Beta.zip. Do not upload the workspace, local game copy, or old ControllerPrototype archives. This is a manual game-root install; mod-manager deployment has not been verified. The download has not been uploaded or published automatically.
 
-The mod author confirmed that the supplied controller sprites are Creative Commons assets requiring no attribution. No broader license or redistribution permissions for the original mod code have been chosen on the author's behalf. Set Nexus permissions to the author's preferences during upload.
+The mod author confirmed that the supplied controller sprites are Creative Commons assets requiring no attribution. The author has added a LICENSE to the repository; it is included unchanged in the download. Match Nexus permissions to that license and the separate controller-asset terms.
 
 Suggested images: a native interaction prompt with button sprites, the seated driving hints, controller settings showing steering sensitivity, and the uncommon-actions menu. Capture new images from 0.4.0; existing captures may show older layouts.
 

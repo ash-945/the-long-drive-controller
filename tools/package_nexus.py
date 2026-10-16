@@ -32,7 +32,7 @@ def main():
     bbcode = re.sub(r"^- ", "• ", bbcode, flags=re.M)
     (DOCS / "NEXUS_DESCRIPTION_BBCODE.txt").write_text(bbcode)
 
-    files = {plugin_name: plugin}
+    files = {plugin_name: plugin, "LICENSE": (ROOT / "LICENSE").read_bytes()}
     for name in ("INSTALL.txt", "CONTROLS.md", "CHANGELOG.txt", "CREDITS.txt"):
         files[name] = (DOCS / name).read_bytes()
     manifest = dict(build, release_channel="beta", installation="manual-game-root",

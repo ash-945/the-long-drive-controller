@@ -30,6 +30,7 @@ def main():
     plugin.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy2(ROOT / "src/LongDrive.Controller/bin/Release/netstandard2.1/LongDrive.Controller.dll", plugin)
     shutil.copy2(ROOT / "README.md", stage / "README.md")
+    shutil.copy2(ROOT / "LICENSE", stage / "LICENSE")
     (stage / "docs").mkdir(exist_ok=True)
     shutil.copy2(ROOT / "docs/TESTING.md", stage / "docs/TESTING.md")
     shutil.copy2(ROOT / "docs/COMPATIBILITY.md", stage / "docs/COMPATIBILITY.md")
@@ -45,7 +46,7 @@ def main():
     (stage / "build-info.json").write_text(json.dumps(manifest, indent=2) + "\n")
     archive = Path(str(stage) + ".zip")
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as output:
-        for path in [plugin, stage / "README.md", stage / "docs/TESTING.md", stage / "docs/COMPATIBILITY.md", stage / "docs/ACTIONS.md", stage / "docs/BINDINGS.md", stage / "build-info.json"]:
+        for path in [plugin, stage / "README.md", stage / "LICENSE", stage / "docs/TESTING.md", stage / "docs/COMPATIBILITY.md", stage / "docs/ACTIONS.md", stage / "docs/BINDINGS.md", stage / "build-info.json"]:
             output.write(path, path.relative_to(stage))
     print(f"Ready: {archive}")
 
