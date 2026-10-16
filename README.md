@@ -78,4 +78,7 @@ For problems, collect `BepInEx/LogOutput.log` and describe the exact control/con
 
 The repository contains the C# plugin, controller graphics, Python build/package tools, and automated core checks. Building requires Python 3, .NET SDK 8, a compatible game installation, and the official BepInEx loader. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and build commands.
 
-Game files, decompiled game source, loader binaries, generated packages, saves, and personal settings are excluded from version control. BepInEx and HarmonyX are separate dependencies: [BepInEx](https://github.com/BepInEx/BepInEx), [HarmonyX](https://github.com/BepInEx/HarmonyX).
+BepInEx and HarmonyX are separate dependencies: [BepInEx](https://github.com/BepInEx/BepInEx), [HarmonyX](https://github.com/BepInEx/HarmonyX).
+
+## Releases
+At nexusmods: https://www.nexusmods.com/thelongdrive/mods/248
