@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LongDrive.Controller
 {
-    [BepInPlugin(Id, "The Long Drive Controller", "0.5.0")]
+    [BepInPlugin(Id, "The Long Drive Controller", "0.5.1")]
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ashley.thelongdrive.controller";
@@ -22,14 +22,13 @@ namespace LongDrive.Controller
         internal readonly ActionState Actions = new ActionState();
         private readonly ActionMenu actionMenu = new ActionMenu();
         private readonly ControllerSettings controllerSettings = new ControllerSettings();
-        internal readonly ControllerKeyboard Keyboard = new ControllerKeyboard();
         private ConfigEntry<float> deadzone, triggerThreshold, lookSpeed, pointerSpeed, manipulationSpeed, rotationSpeed, steeringSensitivity;
         private ConfigEntry<bool> invertY;
         private ConfigEntry<string> walkingBindings, drivingBindings;
         private bool reportedRuntime;
         private bool captureRequested;
         private bool firstSample;
-        private bool capturedActions, capturedKeyboard;
+        private bool capturedActions;
         private readonly System.Collections.Generic.HashSet<string> capturedSettings = new System.Collections.Generic.HashSet<string>();
         private int capturedBindingRevision = -1;
         private float bindingCaptureAfter;
@@ -55,7 +54,7 @@ namespace LongDrive.Controller
             if (!ActionCatalog.Bindings.TryLoad(drivingBindings.Value, true)) Logger.LogWarning("Invalid driving bindings; using defaults.");
             menus = new MenuControls();
             ControllerGlyphs.Load(Logger);
-            Logger.LogInfo("Controller 0.5.0; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
+            Logger.LogInfo("Controller 0.5.1; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
             if (!supported) { Logger.LogError("Unsupported game version. Controller hooks disabled."); return; }
             patches = new Harmony(Id);
             patches.PatchAll(typeof(Plugin).Assembly);
@@ -66,7 +65,7 @@ namespace LongDrive.Controller
         internal bool Driving => mainscript.s != null && mainscript.s.player != null && mainscript.s.player.Car != null;
         internal bool InGameplay => context == "walking" || context == "driving";
         internal bool ControllerConnected => supported && raw.Connected;
-        internal bool CustomPanel => actionMenu.Open || Keyboard.Open || controllerSettings.Open;
+        internal bool CustomPanel => actionMenu.Open || controllerSettings.Open;
         private bool MenuOpen => !menuhandler.isStarted() || DataFromMenuScript.s == null || DataFromMenuScript.s.mainmenu || mainscript.s == null || mainscript.s.SomeMenuOpen();
 
         internal void Sample()
@@ -107,10 +106,10 @@ namespace LongDrive.Controller
             }
             if (!raw.Connected || !Application.isFocused)
             {
-                Actions.Clear(); actionMenu.Close(); controllerSettings.Close(); Keyboard.Close(false);
+                Actions.Clear(); actionMenu.Close(); controllerSettings.Close();
             }
             // View is a recovery control and must not depend on the gameplay neutral gate.
-            if (supported && Application.isFocused && !Keyboard.Open && UiDown(Buttons.Back))
+            if (supported && Application.isFocused && UiDown(Buttons.Back))
             {
                 if (CustomPanel) { actionMenu.Close(); controllerSettings.Close(); }
                 else if (mainscript.s != null && mainscript.s.settingsOpen) controllerSettings.Show();
@@ -127,9 +126,17 @@ namespace LongDrive.Controller
         {
             Sample();
             if (!supported) return;
-            Keyboard.Detect(this);
-            if (Keyboard.Open) Keyboard.Tick(this, raw, previousRaw);
-            else if (controllerSettings.Open) controllerSettings.Tick(this, raw, previousRaw);
+            // The removed keyboard used to provide this exit control. Preserve it
+            // without an overlay, and release any computer music notes.
+            if (context == "computer" && !CustomPanel && (UiDown(Buttons.B) || UiDown(Buttons.Start)))
+            {
+                var player = mainscript.s == null ? null : mainscript.s.player;
+                if (player != null && player.lookedAtComputer != null) player.lookedAtComputer.StopAllNote();
+                if (inputscript.i != null) inputscript.i.usingComputer = false;
+                SuppressTransition();
+                return;
+            }
+            if (controllerSettings.Open) controllerSettings.Tick(this, raw, previousRaw);
             else if (actionMenu.Open) actionMenu.Tick(this, raw, previousRaw);
             else
             {
@@ -154,7 +161,6 @@ namespace LongDrive.Controller
                 { capturedBindingRevision = ActionCatalog.Bindings.Revision; bindingCaptureAfter = Time.unscaledTime + .5f; }
                 if (bindingCaptureAfter > 0 && Time.unscaledTime >= bindingCaptureAfter && InGameplay && !CustomPanel)
                 { bindingCaptureAfter = 0; Capture("controller-bindings-gameplay.png"); }
-                if (Keyboard.Open && !capturedKeyboard) { capturedKeyboard = true; Capture("controller-keyboard.png"); }
             }
             if (context != "menu" && !CustomPanel) menus.Release();
             if (!reportedRuntime && Time.realtimeSinceStartup > 10 && menuhandler.isStarted())
@@ -331,7 +337,6 @@ namespace LongDrive.Controller
             DrivingHints.Draw(this);
             actionMenu.Draw(this);
             controllerSettings.Draw(this);
-            Keyboard.Draw(this);
             if (ControllerConnected && !CustomPanel && mainscript.s != null && mainscript.s.settingsOpen)
                 if (PanelStyle.Choice(new Rect(Screen.width - 410, 16, 390, 42), "Controller settings  [View]", false, true)) ShowControllerSettings();
         }
@@ -341,7 +346,6 @@ namespace LongDrive.Controller
         private void OnDestroy()
         {
             Logger.LogInfo("Controller prototype destroyed; removing hooks.");
-            Keyboard.Close(false);
             Actions.Clear();
             menus?.Release();
             patches?.UnpatchSelf();

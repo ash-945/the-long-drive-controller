@@ -37,6 +37,7 @@ def main():
     shutil.copy2(ROOT / "docs/ACTIONS.md", stage / "docs/ACTIONS.md")
     shutil.copy2(ROOT / "docs/BINDINGS.md", stage / "docs/BINDINGS.md")
     shutil.copy2(ROOT / "docs/UI_STYLE.md", stage / "docs/UI_STYLE.md")
+    shutil.copy2(ROOT / "docs/SAVE_MENU.md", stage / "docs/SAVE_MENU.md")
     manifest = {
         "version": VERSION,
         "game_version": "2024.11.26b_test",
@@ -47,7 +48,7 @@ def main():
     (stage / "build-info.json").write_text(json.dumps(manifest, indent=2) + "\n")
     archive = Path(str(stage) + ".zip")
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as output:
-        for path in [plugin, stage / "README.md", stage / "LICENSE", stage / "docs/TESTING.md", stage / "docs/COMPATIBILITY.md", stage / "docs/ACTIONS.md", stage / "docs/BINDINGS.md", stage / "docs/UI_STYLE.md", stage / "build-info.json"]:
+        for path in [plugin, stage / "README.md", stage / "LICENSE", stage / "docs/TESTING.md", stage / "docs/COMPATIBILITY.md", stage / "docs/ACTIONS.md", stage / "docs/BINDINGS.md", stage / "docs/UI_STYLE.md", stage / "docs/SAVE_MENU.md", stage / "build-info.json"]:
             output.write(path, path.relative_to(stage))
     print(f"Ready: {archive}")
 

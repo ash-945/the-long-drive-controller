@@ -19,9 +19,14 @@ namespace LongDrive.Controller
         private readonly List<RaycastResult> hits = new List<RaycastResult>();
         private readonly Vector3[] corners = new Vector3[4];
         private BaseInputModule[] modalModules;
+        private readonly SaveMenuNavigation saveMenu = new SaveMenuNavigation();
+        private readonly List<Selectable> focusControls = new List<Selectable>();
+        private readonly List<MenuFocusTarget> focusTargets = new List<MenuFocusTarget>();
 
         public bool Cancel()
         {
+            saveMenu.UpdateScope();
+            if (saveMenu.Active && system != null) return saveMenu.Cancel(system);
             foreach (var dropdown in UnityEngine.Object.FindObjectsOfType<TMP_Dropdown>())
                 if (dropdown.IsExpanded) { dropdown.Hide(); return true; }
             foreach (var dropdown in UnityEngine.Object.FindObjectsOfType<Dropdown>())
@@ -82,15 +87,39 @@ namespace LongDrive.Controller
             // Keep native mouse interaction and restore keyboard navigation when used.
             bool keyboard = Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) ||
                 Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
-                Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Tab) || Input.GetMouseButtonDown(0);
-            if (keyboard) { system.sendNavigationEvents = originalNavigation; ownsNavigation = false; pointerMode = false; }
-            if (!ownsNavigation && !keyboard) { system.sendNavigationEvents = false; ownsNavigation = true; }
+                Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Tab) || Input.GetMouseButtonDown(0) || Input.inputString.Length > 0;
+            if (keyboard)
+            {
+                system.sendNavigationEvents = originalNavigation; ownsNavigation = false; pointerMode = false;
+                saveMenu.Release();
+            }
+            bool controller = pad.Buttons != 0 || pad.LX != 0 || pad.LY != 0 || pad.RX != 0 || pad.RY != 0 || pad.LT != 0 || pad.RT != 0;
+            if (!ownsNavigation && !keyboard && controller) { system.sendNavigationEvents = false; ownsNavigation = true; }
             return true;
         }
 
         public void Tick(Plugin plugin, PadState pad, PadState previous, float speed)
         {
-            if (!Prepare(pad)) return;
+            if (!Prepare(pad) || !ownsNavigation) return;
+            bool scopeChanged = saveMenu.UpdateScope();
+            if (!pointerMode) EnsureSelection(scopeChanged);
+            saveMenu.UpdateHint();
+            if (saveMenu.Active)
+            {
+                bool focusSave = pad.Held(Buttons.RB) && !previous.Held(Buttons.RB);
+                bool focusSlots = pad.Held(Buttons.LB) && !previous.Held(Buttons.LB);
+                if (focusSave || focusSlots)
+                {
+                    bool focused = focusSave ? saveMenu.FocusSave(system) : saveMenu.FocusSlots(system);
+                    if (focused)
+                    {
+                        pointerMode = false;
+                        position = Center(system.currentSelectedGameObject.GetComponent<Selectable>());
+                    }
+                    lastDirection = Vector2.zero;
+                    return;
+                }
+            }
             bool confirmDown = pad.Held(Buttons.A) && !previous.Held(Buttons.A);
             bool confirmUp = !pad.Held(Buttons.A) && previous.Held(Buttons.A);
             var direction = new Vector2(pad.LX, pad.LY);
@@ -110,9 +139,17 @@ namespace LongDrive.Controller
                     if (selected != null)
                     {
                         var move = new AxisEventData(system) { moveVector = cardinal, moveDir = cardinal.x < 0 ? MoveDirection.Left : cardinal.x > 0 ? MoveDirection.Right : cardinal.y > 0 ? MoveDirection.Up : MoveDirection.Down };
-                        ExecuteEvents.Execute(selected, move, ExecuteEvents.moveHandler);
-                        if (system.currentSelectedGameObject == selected && !(selected.GetComponent<Slider>() != null && cardinal.x != 0))
-                            GeometricMove(selected, cardinal);
+                        bool editing = selected.GetComponent<TMP_InputField>() != null || selected.GetComponent<InputField>() != null;
+                        if (editing) SaveMenuNavigation.DeactivateInput(selected);
+                        if (saveMenu.Active || editing) GeometricMove(selected, cardinal);
+                        else
+                        {
+                            ExecuteEvents.Execute(selected, move, ExecuteEvents.moveHandler);
+                            var target = system.currentSelectedGameObject;
+                            if (target != null && !Usable(target.GetComponent<Selectable>())) system.SetSelectedGameObject(selected);
+                            if (system.currentSelectedGameObject == selected && !(selected.GetComponent<Slider>() != null && cardinal.x != 0))
+                                GeometricMove(selected, cardinal);
+                        }
                     }
                     repeatAt = Time.unscaledTime + (first ? .35f : .13f);
                     KeepSelectionVisible();
@@ -134,6 +171,11 @@ namespace LongDrive.Controller
                 system.RaycastAll(pointer, hits);
                 pointer.pointerCurrentRaycast = hits.Count > 0 ? hits[0] : default;
                 GameObject hit = hits.Count > 0 ? hits[0].gameObject : null;
+                if (saveMenu.Active && hit != null)
+                {
+                    var target = hit.GetComponentInParent<Selectable>();
+                    if (target == null || !Usable(target)) hit = null;
+                }
                 GameObject nextHover = ExecuteEvents.GetEventHandler<IPointerEnterHandler>(hit);
                 if (nextHover != hover)
                 {
@@ -192,7 +234,12 @@ namespace LongDrive.Controller
             }
         }
 
-        private bool Usable(Selectable selectable) => selectable != null && selectable.isActiveAndEnabled && selectable.IsInteractable();
+        private bool Usable(Selectable selectable)
+        {
+            if (selectable == null || !selectable.isActiveAndEnabled || !selectable.IsInteractable() || !saveMenu.Allows(selectable)) return false;
+            if (selectable is TMP_InputField tmp && tmp.readOnly || selectable is InputField legacy && legacy.readOnly) return false;
+            return true;
+        }
         private Vector2 Center(Selectable selectable)
         {
             var rect = selectable.transform as RectTransform;
@@ -200,39 +247,47 @@ namespace LongDrive.Controller
             var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
             return RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
         }
-        private void EnsureSelection()
+        private void CollectFocusTargets()
         {
-            if (system.currentSelectedGameObject != null && Usable(system.currentSelectedGameObject.GetComponent<Selectable>())) return;
-            Selectable best = null;
-            float score = float.PositiveInfinity;
+            focusControls.Clear(); focusTargets.Clear();
             foreach (var item in Selectable.allSelectablesArray)
             {
                 if (!Usable(item)) continue;
                 Vector2 center = Center(item);
-                if (center.x < 0 || center.x > Screen.width || center.y < 0 || center.y > Screen.height) continue;
-                float candidate = (Screen.height - center.y) * Screen.width + center.x;
-                if (candidate < score) { best = item; score = candidate; }
+                bool visible = center.x >= 0 && center.x <= Screen.width && center.y >= 0 && center.y <= Screen.height;
+                int priority = saveMenu.Active ? saveMenu.Priority(item) : item is TMP_InputField || item is InputField ? 2 : 1;
+                focusControls.Add(item);
+                focusTargets.Add(new MenuFocusTarget(center.x, center.y, priority, visible));
             }
-            if (best != null) system.SetSelectedGameObject(best.gameObject);
+        }
+        private void EnsureSelection(bool force = false)
+        {
+            if (!force && system.currentSelectedGameObject != null && Usable(system.currentSelectedGameObject.GetComponent<Selectable>())) return;
+            CollectFocusTargets();
+            int target = MenuFocus.Initial(focusTargets);
+            if (target >= 0)
+            {
+                SaveMenuNavigation.DeactivateInput(system.currentSelectedGameObject);
+                system.SetSelectedGameObject(focusControls[target].gameObject);
+                position = Center(focusControls[target]);
+            }
+            else system.SetSelectedGameObject(null);
         }
         private void GeometricMove(GameObject selected, Vector2 direction)
         {
             var from = selected.GetComponent<Selectable>();
             if (from == null) return;
-            var origin = Center(from);
-            Selectable best = null;
-            float score = float.PositiveInfinity;
-            foreach (var item in Selectable.allSelectablesArray)
+            CollectFocusTargets();
+            if (!saveMenu.Active)
             {
-                if (!Usable(item) || item == from) continue;
-                var offset = Center(item) - origin;
-                float forward = Vector2.Dot(offset, direction);
-                if (forward <= 1) continue;
-                float sideways = Mathf.Abs(Vector2.Dot(offset, new Vector2(-direction.y, direction.x)));
-                float candidate = forward + sideways * 3;
-                if (candidate < score) { score = candidate; best = item; }
+                // A native scrolling list may contain the next item outside the screen;
+                // KeepSelectionVisible scrolls to it after selection.
+                for (int i = 0; i < focusControls.Count; i++)
+                    if (focusControls[i].GetComponentInParent<ScrollRect>() != null)
+                    { var target = focusTargets[i]; target.Eligible = true; focusTargets[i] = target; }
             }
-            if (best != null) system.SetSelectedGameObject(best.gameObject);
+            int best = MenuFocus.Move(focusTargets, focusControls.IndexOf(from), direction.x, direction.y);
+            if (best >= 0) system.SetSelectedGameObject(focusControls[best].gameObject);
         }
         private void PointerUp(bool allowClick)
         {
@@ -251,6 +306,7 @@ namespace LongDrive.Controller
         public void Release()
         {
             SetModal(false);
+            saveMenu.Release();
             PointerUp(false);
             if (hover != null && pointer != null) ExecuteEvents.Execute(hover, pointer, ExecuteEvents.pointerExitHandler);
             hover = null;
@@ -261,6 +317,7 @@ namespace LongDrive.Controller
         }
         public void Draw()
         {
+            if (!ownsNavigation) return;
             if (pointerMode)
             {
                 GUI.color = Color.yellow;
