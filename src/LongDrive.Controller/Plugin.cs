@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LongDrive.Controller
 {
-    [BepInPlugin(Id, "The Long Drive Controller", "0.4.0")]
+    [BepInPlugin(Id, "The Long Drive Controller", "0.5.0")]
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ashley.thelongdrive.controller";
@@ -55,7 +55,7 @@ namespace LongDrive.Controller
             if (!ActionCatalog.Bindings.TryLoad(drivingBindings.Value, true)) Logger.LogWarning("Invalid driving bindings; using defaults.");
             menus = new MenuControls();
             ControllerGlyphs.Load(Logger);
-            Logger.LogInfo("Controller 0.4.0; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
+            Logger.LogInfo("Controller 0.5.0; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
             if (!supported) { Logger.LogError("Unsupported game version. Controller hooks disabled."); return; }
             patches = new Harmony(Id);
             patches.PatchAll(typeof(Plugin).Assembly);
@@ -333,8 +333,10 @@ namespace LongDrive.Controller
             controllerSettings.Draw(this);
             Keyboard.Draw(this);
             if (ControllerConnected && !CustomPanel && mainscript.s != null && mainscript.s.settingsOpen)
-                if (ControllerGlyphs.Button(new Rect(Screen.width - 410, 16, 390, 42), "Controller settings  [View]", GUI.skin.button)) ShowControllerSettings();
+                if (PanelStyle.Choice(new Rect(Screen.width - 410, 16, 390, 42), "Controller settings  [View]", false, true)) ShowControllerSettings();
         }
+
+        internal void LoggerForSkin(string message) => Logger.LogInfo(message);
 
         private void OnDestroy()
         {
@@ -344,6 +346,7 @@ namespace LongDrive.Controller
             menus?.Release();
             patches?.UnpatchSelf();
             ControllerGlyphs.Dispose();
+            GameMenuSkin.Dispose();
             if (Instance == this) Instance = null;
         }
         private void Start() { Logger.LogInfo("Controller prototype Start; enabled=" + enabled + "; active=" + gameObject.activeInHierarchy); }

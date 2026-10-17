@@ -2,6 +2,10 @@
 
 Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), XInput controllers, Windows x64 and Linux running the Windows game under Proton. The original game assemblies and keyboard bindings are not modified on disk.
 
+## Development preview
+
+Version 0.5.0 restyles the controller windows to match the game's pale menu panels and textured buttons. The local test build passes 1,420 core checks; its in-game appearance is awaiting visual verification. The latest tested release is 0.4.0.
+
 ## Features
 
 - Sprint toggles with LS click while moving, and switches off when movement stops, crouching, entering another context, or disconnecting.

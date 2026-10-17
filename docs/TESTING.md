@@ -61,3 +61,7 @@ Automated coverage includes every named action in both contexts, analog values, 
 ## 0.4.0 release verification — 2026-10-16
 
 The user tested the end-user installation in their game folder and confirmed it works. BepInEx 5.4.23.3 loaded 0.4.0 successfully after HideManagerGameObject was corrected to true. The plugin remained active, detected XInput slot 0, and parsed all 16 sprites. Captures show Sensitivity and both on-foot/driving binding pages, plus capture mode. The log records a binding save, and the configuration on disk contains Driving/use=LSUp. The user confirmed the feature works before requesting packaging. The release plugin is byte-identical to this tested DLL. All 1,420 core checks passed on this source. This evidence does not claim an exhaustive pass across every binding, device, activity, or native Windows.
+
+## 0.5.0 native menu theme
+
+See [UI_STYLE.md](UI_STYLE.md) for the visual checklist and native-resource selection. Build and existing input/binding checks pass. Visual verification is deferred at the user's request to test later; 0.5.0 has not been launched.

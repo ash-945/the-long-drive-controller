@@ -93,18 +93,29 @@ namespace LongDrive.Controller
             return RichCache[text] = result.ToString();
         }
 
-        public static bool Button(Rect area, string text, GUIStyle style, bool selected = false)
+        public static bool Button(Rect area, string text, GUIStyle style, bool selected = false, bool glyphs = true)
         {
-            GUI.backgroundColor = selected ? new Color(.2f, .85f, .4f) : new Color(.22f, .27f, .32f);
+            Color background = GUI.backgroundColor;
+            GUI.backgroundColor = selected ? new Color(1, .98f, .82f) : Color.white;
             bool clicked = GUI.Button(area, GUIContent.none, style);
-            GUI.backgroundColor = Color.white;
+            GUI.backgroundColor = background;
+            if (selected && GUI.enabled) GameMenuSkin.Focus(area);
+            var textStyle = new GUIStyle(style);
+            textStyle.normal.textColor = selected ? GameMenuSkin.SelectedInk : GameMenuSkin.Ink;
             // Compact tabs and binding rows need a complete glyph line even when
             // the skin's normal button padding would leave too little vertical room.
             int fontSize = style.fontSize > 0 ? style.fontSize : 17;
             float line = Mathf.Max(style.lineHeight, fontSize * 1.45f);
             float top = Mathf.Min(style.padding.top, Mathf.Max(0, (area.height - line) / 2));
             float bottom = Mathf.Min(style.padding.bottom, Mathf.Max(0, area.height - top - line));
-            Label(new Rect(area.x + style.padding.left, area.y + top, area.width - style.padding.horizontal, area.height - top - bottom), text, style);
+            var content = new Rect(area.x + style.padding.left, area.y + top, area.width - style.padding.horizontal, area.height - top - bottom);
+            if (glyphs) Label(content, text, textStyle);
+            else
+            {
+                var plain = new GUIStyle(GUI.skin.label) { font = textStyle.font, fontSize = textStyle.fontSize, fontStyle = textStyle.fontStyle, padding = new RectOffset(), alignment = TextAnchor.MiddleLeft, wordWrap = textStyle.wordWrap };
+                plain.normal.textColor = textStyle.normal.textColor;
+                GUI.Label(content, text, plain);
+            }
             return clicked;
         }
 

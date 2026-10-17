@@ -24,14 +24,18 @@ namespace LongDrive.Controller
 
     internal static class PanelStyle
     {
-        public static readonly Color Background = new Color(.055f, .07f, .09f, .98f);
         public static GUIStyle Title, Text, Button;
+        private static int skinRevision = -1;
         public static void Init()
         {
-            if (Title != null) return;
-            Title = new GUIStyle(GUI.skin.label) { fontSize = 25, fontStyle = FontStyle.Bold };
-            Text = new GUIStyle(GUI.skin.label) { fontSize = 17, wordWrap = true };
-            Button = new GUIStyle(GUI.skin.button) { fontSize = 18, alignment = TextAnchor.MiddleLeft, padding = new RectOffset(14, 10, 6, 6) };
+            GameMenuSkin.Init();
+            if (Title != null && skinRevision == GameMenuSkin.Revision) return;
+            skinRevision = GameMenuSkin.Revision;
+            Title = new GUIStyle(GUI.skin.label) { font = GameMenuSkin.Font, fontSize = 28, fontStyle = FontStyle.Bold };
+            Text = new GUIStyle(GUI.skin.label) { font = GameMenuSkin.Font, fontSize = 17, wordWrap = true };
+            Button = new GUIStyle(GUI.skin.button) { font = GameMenuSkin.Font, fontSize = 18, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleLeft, padding = new RectOffset(14, 10, 6, 6) };
+            Title.normal.textColor = Text.normal.textColor = GameMenuSkin.Ink;
+            GameMenuSkin.ApplyButton(Button);
         }
         public static Rect Begin(float width, float height)
         {
@@ -39,18 +43,20 @@ namespace LongDrive.Controller
             float scale = Mathf.Min(Screen.width / 1280f, Screen.height / 720f);
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, Vector3.one * scale);
             var area = new Rect((Screen.width / scale - width) / 2, (Screen.height / scale - height) / 2, width, height);
-            GUI.color = Background;
-            GUI.DrawTexture(area, Texture2D.whiteTexture);
-            GUI.color = Color.white;
+            GameMenuSkin.DrawPanel(area);
             return area;
+        }
+        public static void Heading(Rect area, string text)
+        {
+            var highlight = new GUIStyle(Title);
+            highlight.normal.textColor = new Color(.98f, .96f, .85f, .75f);
+            GUI.Label(new Rect(area.x + 1, area.y + 1, area.width, area.height), text, highlight);
+            GUI.Label(area, text, Title);
         }
         public static bool Choice(Rect rect, string text, bool selected, bool glyphs = false)
         {
-            if (glyphs) return ControllerGlyphs.Button(rect, text, Button, selected);
-            GUI.backgroundColor = selected ? new Color(.2f, .85f, .4f) : new Color(.22f, .27f, .32f);
-            bool clicked = GUI.Button(rect, text, Button);
-            GUI.backgroundColor = Color.white;
-            return clicked;
+            Init();
+            return ControllerGlyphs.Button(rect, text, Button, selected, glyphs);
         }
     }
 
@@ -120,7 +126,8 @@ namespace LongDrive.Controller
         {
             if (!Open || holding) return;
             var area = PanelStyle.Begin(920, 565);
-            GUI.Label(new Rect(area.x + 24, area.y + 16, 875, 40), "Controller actions  /  " + ActionCatalog.MenuPages[page], PanelStyle.Title);
+            PanelStyle.Heading(new Rect(area.x + 24, area.y + 14, 720, 40), "Uncommon actions / " + ActionCatalog.MenuPages[page]);
+            if (PanelStyle.Choice(new Rect(area.x + 764, area.y + 16, 128, 34), "Back [B]", false, true)) { Close(); plugin.MenuActivated(); }
             ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 60, 875, 45), "[LB] / [RB] change page     [D-pad / LS] select     [A] perform / hold     [X] toggle hold", PanelStyle.Text);
             var group = ActionCatalog.MenuGroups[page];
             for (int i = 0; i < ActionCatalog.MenuEntryCount(page); i++)
@@ -230,7 +237,8 @@ namespace LongDrive.Controller
         {
             if (!Open) return;
             var area = PanelStyle.Begin(1000, 530);
-            GUI.Label(new Rect(area.x + 24, area.y + 14, 950, 40), computer != null ? "Computer keyboard" : "Enter text", PanelStyle.Title);
+            PanelStyle.Heading(new Rect(area.x + 24, area.y + 14, 800, 40), computer != null ? "Computer keyboard" : "Enter text");
+            if (PanelStyle.Choice(new Rect(area.x + 844, area.y + 16, 128, 34), "Back [B]", false, true)) { Close(false); plugin.MenuActivated(); }
             GUI.Label(new Rect(area.x + 24, area.y + 60, 950, 55), buffer.Length > 120 ? buffer.Substring(buffer.Length - 120) : buffer + "|", PanelStyle.Text);
             int count = Keys.Length + 4;
             for (int i = 0; i < count; i++)

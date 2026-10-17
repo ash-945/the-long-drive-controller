@@ -13,7 +13,7 @@ namespace LongDrive.Controller
             if (!plugin.ControllerConnected || !plugin.Driving || !plugin.InGameplay || plugin.CustomPanel ||
                 mainscript.s == null || !mainscript.s.showcrosshair2 || mainscript.s.sleeping || mainscript.s.player.died) return;
             PanelStyle.Init();
-            if (textStyle == null) textStyle = new GUIStyle(PanelStyle.Text) { fontSize = 13 };
+            if (textStyle == null) { textStyle = new GUIStyle(PanelStyle.Text) { fontSize = 13 }; textStyle.normal.textColor = Color.white; }
             var before = GUI.matrix;
             float scale = Mathf.Min(Screen.width / 1280f, Screen.height / 720f);
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, Vector3.one * scale);
