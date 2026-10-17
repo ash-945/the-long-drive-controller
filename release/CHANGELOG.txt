@@ -1,3 +1,21 @@
+0.5.5 BETA - MENU STYLING AND NAVIGATION
+- Controller windows use the game's native textured panels and buttons.
+- Uncommon actions and controller settings use inset, outlined lettering.
+- Thicker royal-blue focus borders and a matching virtual pointer are easier
+  to see against tan backgrounds.
+- Save/Load prefers Save when available and skips informational fields.
+  RB focuses Save; LB returns to save slots. D-pad/LS can leave name editing.
+- Save/load/delete and in-game exit confirmations keep controller focus
+  inside the dialog, default to No, and support B cancellation.
+- Pause/title menus reset focus on entry and prefer Continue, then New Game.
+- Removed the on-screen keyboard and synthetic computer typing/music input.
+  Use a physical keyboard for text; default save names still work without
+  typing. RS computer cursor and B/Start exit controls remain available.
+- All 68 action routes, editable bindings, Xbox prompts, and driving hints
+  are retained. Existing controller settings are preserved.
+- 1,436 core checks pass. Final interactive Linux/Proton test approved by
+  the user before release packaging. Native Windows remains unverified.
+
 0.4.0 BETA - EDITABLE CONTROLLER BINDINGS
 - New Bindings page beside Sensitivity, with separate on-foot/driving profiles.
 - All 68 named actions accept buttons, triggers, stick directions, and up to

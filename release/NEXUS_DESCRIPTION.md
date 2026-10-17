@@ -1,14 +1,16 @@
 # The Long Drive — XInput Controller Support
 
-**Play The Long Drive with an XInput controller, from walking and driving to menus, object handling, and text entry.** Xbox button prompts, toggle sprint and crouch, adjustable steering response, and an on-screen keyboard bring the controls together in one mod.
+**Play The Long Drive with an XInput controller, from walking and driving to menus and object handling.** Xbox button prompts, toggle sprint and crouch, adjustable steering response, and menus styled to match the game bring the controls together in one mod.
 
-**Version 0.4.0 beta • For game v2024.11.26b**
+**Version 0.5.5 beta • For game v2024.11.26b**
 
 ## Features
 
 - **Walking and driving controls:** analog movement, camera, steering, and independent throttle/brake triggers, plus clutch, ignition, shifting, handbrake, lights, and horn.
 - **Object handling:** pick up, move, rotate, mount, detach, and adjust object distance. Rotation has its own speed setting.
-- **Controller UI:** navigate menus with the D-pad or left stick, or use the right stick as a virtual pointer. Includes scrolling and an on-screen keyboard for text fields and the in-game computer.
+- **Controller UI:** navigate menus with the D-pad or left stick, or use the right stick as a virtual pointer. Includes scrolling, sensible default selections, and clear blue focus outlines. Text entry uses a physical keyboard.
+- **Readable menu styling:** native textured panels and buttons, inset text with a thin black outline, and thicker royal-blue selection borders.
+- **Save/Load navigation:** starts on Save when available; RB focuses Save, LB returns to slots, and confirmations default to No. B cancels confirmations.
 - **Xbox button prompts:** controller sprites appear in interaction prompts, the Controls page, and custom panels. Keyboard/mouse labels return when the controller disconnects.
 - **Uncommon-actions menu:** press View/Back for survival actions, tools, direct gears, camera functions, and system actions. Hold A for continuous actions, or use X to toggle supported holds.
 - **Toggle sprint and crouch:** click LS to toggle sprint; stopping movement cancels it. B toggles crouch.
@@ -60,15 +62,21 @@ Steering sensitivity defaults to **1.00**. Lower values make small corrections g
 
 ## Compatibility and current limits
 
-This is a **beta**, tested interactively on Linux/Proton with an 8BitDo Ultimate 2 Wireless Controller in XInput mode, including the new 0.4.0 binding settings. Windows x64 is targeted by the same plugin but has not yet been independently verified. Other game versions are unsupported; other controllers and every vehicle, menu, multiplayer/VR activity, and third-party mod menu have not been exhaustively tested.
+This is a **beta**, tested interactively on Linux/Proton with an 8BitDo Ultimate 2 Wireless Controller in XInput mode, including the 0.5.5 menu styling and navigation updates. Windows x64 is targeted by the same plugin but has not yet been independently verified. Other game versions are unsupported; other controllers and every vehicle, menu, multiplayer/VR activity, and third-party mod menu have not been exhaustively tested.
 
 Gameplay bindings are editable on a Bindings page beside Sensitivity, with separate on-foot/driving profiles. Use LB/RB to switch settings pages, X to switch profiles, LT/RT to change categories, and A to capture a control or combination. Release all controls first, then press and release the new input. Occupied bindings require confirmation before swapping. Start/View and menu navigation remain fixed for recovery. Free stick movement uses LS/RS text because the supplied stick images depict clicks. Multiplayer and VR actions require their respective game contexts.
+
+## Text entry and menu focus
+
+The on-screen keyboard has been removed. Use a physical keyboard for custom save names and the in-game computer; the game generates a default save name when creating a save. RS still moves the computer cursor, and B or Start leaves it.
+
+The pause/title menu prefers Continue when available, otherwise New Game. Save/Load skips informational fields and lets you leave the name field with D-pad/LS. Save/load/delete and in-game exit confirmations keep controller focus inside the dialog and prefer No; B cancels. Native title-screen Exit retains its immediate-exit behavior.
 
 ## Updating, uninstalling, and support
 
 Close the game before updating and replace the existing plugin DLL. Keep only one copy installed. To uninstall, remove `BepInEx/plugins/LongDrive.Controller`; keep BepInEx if other mods need it.
 
-If the mod does not load, check the executable path, BepInEx installation, `HideManagerGameObject` setting, and Proton override. Look for **The Long Drive Controller 0.4.0** in `BepInEx/LogOutput.log`.
+If the mod does not load, check the executable path, BepInEx installation, `HideManagerGameObject` setting, and Proton override. Look for **The Long Drive Controller 0.5.5** in `BepInEx/LogOutput.log`.
 
 When reporting a problem, include the game/mod version, OS and Proton version, controller model/mode, Steam Input setup, the failed action, and the log. After reconnecting or changing contexts, release all controls to neutral before continuing.
 

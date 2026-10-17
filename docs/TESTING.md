@@ -85,3 +85,7 @@ Check the royal-blue focus outline on the title/pause menu, Save/Load, Exit conf
 ## 0.5.5 settings legibility and focus width
 
 Check the slightly thicker blue borders in native and custom menus. In controller settings, check inset outlined text on Sensitivity and Bindings tabs, every sensitivity row, +/- controls, profile selector, LT/RT, action names, binding glyphs, Clear, and capture/conflict/reset buttons. Verify narrow buttons retain complete labels and action names are not interpreted as controller tokens. All 1,436 core checks pass; visual verification is pending.
+
+## 0.5.5 release verification
+
+The user completed the final interactive Linux/Proton test and approved release packaging after the settings readability and border-width changes. The tested DLL is preserved unchanged in the release archive. Build output records zero warnings/errors and all 1,436 core checks passing. Archive CRCs, file hashes, and equality with the tested installation are checked during packaging. This supersedes the pending notes above for the reported menu fixes; it does not claim every historical checklist item, resolution, device, vehicle, or platform was tested. Native Windows remains unverified.

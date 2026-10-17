@@ -2,9 +2,9 @@
 
 Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), XInput controllers, Windows x64 and Linux running the Windows game under Proton. The original game assemblies and keyboard bindings are not modified on disk.
 
-## Development preview
+## Current release
 
-Version 0.5.5 builds on the tested 0.5.1 menu styling, keyboard removal, and Save/Load navigation. Uncommon-action labels now sit inside the lighter button face with a thin black outline. The in-game exit confirmation restricts navigation to its own buttons, defaults to No, and supports B to cancel. The top-level pause/title menu now resets focus on entry, preferring Continue (or New Game when unavailable), with navigation confined to that menu. Menu focus outlines and the virtual pointer use a high-contrast royal blue. Focus borders are slightly thicker, and controller settings buttons use inset lettering with a thin black outline. The build passes 1,436 core checks; these latest visual and exit-navigation changes still need an in-game check. The latest packaged stable release is 0.4.0.
+**0.5.5 beta** adds native menu styling, inset text with thin black outlines, thicker royal-blue focus borders, and improved Save/Load, pause/title, and exit-confirmation navigation. The on-screen keyboard has been removed; text entry uses a physical keyboard. All 1,436 core checks pass, and the final build was tested and approved under Linux/Proton.
 
 ## Features
 
@@ -70,7 +70,7 @@ Configuration is saved in `BepInEx/config/ashley.thelongdrive.controller.cfg` in
 
 ## Verification and limits
 
-Version 0.4.0 passes 1,420 automated checks and has been tested interactively under Linux/Proton, including the new Bindings page. Native Windows and exhaustive device/activity coverage remain unverified.
+Version 0.5.5 passes 1,436 automated checks and has been tested interactively under Linux/Proton, including the menu styling and navigation updates. Native Windows and exhaustive device/activity coverage remain unverified.
 
 The core checks compare all action names/ordinals with the actual installed game's metadata and exercise action edges, menu queues, modifiers, toggle behavior, safe input gating, trigger independence, and rotation rate calculations. Runtime testing confirms Proton loading, controller detection, rewritten prompt paths, and rendered controller panels. See [testing](docs/TESTING.md), [integration details](docs/COMPATIBILITY.md), and [action inventory](docs/ACTIONS.md).
 

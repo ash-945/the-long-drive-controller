@@ -18,4 +18,4 @@ Later, open Save/Load during gameplay. Confirm Save is selected and no keyboard 
 
 The in-game exit confirmation uses the same scoped controller navigation: only its own controls are reachable by D-pad/LS or the virtual pointer, No receives initial focus, and B invokes the native cancel action. Opening or closing a dialog resets pointer interaction before focusing the new scope. A still invokes the selected native button. The title-screen immediate-exit behavior remains the game's own behavior.
 
-In-game verification is pending: open Exit from the pause menu, check that No is selected, move between Yes and No, and cancel with B. Check pointer navigation too. No automated check invokes Yes or quits the game.
+The user approved the final 0.5.5 interactive test before release. For regression checks, open Exit from the pause menu, check that No is selected, move between Yes and No, and cancel with B. Check pointer navigation too. No automated check invokes Yes or quits the game.

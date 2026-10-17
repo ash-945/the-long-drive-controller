@@ -1,4 +1,4 @@
-# XInput controller reference — 0.4.0 beta
+# XInput controller reference — 0.5.5 beta
 
 The tables below describe default bindings. Gameplay assignments can be changed independently for on-foot/driving in the Bindings page of controller settings; current in-game hints follow your saved bindings.
 
@@ -55,14 +55,19 @@ Native vehicle/transmission rules still apply. Small hints appear while seated a
 | Navigate / confirm / back | D-pad or LS / A / B |
 | Virtual pointer / click | RS / A |
 | Scroll native menus | LT / RT |
+| Focus Save / save slots in Save/Load | RB / LB |
 
 In the action menu, LB/RB changes pages. A performs an action; hold A for supported continuous actions. The menu hides while holding and returns on release. X toggles supported holds; Y releases toggled holds. B or View closes. Survival is the first page and includes Defecate, which requires at least 30% bowel meter. Tools, Gears, Camera, and System contain other uncommon actions. Multiplayer and VR actions still require their native contexts.
 
 In controller settings, up/down selects and left/right adjusts. A increases or toggles, Y restores defaults, and B/Start/View closes. Values save automatically.
 
-## On-screen keyboard
+## Save/Load, confirmations, and text entry
 
-Editable text fields and the in-game computer use the controller keyboard. D-pad/LS selects keys; A types, X deletes, Y changes case, LB switches symbols, RB inserts space, Start finishes, and B cancels. RS moves the in-game computer cursor. Letter/number keys also operate its music mode.
+Save/Load initially selects Save when available, otherwise a visible save slot. RB focuses Save; LB returns to save slots. A activates the selected native control. D-pad/LS can leave the name field; read-only save details are skipped. Save/load/delete and in-game exit confirmations select No initially and keep controller navigation within the dialog. B cancels a confirmation before backing out of the screen.
+
+Opening the pause/title menu or returning from a submenu prefers Continue, or New Game when Continue is unavailable. Blue borders show controller focus.
+
+The on-screen keyboard has been removed. Type custom save names and computer text with a physical keyboard. The game still generates a default new-save name. RS moves the in-game computer cursor; B or Start exits the computer.
 
 After reconnecting or changing contexts, release all controls to neutral before resuming gameplay. Controller prompts return to keyboard/mouse labels on disconnect. Free stick movement remains labelled LS/RS because the supplied stick sprites depict clicks.
 

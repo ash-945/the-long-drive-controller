@@ -1,4 +1,4 @@
-# Menu styling — 0.5.5 development preview
+# Menu styling — 0.5.5 release
 
 The uncommon-actions window and controller settings (Sensitivity and Bindings) share the same menu theme. Selection uses green text and a royal-blue outline on a pale textured button. Headings use dark ink with a small light offset, and each window provides a clickable Close button alongside controller navigation.
 
@@ -10,7 +10,7 @@ Action-card labels use smaller, inset text centered within the lighter button fa
 
 ## Verification
 
-The user tested 0.5.1 and confirmed it works, then reported action labels crossing the dark bevel and exit-dialog navigation needing the same treatment as Save/Load. The runtime log confirms native newmenubutton2, ingamemenubg01, and ingamemenubg01keret sampling. Build and 1,432 core checks pass for 0.5.2; the new label placement/outline and exit confirmation still need in-game verification.
+The final 0.5.5 build passes all 1,436 core checks with no build warnings or errors. The user completed the final interactive Linux/Proton test and approved release packaging. Startup logs confirm 0.5.5, XInput slot 0, all 16 controller sprites, and native menu sampling. This is not an exhaustive resolution/device/platform test; native Windows remains unverified.
 
 For visual review, open View for Uncommon actions, Start for settings, and both settings tabs with LB/RB. Check outlined action labels inside the light button face, native panel/button textures, legible green/blue selection, button glyphs, all eight settings and binding rows, capture/confirmation states, and mouse Close buttons. Confirm the small driving hints remain readable. Review at 1280×720, the preferred display resolution, and a wide aspect ratio. A capture-enabled launch only records user-opened windows; it never navigates or closes them.
 
@@ -18,6 +18,6 @@ The on-screen keyboard has been removed. Save-name and computer typing use the p
 
 The startup log should identify sampled native button/panel/frame names, or report the paper fallback. If a fallback appears, include that log line with the screenshot so the resource selection can be adjusted.
 
-In 0.5.4 the native menu focus outline, custom panel focus outline, and virtual pointer share an opaque royal-blue color to contrast with tan menu backgrounds. Input/navigation behavior is unchanged. The build passes 1,436 core checks; visual confirmation of the new color is pending.
+In 0.5.4 the native menu focus outline, custom panel focus outline, and virtual pointer share an opaque royal-blue color to contrast with tan menu backgrounds. Input/navigation behavior is unchanged. The final color was approved in the interactive test.
 
-In 0.5.5 focus borders increase by one pixel: native-menu outlines are four pixels, custom-panel outlines three reference pixels. The pointer size is unchanged. Settings tabs, sensitivity rows, binding names/values, and dialog buttons now share the outlined lettering treatment. Visual verification is pending.
+In 0.5.5 focus borders increase by one pixel: native-menu outlines are four pixels, custom-panel outlines three reference pixels. The pointer size is unchanged. Settings tabs, sensitivity rows, binding names/values, and dialog buttons now share the outlined lettering treatment. The final styling was approved in the interactive test.
