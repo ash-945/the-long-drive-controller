@@ -5,6 +5,7 @@
     <EnableNETAnalyzers>false</EnableNETAnalyzers>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="../../src/LongDrive.Controller/MenuFocus.cs" Link="MenuFocus.cs" />
     <Compile Include="../../src/LongDrive.Controller/Pad.cs" Link="Pad.cs" />
     <Compile Include="../../src/LongDrive.Controller/BindingHints.cs" Link="BindingHints.cs" />
     <Compile Include="../../src/LongDrive.Controller/Bindings.cs" Link="Bindings.cs" />

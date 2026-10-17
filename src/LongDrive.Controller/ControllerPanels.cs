@@ -1,8 +1,5 @@
 using System;
-using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace LongDrive.Controller
 {
@@ -24,14 +21,19 @@ namespace LongDrive.Controller
 
     internal static class PanelStyle
     {
-        public static readonly Color Background = new Color(.055f, .07f, .09f, .98f);
-        public static GUIStyle Title, Text, Button;
+        public static GUIStyle Title, Text, Button, ActionButton;
+        private static int skinRevision = -1;
         public static void Init()
         {
-            if (Title != null) return;
-            Title = new GUIStyle(GUI.skin.label) { fontSize = 25, fontStyle = FontStyle.Bold };
-            Text = new GUIStyle(GUI.skin.label) { fontSize = 17, wordWrap = true };
-            Button = new GUIStyle(GUI.skin.button) { fontSize = 18, alignment = TextAnchor.MiddleLeft, padding = new RectOffset(14, 10, 6, 6) };
+            GameMenuSkin.Init();
+            if (Title != null && skinRevision == GameMenuSkin.Revision) return;
+            skinRevision = GameMenuSkin.Revision;
+            Title = new GUIStyle(GUI.skin.label) { font = GameMenuSkin.Font, fontSize = 28, fontStyle = FontStyle.Bold };
+            Text = new GUIStyle(GUI.skin.label) { font = GameMenuSkin.Font, fontSize = 17, wordWrap = true };
+            Button = new GUIStyle(GUI.skin.button) { font = GameMenuSkin.Font, fontSize = 16, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleLeft, padding = new RectOffset(22, 18, 7, 7) };
+            Title.normal.textColor = Text.normal.textColor = GameMenuSkin.Ink;
+            GameMenuSkin.ApplyButton(Button);
+            ActionButton = new GUIStyle(Button) { fontSize = 15, padding = new RectOffset(28, 24, 18, 12) };
         }
         public static Rect Begin(float width, float height)
         {
@@ -39,18 +41,20 @@ namespace LongDrive.Controller
             float scale = Mathf.Min(Screen.width / 1280f, Screen.height / 720f);
             GUI.matrix = Matrix4x4.TRS(Vector3.zero, Quaternion.identity, Vector3.one * scale);
             var area = new Rect((Screen.width / scale - width) / 2, (Screen.height / scale - height) / 2, width, height);
-            GUI.color = Background;
-            GUI.DrawTexture(area, Texture2D.whiteTexture);
-            GUI.color = Color.white;
+            GameMenuSkin.DrawPanel(area);
             return area;
+        }
+        public static void Heading(Rect area, string text)
+        {
+            var highlight = new GUIStyle(Title);
+            highlight.normal.textColor = new Color(.98f, .96f, .85f, .75f);
+            GUI.Label(new Rect(area.x + 1, area.y + 1, area.width, area.height), text, highlight);
+            GUI.Label(area, text, Title);
         }
         public static bool Choice(Rect rect, string text, bool selected, bool glyphs = false)
         {
-            if (glyphs) return ControllerGlyphs.Button(rect, text, Button, selected);
-            GUI.backgroundColor = selected ? new Color(.2f, .85f, .4f) : new Color(.22f, .27f, .32f);
-            bool clicked = GUI.Button(rect, text, Button);
-            GUI.backgroundColor = Color.white;
-            return clicked;
+            Init();
+            return ControllerGlyphs.Button(rect, text, Button, selected, glyphs, true);
         }
     }
 
@@ -120,128 +124,22 @@ namespace LongDrive.Controller
         {
             if (!Open || holding) return;
             var area = PanelStyle.Begin(920, 565);
-            GUI.Label(new Rect(area.x + 24, area.y + 16, 875, 40), "Controller actions  /  " + ActionCatalog.MenuPages[page], PanelStyle.Title);
+            PanelStyle.Heading(new Rect(area.x + 24, area.y + 14, 720, 40), "Uncommon actions / " + ActionCatalog.MenuPages[page]);
+            if (PanelStyle.Choice(new Rect(area.x + 764, area.y + 16, 128, 34), "Close [B]", false, true)) { Close(); plugin.MenuActivated(); }
             ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 60, 875, 45), "[LB] / [RB] change page     [D-pad / LS] select     [A] perform / hold     [X] toggle hold", PanelStyle.Text);
             var group = ActionCatalog.MenuGroups[page];
             for (int i = 0; i < ActionCatalog.MenuEntryCount(page); i++)
             {
                 bool defecate = ActionCatalog.IsDefecateEntry(page, i);
                 var action = defecate ? default : group[i];
-                string label = defecate ? "Defecate\n[A] perform (requires 30% bowel meter)" : (plugin.Actions.Held(action) ? "HOLDING  " : "") + ActionCatalog.Label(action) + "\n" + ActionCatalog.Hint(action, plugin.Driving);
-                if (PanelStyle.Choice(new Rect(area.x + 24 + i % 2 * 440, area.y + 115 + i / 2 * 78, 430, 70), label, selected == i, true))
+                string label = defecate ? "Defecate\n[A] perform (30% bowel meter)" : (plugin.Actions.Held(action) ? "HOLDING  " : "") + ActionCatalog.Label(action) + "\n" + ActionCatalog.Hint(action, plugin.Driving);
+                if (ControllerGlyphs.Button(new Rect(area.x + 24 + i % 2 * 440, area.y + 115 + i / 2 * 80, 430, 74), label, PanelStyle.ActionButton, selected == i, true, true))
                 { selected = i; Activate(plugin, false); }
             }
-            ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 438, 875, 65), message.Length > 0 ? message : "Hold [A] for continuous actions; release to stop. [X] toggles a hold after closing. [Y] releases toggled holds.", PanelStyle.Text);
+            ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 447, 875, 58), message.Length > 0 ? message : "Hold [A] for continuous actions; release to stop. [X] toggles a hold after closing. [Y] releases toggled holds.", PanelStyle.Text);
             ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 515, 875, 35), "[B / View] close   [Y] release holds   [Start] settings                 " + (page + 1) + " / " + ActionCatalog.MenuGroups.Length, PanelStyle.Text);
             GUI.matrix = Matrix4x4.identity;
         }
     }
 
-    internal sealed class ControllerKeyboard
-    {
-        private TMP_InputField tmp;
-        private InputField legacy;
-        private computerscript computer;
-        private string original, buffer = "", pending = "";
-        private int selected;
-        private bool upper, symbols, ready;
-        private readonly PanelNavigation navigation = new PanelNavigation();
-        public bool Open => tmp != null || legacy != null || computer != null;
-        internal void Begin(TMP_InputField field) { tmp = field; original = buffer = field.text; selected = 0; ready = false; }
-        private string Keys => symbols ? "1234567890!@#$%^&*()-_=+[]{};:'\",.<>/?\\|`~" : "1234567890qwertyuiopasdfghjkl;zxcvbnm,./ ";
-        public void Detect(Plugin plugin)
-        {
-            if (Open || !plugin.ControllerConnected) return;
-            var selectedObject = EventSystem.current == null ? null : EventSystem.current.currentSelectedGameObject;
-            if (selectedObject != null)
-            {
-                var t = selectedObject.GetComponent<TMP_InputField>();
-                var l = selectedObject.GetComponent<InputField>();
-                if (t != null && t.isFocused && !t.readOnly) Begin(t);
-                else if (l != null && l.isFocused && !l.readOnly) { legacy = l; original = buffer = l.text; ready = false; }
-            }
-            if (!Open && inputscript.i != null && inputscript.i.usingComputer && mainscript.s != null && mainscript.s.player != null)
-            {
-                computer = mainscript.s.player.lookedAtComputer;
-                buffer = "";
-                ready = false;
-            }
-            if (Open) { selected = 0; plugin.MenuActivated(); }
-        }
-        public void Tick(Plugin plugin, PadState pad, PadState previous)
-        {
-            if (!Open) return;
-            if (!pad.Connected) return;
-            if (!ready) { if (pad.Buttons == 0 && pad.LT == 0 && pad.RT == 0) ready = true; return; }
-            bool Down(Buttons b) => pad.Held(b) && !previous.Held(b);
-            int move = navigation.Move(pad, Time.unscaledTime, 10);
-            int count = Keys.Length + 4;
-            selected = (selected + move + count) % count;
-            if (Down(Buttons.B)) { Close(false); plugin.MenuActivated(); return; }
-            if (Down(Buttons.Start)) { Close(true); plugin.MenuActivated(); return; }
-            if (Down(Buttons.Y)) upper = !upper;
-            if (Down(Buttons.LB)) { symbols = !symbols; selected = 0; }
-            if (Down(Buttons.RB)) Enter(" ");
-            if (Down(Buttons.X)) Delete();
-            if (Down(Buttons.A)) Choose(plugin);
-        }
-        private void Choose(Plugin plugin)
-        {
-            if (selected < Keys.Length) Enter(upper ? char.ToUpperInvariant(Keys[selected]).ToString() : Keys[selected].ToString());
-            else switch (selected - Keys.Length)
-            {
-                case 0: Enter(" "); break;
-                case 1: Delete(); break;
-                case 2: if (computer != null) Enter("\r"); else { buffer = ""; Sync(); } break;
-                case 3: Close(true); plugin.MenuActivated(); break;
-            }
-        }
-        private void Enter(string text)
-        {
-            if (computer != null) { pending += text; buffer = text == "\r" ? "" : buffer + text; }
-            else { buffer += text; Sync(); }
-        }
-        private void Delete()
-        {
-            if (computer != null) pending += "\b";
-            if (buffer.Length > 0) buffer = buffer.Substring(0, buffer.Length - 1);
-            Sync();
-        }
-        private void Sync()
-        {
-            if (tmp != null) { tmp.text = buffer; tmp.caretPosition = tmp.text.Length; buffer = tmp.text; }
-            if (legacy != null) { legacy.text = buffer; legacy.caretPosition = legacy.text.Length; buffer = legacy.text; }
-        }
-        public string TakeComputerText() { string result = pending; pending = ""; return result; }
-        public void Close(bool commit)
-        {
-            if (!commit && computer == null) { buffer = original ?? ""; Sync(); }
-            if (tmp != null) { tmp.DeactivateInputField(); EventSystem.current?.SetSelectedGameObject(null); }
-            if (legacy != null) { legacy.DeactivateInputField(); EventSystem.current?.SetSelectedGameObject(null); }
-            if (computer != null)
-            {
-                computer.StopAllNote();
-                if (inputscript.i != null) inputscript.i.usingComputer = false;
-            }
-            tmp = null; legacy = null; computer = null;
-            pending = "";
-        }
-        public void Draw(Plugin plugin)
-        {
-            if (!Open) return;
-            var area = PanelStyle.Begin(1000, 530);
-            GUI.Label(new Rect(area.x + 24, area.y + 14, 950, 40), computer != null ? "Computer keyboard" : "Enter text", PanelStyle.Title);
-            GUI.Label(new Rect(area.x + 24, area.y + 60, 950, 55), buffer.Length > 120 ? buffer.Substring(buffer.Length - 120) : buffer + "|", PanelStyle.Text);
-            int count = Keys.Length + 4;
-            for (int i = 0; i < count; i++)
-            {
-                string label = i < Keys.Length ? (upper ? char.ToUpperInvariant(Keys[i]) : Keys[i]).ToString() : new[] { "Space", "Delete", computer != null ? "Enter" : "Clear", "Done" }[i - Keys.Length];
-                if (label == " ") label = "Space";
-                if (PanelStyle.Choice(new Rect(area.x + 24 + i % 10 * 95, area.y + 125 + i / 10 * 60, 88, 52), label, selected == i))
-                { selected = i; Choose(plugin); }
-            }
-            ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 448, 950, 65), "[A] type   [X] delete   [Y] case   [LB] symbols   [RB] space\n[Start] done   [B] cancel   [D-pad / LS] select", PanelStyle.Text);
-            GUI.matrix = Matrix4x4.identity;
-        }
-    }
 }

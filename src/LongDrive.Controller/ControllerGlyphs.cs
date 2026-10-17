@@ -93,24 +93,54 @@ namespace LongDrive.Controller
             return RichCache[text] = result.ToString();
         }
 
-        public static bool Button(Rect area, string text, GUIStyle style, bool selected = false)
+        public static bool Button(Rect area, string text, GUIStyle style, bool selected = false, bool glyphs = true, bool outline = false)
         {
-            GUI.backgroundColor = selected ? new Color(.2f, .85f, .4f) : new Color(.22f, .27f, .32f);
+            Color background = GUI.backgroundColor;
+            GUI.backgroundColor = selected ? new Color(1, .98f, .82f) : Color.white;
             bool clicked = GUI.Button(area, GUIContent.none, style);
-            GUI.backgroundColor = Color.white;
+            GUI.backgroundColor = background;
+            if (selected && GUI.enabled) GameMenuSkin.Focus(area);
+            var textStyle = new GUIStyle(style);
+            textStyle.normal.textColor = outline
+                ? (selected ? new Color(.75f, .95f, .45f) : new Color(.98f, .96f, .86f))
+                : (selected ? GameMenuSkin.SelectedInk : GameMenuSkin.Ink);
             // Compact tabs and binding rows need a complete glyph line even when
             // the skin's normal button padding would leave too little vertical room.
             int fontSize = style.fontSize > 0 ? style.fontSize : 17;
             float line = Mathf.Max(style.lineHeight, fontSize * 1.45f);
             float top = Mathf.Min(style.padding.top, Mathf.Max(0, (area.height - line) / 2));
             float bottom = Mathf.Min(style.padding.bottom, Mathf.Max(0, area.height - top - line));
-            Label(new Rect(area.x + style.padding.left, area.y + top, area.width - style.padding.horizontal, area.height - top - bottom), text, style);
+            // Narrow Clear/+/-/trigger buttons still need room for their complete label.
+            float left = Mathf.Min(style.padding.left, area.width < 150 ? 10 : style.padding.left);
+            float right = Mathf.Min(style.padding.right, area.width < 150 ? 10 : style.padding.right);
+            var content = new Rect(area.x + left, area.y + top, area.width - left - right, area.height - top - bottom);
+            if (glyphs)
+            {
+                if (outline)
+                {
+                    // Keep two-line action cards inside the bright face of the sprite.
+                    while (textStyle.fontSize > 13 && MeasureHeight(text, content.width, textStyle) > content.height)
+                        textStyle.fontSize--;
+                    float height = MeasureHeight(text, content.width, textStyle);
+                    content.y += Mathf.Max(0, (content.height - height) / 2);
+                }
+                Label(content, text, textStyle, true, outline);
+            }
+            else
+            {
+                var plain = new GUIStyle(GUI.skin.label) { font = textStyle.font, fontSize = textStyle.fontSize, fontStyle = textStyle.fontStyle, padding = new RectOffset(), alignment = TextAnchor.MiddleLeft, wordWrap = textStyle.wordWrap };
+                plain.normal.textColor = textStyle.normal.textColor;
+                if (outline)
+                    while (plain.fontSize > 13 && plain.CalcSize(new GUIContent(text)).x > content.width)
+                        plain.fontSize--;
+                DrawText(content, text, plain, outline);
+            }
             return clicked;
         }
 
         public static float MeasureHeight(string text, float width, GUIStyle style) => Label(new Rect(0, 0, width, 100000), text, style, false);
 
-        public static float Label(Rect area, string text, GUIStyle style, bool draw = true)
+        public static float Label(Rect area, string text, GUIStyle style, bool draw = true, bool outline = false)
         {
             // Use fixed inline boxes with preserved aspect ratios, then wrap normal text at
             // spaces. Font labels and game settings are never parsed as controller commands.
@@ -139,12 +169,28 @@ namespace LongDrive.Controller
                     if (!space && x > area.x && x + width > area.xMax) { x = area.x; y += line; }
                     if (draw && !space && y + line <= area.yMax + 1)
                     {
-                        GUI.Label(new Rect(x, y, width + 1, line), token, labelStyle);
+                        var word = new Rect(x, y, width + 1, line);
+                        DrawText(word, token, labelStyle, outline);
                     }
                     if (x > area.x || !space) x += width;
                 }
             }
             return y + line - area.y;
+        }
+
+        private static void DrawText(Rect area, string text, GUIStyle style, bool outline)
+        {
+            if (outline)
+            {
+                Color ink = style.normal.textColor;
+                style.normal.textColor = Color.black;
+                for (int dx = -1; dx <= 1; dx++)
+                    for (int dy = -1; dy <= 1; dy++)
+                        if (dx != 0 || dy != 0)
+                            GUI.Label(new Rect(area.x + dx, area.y + dy, area.width, area.height), text, style);
+                style.normal.textColor = ink;
+            }
+            GUI.Label(area, text, style);
         }
 
         public static void Verify(ManualLogSource log)

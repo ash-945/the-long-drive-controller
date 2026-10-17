@@ -1,5 +1,5 @@
 THE LONG DRIVE - XINPUT CONTROLLER SUPPORT
-Version 0.4.0 beta | Game v2024.11.26b
+Version 0.5.5 beta | Game v2024.11.26b
 
 REQUIREMENTS
 - The Long Drive v2024.11.26b (tested build reports 2024.11.26b_test).
@@ -77,6 +77,22 @@ BepInEx/config/ashley.thelongdrive.controller.cfg
 Steering sensitivity: 0.25-2.00, default 1.00. Lower is gentler around the
 center. Full stick travel always reaches full steering lock.
 
+MENUS AND TEXT ENTRY
+The controller windows use the game's textured menu panels with outlined
+text and blue focus borders. Pause/title menus prefer Continue (or New Game
+when Continue is unavailable). In-game exit confirmation defaults to No;
+B cancels and returns to the pause menu.
+
+In Save/Load, RB focuses Save and LB returns to normal save slots. A activates
+the selected control; it does not bypass overwrite confirmation. Read-only
+save details are skipped. D-pad/LS can leave the name field. Confirmation
+windows keep their own focus and default to No; B cancels them first.
+
+The on-screen keyboard has been removed. Use a physical keyboard to type
+custom save names or computer text. The game generates a default save name,
+so creating a new save does not require typing. RS moves the computer cursor;
+B or Start exits the computer.
+
 UPDATING / REMOVAL
 Close the game before updating. Replace the old plugin DLL; do not install
 multiple copies of this plugin. Existing controller settings are preserved.
@@ -85,7 +101,7 @@ the mod's configuration file. Keep BepInEx if other mods depend on it.
 
 TROUBLESHOOTING
 No controller menu: check BepInEx/LogOutput.log for
-"Loading [The Long Drive Controller 0.4.0]".
+"Loading [The Long Drive Controller 0.5.5]".
 No BepInEx log: check loader installation and, on Proton, the winhttp override.
 Plugin loads but no controls: check XInput mode, focus, and the Chainloader
 setting above. After reconnecting or leaving menus, release sticks, triggers,
