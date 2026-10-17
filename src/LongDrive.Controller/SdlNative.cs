@@ -26,8 +26,8 @@ namespace LongDrive.Controller
                 if (LoadLibraryW(path) == IntPtr.Zero) throw new InvalidOperationException("Windows loader error " + Marshal.GetLastWin32Error());
                 SDL_SetMainReady();
                 SDL_SetHintWithPriority("SDL_XINPUT_ENABLED", "1", 2);
-                // Read stable physical positions; SdlInputMath applies Nintendo letter mapping once.
-                SDL_SetHintWithPriority("SDL_GAMECONTROLLER_USE_BUTTON_LABELS", "0", 2);
+                // Let SDL normalize Nintendo labels; mapped input must not be swapped again.
+                SDL_SetHintWithPriority("SDL_GAMECONTROLLER_USE_BUTTON_LABELS", "1", 2);
                 SDL_SetHintWithPriority("SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS", "1", 1);
                 SDL_SetHintWithPriority("SDL_JOYSTICK_HIDAPI", "1", 1);
                 SDL_SetHintWithPriority("SDL_JOYSTICK_HIDAPI_SWITCH", "1", 1);

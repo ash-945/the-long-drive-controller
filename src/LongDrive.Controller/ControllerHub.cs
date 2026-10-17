@@ -77,7 +77,6 @@ namespace LongDrive.Controller
                     result.RT = SdlNative.SDL_JoystickGetButton(joystick, 7) != 0 ? 1 : 0;
                 }
             }
-            result.Buttons = SdlInputMath.FamilyButtons(result.Buttons, Family);
             return result;
         }
         public void Dispose()

@@ -1,9 +1,9 @@
-# Controller families and input — 0.6.1 development
+# Controller families and input — 0.6.2 development
 
 Xbox and PlayStation use their usual physical layout: Cross confirms and Circle
 cancels on PlayStation. Nintendo follows the letters printed on its buttons:
 A (right) confirms, B (lower) cancels, X is upper, and Y is left. A/B and X/Y
-are swapped at the input boundary, and sprites follow the same letter mapping.
+are normalized by SDL, and sprites follow the same letter mapping.
 Gameplay defaults, saved bindings, menu navigation, and capture all consume
 these normalized controls. Existing binding strings do not need conversion.
 The 0.6.0 positional Nintendo mapping was corrected after the physical test.
@@ -14,8 +14,9 @@ The private Windows x64 SDL2 2.32.10 runtime supports XInput, DirectInput and
 HIDAPI through one controller layer. It runs inside the Windows game on both
 Windows and Proton. No native Linux plugin is required. SDL is initialized only
 for joystick/game-controller input, not audio or video; the mod never replaces
-Unity's event system. SDL's Nintendo label-swapping hint is explicitly disabled
-so the mod applies its Nintendo letter remapping exactly once.
+Unity's event system. SDL's button-label hint is explicitly enabled. Mapped
+buttons pass through without an additional family swap, including Proton
+DirectInput mappings that already report Nintendo letters.
 
 SDL's built-in mappings normalize recognized PlayStation/Nintendo controllers,
 including separate sticks, triggers, D-pad, shoulder buttons, and menu buttons.
@@ -71,21 +72,27 @@ Text fallback uses family-correct button names if sprite rendering is unavailabl
 
 ## Verification
 
-The current build passes 1,524 core checks. In an isolated Proton run, 139 native
-virtual-device/UI checks passed: mapped Xbox, PlayStation, Nintendo, unknown,
+Version 0.6.2 passes 1,509 core checks. Earlier isolated Proton runs passed
+139 native virtual-device/UI checks on 0.6.0 and 0.6.1: mapped Xbox, PlayStation, Nintendo, unknown,
 and unmapped joystick routes; isolated buttons; independent triggers; stick
 signs; diagonal raw POV input; disconnection; and existing legacy/TMP labels
 switching families and back. Four-axis digital-trigger pads and multi-controller
 activity selection/disconnect boundaries are covered too. A Save-button caption
 also restores correctly if family switching precedes its next UI update. The actual game text renderer parsed all 81 sprites.
-These are simulated devices, not proof of every physical USB/Bluetooth mapping.
-Physical PlayStation/Nintendo validation and native Windows remain pending.
+The changed 0.6.2 diagnostic expectations have not yet been rerun. These are
+simulated devices, not proof of every physical USB/Bluetooth mapping.
+Nintendo-mode gameplay and camera have been tested on an 8BitDo controller
+under Proton. The latest face-button correction, PlayStation mode, and native
+Windows still need hands-on validation.
 
-For the opt-in diagnostic run, use `python3 tools/launch.py --capture --self-test`.
+For an isolated opt-in diagnostic run, use `python3 tools/launch.py --capture --self-test`.
 Virtual input is read directly by diagnostics and detached before gameplay
 polling resumes. It never submits menus, writes saves, or drives gameplay.
 `--seconds` optionally bounds an isolated smoke test. Plain launches never create
-virtual devices. The log reports the selected device, family, transport,
+virtual devices. Use a plain launch for manual controller testing: the user
+reported camera input loss during a diagnostic launch and confirmed it recovered
+on a normal launch of the same build. Diagnostics no longer compare live native
+XInput while SDL owns the device. The log reports the selected device, family, transport,
 VID/PID, SDL type, and whether a built-in or generic mapping is used.
 
 To test hardware, connect each controller via USB and Bluetooth as applicable.
@@ -98,4 +105,7 @@ SDL references: [controller API](https://wiki.libsdl.org/SDL2/CategoryGameContro
 [physical versus label mapping](https://wiki.libsdl.org/SDL2/SDL_HINT_GAMECONTROLLER_USE_BUTTON_LABELS),
 [virtual diagnostic API](https://wiki.libsdl.org/SDL2/SDL_JoystickAttachVirtualEx).
 
-The user confirmed Nintendo-mode gameplay works, then reported A/B and X/Y should follow their printed labels. Version 0.6.1 corrects input normalization, all four face-button sprite positions, and fallback text together. A hands-on retest of that correction and PlayStation-mode testing remain pending.
+Nintendo-mode testing exposed two separate mismatches: 0.6.0 used positional
+sprites, and 0.6.1 then also swapped input already normalized by Proton.
+Version 0.6.2 keeps the corrected letter sprites and removes that extra input
+swap. Hardware retesting of the correction remains pending.
