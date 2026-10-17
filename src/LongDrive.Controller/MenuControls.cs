@@ -336,7 +336,7 @@ namespace LongDrive.Controller
             if (!ownsNavigation) return;
             if (pointerMode)
             {
-                GUI.color = Color.yellow;
+                GUI.color = GameMenuSkin.FocusColor;
                 GUI.DrawTexture(new Rect(position.x - 8, Screen.height - position.y - 1, 16, 2), Texture2D.whiteTexture);
                 GUI.DrawTexture(new Rect(position.x - 1, Screen.height - position.y - 8, 2, 16), Texture2D.whiteTexture);
                 GUI.color = Color.white;
@@ -351,7 +351,7 @@ namespace LongDrive.Controller
             var min = RectTransformUtility.WorldToScreenPoint(camera, corners[0]);
             var max = RectTransformUtility.WorldToScreenPoint(camera, corners[2]);
             var box = new Rect(min.x - 3, Screen.height - max.y - 3, max.x - min.x + 6, max.y - min.y + 6);
-            GUI.color = Color.yellow;
+            GUI.color = GameMenuSkin.FocusColor;
             GUI.DrawTexture(new Rect(box.x, box.y, box.width, 3), Texture2D.whiteTexture);
             GUI.DrawTexture(new Rect(box.x, box.yMax - 3, box.width, 3), Texture2D.whiteTexture);
             GUI.DrawTexture(new Rect(box.x, box.y, 3, box.height), Texture2D.whiteTexture);

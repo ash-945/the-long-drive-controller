@@ -4,7 +4,7 @@ Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), XInput controllers
 
 ## Development preview
 
-Version 0.5.3 builds on the tested 0.5.1 menu styling, keyboard removal, and Save/Load navigation. Uncommon-action labels now sit inside the lighter button face with a thin black outline. The in-game exit confirmation restricts navigation to its own buttons, defaults to No, and supports B to cancel. The top-level pause/title menu now resets focus on entry, preferring Continue (or New Game when unavailable), with navigation confined to that menu. The build passes 1,436 core checks; these latest visual and exit-navigation changes still need an in-game check. The latest packaged stable release is 0.4.0.
+Version 0.5.4 builds on the tested 0.5.1 menu styling, keyboard removal, and Save/Load navigation. Uncommon-action labels now sit inside the lighter button face with a thin black outline. The in-game exit confirmation restricts navigation to its own buttons, defaults to No, and supports B to cancel. The top-level pause/title menu now resets focus on entry, preferring Continue (or New Game when unavailable), with navigation confined to that menu. Menu focus outlines and the virtual pointer use a high-contrast royal blue. The build passes 1,436 core checks; these latest visual and exit-navigation changes still need an in-game check. The latest packaged stable release is 0.4.0.
 
 ## Features
 

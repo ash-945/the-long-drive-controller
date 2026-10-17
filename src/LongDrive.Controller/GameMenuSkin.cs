@@ -18,6 +18,7 @@ namespace LongDrive.Controller
         private static float retryAfter;
         internal static int Revision { get; private set; }
         internal static Font Font { get; private set; }
+        internal static readonly Color FocusColor = new Color(.04f, .24f, .85f, 1f);
         internal static readonly Color Ink = new Color(.22f, .19f, .14f);
         internal static readonly Color SelectedInk = new Color(.17f, .38f, .06f);
 
@@ -104,7 +105,7 @@ namespace LongDrive.Controller
         internal static void Focus(Rect area)
         {
             Color saved = GUI.color;
-            GUI.color = new Color(.86f, .77f, .34f, .95f);
+            GUI.color = FocusColor;
             GUI.DrawTexture(new Rect(area.x + 3, area.y + 3, area.width - 6, 2), Texture2D.whiteTexture);
             GUI.DrawTexture(new Rect(area.x + 3, area.yMax - 5, area.width - 6, 2), Texture2D.whiteTexture);
             GUI.DrawTexture(new Rect(area.x + 3, area.y + 3, 2, area.height - 6), Texture2D.whiteTexture);

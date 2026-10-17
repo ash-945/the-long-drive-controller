@@ -77,3 +77,7 @@ Check all five uncommon-action pages: text should lie inside the light button fa
 ## 0.5.3 top-level menu selection
 
 Opening the pause menu or returning from Save/Load, settings, or Exit should select Continue. The title screen prefers Continue when available, otherwise New Game. D-pad/LS and the virtual pointer stay within the active top-level menu. Keyboard/mouse use keeps native navigation; returning to controller use selects the default again. Four new focus-policy checks cover resume, title Continue, unavailable Continue, and stable fallback ordering; 1,436 core checks pass. In-game verification is pending.
+
+## 0.5.4 focus contrast
+
+Check the royal-blue focus outline on the title/pause menu, Save/Load, Exit confirmation, and both custom controller panels. Check that the virtual pointer uses the same blue and remains visible. No navigation behavior changes.
