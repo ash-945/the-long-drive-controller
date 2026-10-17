@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LongDrive.Controller
 {
-    [BepInPlugin(Id, "The Long Drive Controller", "0.6.2")]
+    [BepInPlugin(Id, "The Long Drive Controller", "0.6.3")]
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ashley.thelongdrive.controller";
@@ -54,7 +54,7 @@ namespace LongDrive.Controller
             if (!ActionCatalog.Bindings.TryLoad(drivingBindings.Value, true)) Logger.LogWarning("Invalid driving bindings; using defaults.");
             menus = new MenuControls();
             ControllerGlyphs.Load(Logger);
-            Logger.LogInfo("Controller 0.6.2; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
+            Logger.LogInfo("Controller 0.6.3; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
             if (!supported) { Logger.LogError("Unsupported game version. Controller hooks disabled."); return; }
             patches = new Harmony(Id);
             patches.PatchAll(typeof(Plugin).Assembly);
@@ -164,11 +164,13 @@ namespace LongDrive.Controller
                 { bindingCaptureAfter = 0; Capture("controller-bindings-gameplay.png"); }
             }
             if (context != "menu" && !CustomPanel) menus.Release();
-            if (!reportedRuntime && Time.realtimeSinceStartup > 10 && menuhandler.isStarted())
+            // Opt-in input/UI diagnostics need no loaded save or gameplay scene.
+            bool selfTest = Array.IndexOf(Environment.GetCommandLineArgs(), "--controller-self-test") >= 0;
+            if (!reportedRuntime && Time.realtimeSinceStartup > 10 && (menuhandler.isStarted() || selfTest))
             {
                 reportedRuntime = true;
                 Logger.LogInfo("Runtime check: input=" + (inputscript.i != null) + "; EventSystem=" + (UnityEngine.EventSystems.EventSystem.current != null) + "; active Selectables=" + UnityEngine.UI.Selectable.allSelectablesArray.Length + "; hook calls axis/buttons/look=" + AxisCalls + "/" + ButtonCalls + "/" + LookCalls);
-                if (Array.IndexOf(Environment.GetCommandLineArgs(), "--controller-self-test") >= 0) ControllerDiagnostics.Run(Logger);
+                if (selfTest) ControllerDiagnostics.Run(Logger);
                 if (captureRequested)
                 {
                     ControllerGlyphs.Verify(Logger);

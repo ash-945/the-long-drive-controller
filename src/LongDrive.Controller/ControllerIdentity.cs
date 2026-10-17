@@ -7,7 +7,7 @@ namespace LongDrive.Controller
 
     internal static class ControllerIdentity
     {
-        internal static ControllerFamily Detect(ushort vendor, string name, int sdlType, ControllerTransport transport)
+        internal static ControllerFamily Detect(ushort vendor, string name, int sdlType, ControllerTransport transport, ushort product = 0)
         {
             // Physical identity takes precedence over a driver's normalized button layout.
             if (vendor == 0x054c) return ControllerFamily.PlayStation;
@@ -23,10 +23,9 @@ namespace LongDrive.Controller
                 case 3: case 4: case 7: return ControllerFamily.PlayStation;
                 case 5: case 11: case 12: case 13: return ControllerFamily.Nintendo;
             }
-            // This model uses Xbox face legends even when Proton re-exposes its
-            // XInput device as a named DirectInput joystick. Other 8BitDo models
-            // deliberately remain subject to their own identity/type or fallback.
-            if (text.Contains("8bitdo") && text.Contains("ultimate 2 wireless")) return ControllerFamily.Xbox;
+            // Preserve the tested Xbox-mode identity when Proton exposes it through
+            // DirectInput. Other modes can share the name, so require its VID/PID.
+            if (vendor == 0x2dc8 && product == 0x310b && text.Contains("8bitdo") && text.Contains("ultimate 2 wireless")) return ControllerFamily.Xbox;
             return transport == ControllerTransport.XInput ? ControllerFamily.Xbox : ControllerFamily.PlayStation;
         }
 

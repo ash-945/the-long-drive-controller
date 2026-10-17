@@ -34,7 +34,7 @@ namespace LongDrive.Controller
             pad.Transport = driver == 'x' ? ControllerTransport.XInput : driver == 'h' ? ControllerTransport.Hid : driver == 'v' ? ControllerTransport.Virtual : ControllerTransport.DirectInput;
             pad.Vendor = SdlNative.SDL_JoystickGetVendor(pad.joystick); pad.Product = SdlNative.SDL_JoystickGetProduct(pad.joystick);
             pad.Type = pad.controller == IntPtr.Zero ? 0 : SdlNative.SDL_GameControllerGetType(pad.controller);
-            pad.Family = ControllerIdentity.Detect(pad.Vendor, pad.Name, pad.Type, pad.Transport);
+            pad.Family = ControllerIdentity.Detect(pad.Vendor, pad.Name, pad.Type, pad.Transport, pad.Product);
             return pad;
         }
         internal PadState Read(float deadzone, float threshold)

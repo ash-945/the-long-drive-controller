@@ -18,7 +18,9 @@ internal static class ControllerFamilyChecks
         foreach (string name in new[] { "Nintendo Pro Controller", "8BitDo Switch Controller", "Joy-Con (L)", "JoyCon Pair" })
             check(ControllerIdentity.Detect(0, name, 0, ControllerTransport.XInput) == ControllerFamily.Nintendo, "Nintendo identity overrides transport " + name);
         check(ControllerIdentity.Detect(0, "Xbox Wireless Controller", 0, ControllerTransport.DirectInput) == ControllerFamily.Xbox, "Xbox name identified outside XInput");
-        check(ControllerIdentity.Detect(0x2dc8, "SDL 8BitDo Ultimate 2 Wireless Controller", 0, ControllerTransport.DirectInput) == ControllerFamily.Xbox, "Proton-exposed Ultimate 2 Wireless retains Xbox legends");
+        check(ControllerIdentity.Detect(0x2dc8, "SDL 8BitDo Ultimate 2 Wireless Controller", 0, ControllerTransport.DirectInput, 0x310b) == ControllerFamily.Xbox, "Proton-exposed Ultimate 2 Wireless retains Xbox legends");
+        check(ControllerIdentity.Detect(0x2dc8, "SDL 8BitDo Ultimate 2 Wireless Controller", 0, ControllerTransport.DirectInput, 0x6012) == ControllerFamily.PlayStation, "unidentified DirectInput mode with shared 8BitDo name uses PlayStation fallback");
+        check(ControllerIdentity.Detect(0x2dc8, "SDL 8BitDo Ultimate 2 Wireless Controller", 0, ControllerTransport.XInput, 0x6012) == ControllerFamily.Xbox, "unidentified XInput mode with shared 8BitDo name uses Xbox fallback");
         check(ControllerIdentity.Detect(0x2dc8, "Unknown 8BitDo Controller", 0, ControllerTransport.DirectInput) == ControllerFamily.PlayStation, "third-party vendor alone never implies Xbox or Nintendo");
         foreach (int type in new[] { 3, 4, 7 }) check(ControllerIdentity.Detect(0, "Wireless Controller", type, ControllerTransport.DirectInput) == ControllerFamily.PlayStation, "SDL PlayStation type " + type);
         foreach (int type in new[] { 5, 11, 12, 13 }) check(ControllerIdentity.Detect(0, "Pro Controller", type, ControllerTransport.XInput) == ControllerFamily.Nintendo, "SDL Nintendo type " + type);
