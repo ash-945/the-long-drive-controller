@@ -106,10 +106,10 @@ namespace LongDrive.Controller
         {
             Color saved = GUI.color;
             GUI.color = FocusColor;
-            GUI.DrawTexture(new Rect(area.x + 3, area.y + 3, area.width - 6, 2), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(area.x + 3, area.yMax - 5, area.width - 6, 2), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(area.x + 3, area.y + 3, 2, area.height - 6), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(area.xMax - 5, area.y + 3, 2, area.height - 6), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(area.x + 3, area.y + 3, area.width - 6, 3), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(area.x + 3, area.yMax - 6, area.width - 6, 3), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(area.x + 3, area.y + 3, 3, area.height - 6), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(area.xMax - 6, area.y + 3, 3, area.height - 6), Texture2D.whiteTexture);
             GUI.color = saved;
         }
         private static GUIStyle Background(Texture2D texture, RectOffset border)

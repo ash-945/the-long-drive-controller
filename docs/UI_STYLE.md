@@ -1,4 +1,4 @@
-# Menu styling — 0.5.4 development preview
+# Menu styling — 0.5.5 development preview
 
 The uncommon-actions window and controller settings (Sensitivity and Bindings) share the same menu theme. Selection uses green text and a royal-blue outline on a pale textured button. Headings use dark ink with a small light offset, and each window provides a clickable Close button alongside controller navigation.
 
@@ -6,7 +6,7 @@ The uncommon-actions window and controller settings (Sensitivity and Bindings) s
 
 If native UI resources cannot be sampled, a small generated paper/button texture keeps the menus usable. `PanelStyle` rebuilds its cached GUI styles when native assets become available. Glyph labels retain button sprites and sufficient line height in compact tabs. Ordinary button labels remain text. The driving HUD keeps white text on its existing dark background for contrast; menu colors do not leak into it.
 
-Action-card labels use smaller, inset text centered within the lighter button face. Pale lettering (light green when selected) has a one-pixel black outline; controller sprites retain their original colors. Long labels reduce their font size to fit. Compact settings buttons retain their existing spacing. The Close label avoids the controller token alias for Back.
+Action-card labels use smaller, inset text centered within the lighter button face. Pale lettering (light green when selected) has a one-pixel black outline; controller sprites retain their original colors. Long labels reduce their font size to fit. Settings buttons use 16-point inset lettering with the same thin black outline and pale/selected-green colors. Compact buttons keep enough horizontal and vertical room for Close, Clear, trigger glyphs, and +/- controls. Ordinary setting/action names remain plain text and are never parsed as controller aliases. The Close label avoids the controller token alias for Back.
 
 ## Verification
 
@@ -19,3 +19,5 @@ The on-screen keyboard has been removed. Save-name and computer typing use the p
 The startup log should identify sampled native button/panel/frame names, or report the paper fallback. If a fallback appears, include that log line with the screenshot so the resource selection can be adjusted.
 
 In 0.5.4 the native menu focus outline, custom panel focus outline, and virtual pointer share an opaque royal-blue color to contrast with tan menu backgrounds. Input/navigation behavior is unchanged. The build passes 1,436 core checks; visual confirmation of the new color is pending.
+
+In 0.5.5 focus borders increase by one pixel: native-menu outlines are four pixels, custom-panel outlines three reference pixels. The pointer size is unchanged. Settings tabs, sensitivity rows, binding names/values, and dialog buttons now share the outlined lettering treatment. Visual verification is pending.

@@ -101,20 +101,24 @@ namespace LongDrive.Controller
             GUI.backgroundColor = background;
             if (selected && GUI.enabled) GameMenuSkin.Focus(area);
             var textStyle = new GUIStyle(style);
-            textStyle.normal.textColor = selected ? GameMenuSkin.SelectedInk : GameMenuSkin.Ink;
+            textStyle.normal.textColor = outline
+                ? (selected ? new Color(.75f, .95f, .45f) : new Color(.98f, .96f, .86f))
+                : (selected ? GameMenuSkin.SelectedInk : GameMenuSkin.Ink);
             // Compact tabs and binding rows need a complete glyph line even when
             // the skin's normal button padding would leave too little vertical room.
             int fontSize = style.fontSize > 0 ? style.fontSize : 17;
             float line = Mathf.Max(style.lineHeight, fontSize * 1.45f);
             float top = Mathf.Min(style.padding.top, Mathf.Max(0, (area.height - line) / 2));
             float bottom = Mathf.Min(style.padding.bottom, Mathf.Max(0, area.height - top - line));
-            var content = new Rect(area.x + style.padding.left, area.y + top, area.width - style.padding.horizontal, area.height - top - bottom);
+            // Narrow Clear/+/-/trigger buttons still need room for their complete label.
+            float left = Mathf.Min(style.padding.left, area.width < 150 ? 10 : style.padding.left);
+            float right = Mathf.Min(style.padding.right, area.width < 150 ? 10 : style.padding.right);
+            var content = new Rect(area.x + left, area.y + top, area.width - left - right, area.height - top - bottom);
             if (glyphs)
             {
                 if (outline)
                 {
                     // Keep two-line action cards inside the bright face of the sprite.
-                    textStyle.normal.textColor = selected ? new Color(.75f, .95f, .45f) : new Color(.98f, .96f, .86f);
                     while (textStyle.fontSize > 13 && MeasureHeight(text, content.width, textStyle) > content.height)
                         textStyle.fontSize--;
                     float height = MeasureHeight(text, content.width, textStyle);
@@ -126,7 +130,10 @@ namespace LongDrive.Controller
             {
                 var plain = new GUIStyle(GUI.skin.label) { font = textStyle.font, fontSize = textStyle.fontSize, fontStyle = textStyle.fontStyle, padding = new RectOffset(), alignment = TextAnchor.MiddleLeft, wordWrap = textStyle.wordWrap };
                 plain.normal.textColor = textStyle.normal.textColor;
-                GUI.Label(content, text, plain);
+                if (outline)
+                    while (plain.fontSize > 13 && plain.CalcSize(new GUIContent(text)).x > content.width)
+                        plain.fontSize--;
+                DrawText(content, text, plain, outline);
             }
             return clicked;
         }
@@ -163,22 +170,27 @@ namespace LongDrive.Controller
                     if (draw && !space && y + line <= area.yMax + 1)
                     {
                         var word = new Rect(x, y, width + 1, line);
-                        if (outline)
-                        {
-                            Color ink = labelStyle.normal.textColor;
-                            labelStyle.normal.textColor = Color.black;
-                            for (int dx = -1; dx <= 1; dx++)
-                                for (int dy = -1; dy <= 1; dy++)
-                                    if (dx != 0 || dy != 0)
-                                        GUI.Label(new Rect(word.x + dx, word.y + dy, word.width, word.height), token, labelStyle);
-                            labelStyle.normal.textColor = ink;
-                        }
-                        GUI.Label(word, token, labelStyle);
+                        DrawText(word, token, labelStyle, outline);
                     }
                     if (x > area.x || !space) x += width;
                 }
             }
             return y + line - area.y;
+        }
+
+        private static void DrawText(Rect area, string text, GUIStyle style, bool outline)
+        {
+            if (outline)
+            {
+                Color ink = style.normal.textColor;
+                style.normal.textColor = Color.black;
+                for (int dx = -1; dx <= 1; dx++)
+                    for (int dy = -1; dy <= 1; dy++)
+                        if (dx != 0 || dy != 0)
+                            GUI.Label(new Rect(area.x + dx, area.y + dy, area.width, area.height), text, style);
+                style.normal.textColor = ink;
+            }
+            GUI.Label(area, text, style);
         }
 
         public static void Verify(ManualLogSource log)

@@ -30,7 +30,7 @@ namespace LongDrive.Controller
             skinRevision = GameMenuSkin.Revision;
             Title = new GUIStyle(GUI.skin.label) { font = GameMenuSkin.Font, fontSize = 28, fontStyle = FontStyle.Bold };
             Text = new GUIStyle(GUI.skin.label) { font = GameMenuSkin.Font, fontSize = 17, wordWrap = true };
-            Button = new GUIStyle(GUI.skin.button) { font = GameMenuSkin.Font, fontSize = 18, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleLeft, padding = new RectOffset(14, 10, 6, 6) };
+            Button = new GUIStyle(GUI.skin.button) { font = GameMenuSkin.Font, fontSize = 16, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleLeft, padding = new RectOffset(22, 18, 7, 7) };
             Title.normal.textColor = Text.normal.textColor = GameMenuSkin.Ink;
             GameMenuSkin.ApplyButton(Button);
             ActionButton = new GUIStyle(Button) { fontSize = 15, padding = new RectOffset(28, 24, 18, 12) };
@@ -54,7 +54,7 @@ namespace LongDrive.Controller
         public static bool Choice(Rect rect, string text, bool selected, bool glyphs = false)
         {
             Init();
-            return ControllerGlyphs.Button(rect, text, Button, selected, glyphs);
+            return ControllerGlyphs.Button(rect, text, Button, selected, glyphs, true);
         }
     }
 

@@ -352,10 +352,10 @@ namespace LongDrive.Controller
             var max = RectTransformUtility.WorldToScreenPoint(camera, corners[2]);
             var box = new Rect(min.x - 3, Screen.height - max.y - 3, max.x - min.x + 6, max.y - min.y + 6);
             GUI.color = GameMenuSkin.FocusColor;
-            GUI.DrawTexture(new Rect(box.x, box.y, box.width, 3), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(box.x, box.yMax - 3, box.width, 3), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(box.x, box.y, 3, box.height), Texture2D.whiteTexture);
-            GUI.DrawTexture(new Rect(box.xMax - 3, box.y, 3, box.height), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(box.x, box.y, box.width, 4), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(box.x, box.yMax - 4, box.width, 4), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(box.x, box.y, 4, box.height), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(box.xMax - 4, box.y, 4, box.height), Texture2D.whiteTexture);
             GUI.color = Color.white;
         }
     }

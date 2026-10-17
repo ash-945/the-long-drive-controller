@@ -81,3 +81,7 @@ Opening the pause menu or returning from Save/Load, settings, or Exit should sel
 ## 0.5.4 focus contrast
 
 Check the royal-blue focus outline on the title/pause menu, Save/Load, Exit confirmation, and both custom controller panels. Check that the virtual pointer uses the same blue and remains visible. No navigation behavior changes.
+
+## 0.5.5 settings legibility and focus width
+
+Check the slightly thicker blue borders in native and custom menus. In controller settings, check inset outlined text on Sensitivity and Bindings tabs, every sensitivity row, +/- controls, profile selector, LT/RT, action names, binding glyphs, Clear, and capture/conflict/reset buttons. Verify narrow buttons retain complete labels and action names are not interpreted as controller tokens. All 1,436 core checks pass; visual verification is pending.
