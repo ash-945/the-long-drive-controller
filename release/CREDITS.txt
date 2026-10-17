@@ -1,8 +1,8 @@
-The Long Drive - XInput Controller Support
+The Long Drive - Controller Support
 
 The Long Drive belongs to its respective creators. This is an unofficial mod.
 
-Xbox-style button graphics are supplied Creative Commons assets requiring
+Xbox, PlayStation and Nintendo button graphics are supplied Creative Commons assets requiring
 no attribution, as confirmed by the mod author. This package does not assign
 an additional license to those assets.
 
@@ -16,3 +16,9 @@ No game files, decompiled game source, BepInEx loader binaries, HarmonyX
 binaries, personal saves, or user configuration files are included.
 
 The mod software license and copyright notice are included in LICENSE.
+
+Included controller runtime: SDL2 2.32.10 Windows x64, privately renamed
+TLDControllerSDL2.dll. SDL2 uses the zlib license. Its official license and
+distribution notice are included beside the DLL as SDL2-LICENSE.txt and
+README-SDL.txt. The runtime is used on Windows and under Linux/Proton.
+https://www.libsdl.org/

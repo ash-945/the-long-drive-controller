@@ -53,7 +53,7 @@ def main():
 
     output = ROOT / "dist/nexus"
     output.mkdir(parents=True, exist_ok=True)
-    archive = output / ("LongDrive-XInput-Controller-Support-" + VERSION + "-Beta.zip")
+    archive = output / ("LongDrive-Controller-Support-" + VERSION + "-Beta.zip")
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as z:
         for name, data in files.items():
             z.writestr(name, data)

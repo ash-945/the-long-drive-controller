@@ -1,9 +1,9 @@
-THE LONG DRIVE - XINPUT CONTROLLER SUPPORT
-Version 0.5.5 beta | Game v2024.11.26b
+THE LONG DRIVE - CONTROLLER SUPPORT
+Version 0.6.6 beta | Game v2024.11.26b
 
 REQUIREMENTS
 - The Long Drive v2024.11.26b (tested build reports 2024.11.26b_test).
-- An XInput-compatible controller.
+- An Xbox/XInput, supported PlayStation/Nintendo, or compatible DirectInput controller.
 - BepInEx 5.4.23.5 Windows x64, installed separately:
   https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.5
 Use the Windows x64 loader on both Windows and Linux/Proton.
@@ -27,11 +27,16 @@ MANUAL INSTALLATION - WINDOWS AND LINUX/PROTON
 
    Save the file. This game can destroy the visible BepInEx manager otherwise.
    Change that setting in your existing file; do not replace other settings.
-5. Extract this mod archive into the folder beside TheLongDrive.exe. The DLL
-   must end up at:
-   BepInEx/plugins/LongDrive.Controller/LongDrive.Controller.dll
-6. Connect your controller and launch the game. Press View/Back for the
-   uncommon-actions menu; then Start for controller settings.
+5. Extract this mod archive beside TheLongDrive.exe. Copy the WHOLE folder:
+   BepInEx/plugins/LongDrive.Controller/
+   It must contain LongDrive.Controller.dll AND TLDControllerSDL2.dll, plus
+   SDL2-LICENSE.txt and README-SDL.txt. DirectInput needs the included runtime.
+   No separate Linux library is required under Proton.
+6. Connect your controller and launch. View/Back/Select/Minus opens uncommon
+   actions; Start/Options/Plus then opens controller settings.
+   Instructions below use Xbox names. On PlayStation, A/B/X/Y correspond to
+   Cross/Circle/Square/Triangle and LB/RB/LT/RT to L1/R1/L2/R2. Nintendo uses
+   its printed A/B/X/Y letters and L/R/ZL/ZR.
 
 LINUX / PROTON / STEAM
 In the game's Steam launch options, add:
@@ -51,27 +56,36 @@ The same executable in another game folder will not load this installation.
 Different Proton prefixes can have separate settings and saves.
 
 CONTROLLER SETUP
-Use XInput mode if your device offers multiple modes. Avoid a simultaneous
-controller-to-keyboard mapping; duplicate mappings can cause double input.
-Steam Input configuration depends on your device; keep one XInput route.
+XInput, DirectInput and HID devices are supported through the included SDL2.
+Known devices select Xbox, PlayStation or Nintendo icons automatically.
+Unknown XInput devices use Xbox; unknown DirectInput/HID use PlayStation.
+If detection is wrong, set Controller family manually in General settings.
+Steam Input may expose a physical device as a virtual Xbox controller.
+Avoid simultaneous controller-to-keyboard mappings that cause duplicate input.
+Unusual DirectInput layouts may need an SDL mapping in gamecontrollerdb.txt
+beside the plugin DLL. This optional file is not included or overwritten.
 
 SETTINGS
 View/Back, then Start opens controller settings. View also opens them while
 native game Settings is open. Up/down selects; left/right adjusts; A increases
 or toggles; Y restores defaults; B, Start, or View closes.
 
-LB/RB switches between Sensitivity and Bindings. On Bindings, X switches
+LB/RB switches between General and Bindings. On Bindings, X switches
 on-foot/driving profiles, LT/RT changes category, and A begins capture. Release
 all controls, press a button/trigger/stick direction or combination (up to three
 controls), then release to save. Start cancels capture; View closes. B can be
 assigned during capture. Occupied bindings require swap confirmation. RS click
 clears a binding; Y asks before restoring defaults for the current profile.
 Gameplay hints update from saved bindings. The native Controls rows also open
-the corresponding binding entry. Sensitivity defaults do not reset bindings.
+the corresponding binding entry. General defaults do not reset bindings.
 
 Adjust camera speed, object rotation speed, object movement/lean speed,
 pointer speed, stick/trigger deadzones, camera Y inversion, and steering
-stick sensitivity. Settings save automatically to:
+stick sensitivity. Controller family cycles Auto / Xbox / PlayStation / Nintendo.
+A manual family overrides detection across restarts, reconnects and controller
+changes. Auto restores detection. This changes icons, not physical input.
+Driving hint box toggles the entire seated helper panel. General defaults
+restores Auto and enables driving hints. Settings save automatically to:
 BepInEx/config/ashley.thelongdrive.controller.cfg
 
 Steering sensitivity: 0.25-2.00, default 1.00. Lower is gentler around the
@@ -94,24 +108,31 @@ so creating a new save does not require typing. RS moves the computer cursor;
 B or Start exits the computer.
 
 UPDATING / REMOVAL
-Close the game before updating. Replace the old plugin DLL; do not install
-multiple copies of this plugin. Existing controller settings are preserved.
+Close the game before updating. Replace the COMPLETE plugin folder contents
+from this archive, including the SDL runtime and notices. Do not install
+multiple copies. Keep existing configuration and custom gamecontrollerdb.txt;
+they are not shipped in this archive.
 To uninstall, remove BepInEx/plugins/LongDrive.Controller. Optionally delete
 the mod's configuration file. Keep BepInEx if other mods depend on it.
 
 TROUBLESHOOTING
 No controller menu: check BepInEx/LogOutput.log for
-"Loading [The Long Drive Controller 0.5.5]".
+"Loading [The Long Drive Controller 0.6.6]".
 No BepInEx log: check loader installation and, on Proton, the winhttp override.
-Plugin loads but no controls: check XInput mode, focus, and the Chainloader
-setting above. After reconnecting or leaving menus, release sticks, triggers,
-and buttons to neutral before resuming gameplay.
+Plugin loads but no controls: check device mode, focus, and the Chainloader
+setting above. DirectInput unavailable: check TLDControllerSDL2.dll is installed
+beside the plugin; check the log for SDL runtime failures.
+Wrong button icons: change Controller family manually, or select Auto again.
+After reconnecting or leaving menus, release sticks, triggers, and buttons to
+neutral before resuming gameplay.
 For a report, include game/mod versions, OS/Proton, controller model/mode,
 Steam Input setup, the exact action that failed, and BepInEx/LogOutput.log.
 
 COMPATIBILITY
 Tested interactively on Linux/Proton with an 8BitDo Ultimate 2 Wireless
-Controller in XInput mode. Windows x64 is targeted but not yet independently
-verified. Other game versions, every vehicle/menu, multiplayer, VR, and
-third-party mod menus have not been exhaustively tested. Gameplay bindings are editable in the Bindings page; Start/View and menu
-navigation remain fixed for recovery.
+Controller in Xbox, Nintendo and generic DirectInput modes, including manual
+family selection and driving-hint settings. Genuine Sony hardware has not been
+tested. Windows x64 is targeted but not yet independently verified. Other game versions, every vehicle/menu, multiplayer, VR, and
+third-party mod menus have not been exhaustively tested. Gameplay bindings
+are editable in the Bindings page; Start/View and menu navigation remain
+fixed for recovery.

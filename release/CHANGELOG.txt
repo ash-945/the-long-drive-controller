@@ -1,3 +1,28 @@
+0.6.6 BETA - CONTROLLER FAMILIES AND PREFERENCES
+- Adds DirectInput and HID controller input alongside XInput through a bundled
+  private SDL2 Windows x64 runtime, used on Windows and under Linux/Proton.
+- Automatically selects Xbox, PlayStation or Nintendo button graphics.
+  Unknown XInput uses Xbox; unknown DirectInput/HID uses PlayStation.
+- Includes 81 supplied sprites with refreshed Xbox art, stick movement and
+  direction icons, and family-aware native prompts, Controls rows and menus.
+- Corrected Nintendo printed-letter face mappings and sprite positions.
+- Scoped the 8BitDo Xbox-mode exception to its tested device ID so unknown
+  DirectInput modes receive the PlayStation fallback.
+- General settings adds a saved family override: Auto/Xbox/PlayStation/Nintendo.
+  Manual choices override detection across reconnects and restarts.
+- Driving hint box can be disabled in General settings. Preferences persist;
+  General defaults restores Auto and enables hints without resetting bindings.
+- Uncommon-action cards center their text and icons. Both controller menus
+  darken textured button backgrounds for contrast with outlined pale text.
+- Preserves existing controller bindings, sensitivity, and menu navigation.
+- Includes SDL2 license/distribution notices. Install/update the whole plugin
+  folder, not only the managed DLL.
+- 1,525 core checks pass on 0.6.6. The 0.6.5 runtime passed 159 native input,
+  UI and config checks, with all 81 sprite identities verified under Proton.
+  User confirmed Nintendo/DirectInput behavior and 0.6.5 preferences/layout.
+  The final 0.6.6 darkening is build-checked; visual approval is still pending.
+  Native Windows and genuine Sony-controller hardware remain unverified.
+
 0.5.5 BETA - MENU STYLING AND NAVIGATION
 - Controller windows use the game's native textured panels and buttons.
 - Uncommon actions and controller settings use inset, outlined lettering.
