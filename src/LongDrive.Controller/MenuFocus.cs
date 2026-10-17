@@ -14,6 +14,14 @@ namespace LongDrive.Controller
 
     internal static class MenuFocus
     {
+        public static int TopLevelPriority(string nativeMethod)
+        {
+            // Prefer returning to the current game, then starting a new one.
+            if (nativeMethod == "PressedContinue" || nativeMethod == "PressedContinueMainMenu") return 0;
+            if (nativeMethod == "PressedStart" || nativeMethod == "PressedNewStart") return 1;
+            return 2;
+        }
+
         public static int Initial(IList<MenuFocusTarget> targets)
         {
             int best = -1;

@@ -5,6 +5,21 @@ internal static class MenuFocusChecks
 {
     internal static void Run(Action<bool, string> check)
     {
+        var top = new[]
+        {
+            new MenuFocusTarget(100, 600, MenuFocus.TopLevelPriority("PressedExit"), true),
+            new MenuFocusTarget(100, 400, MenuFocus.TopLevelPriority("PressedSettings"), true),
+            new MenuFocusTarget(100, 200, MenuFocus.TopLevelPriority("PressedContinue"), true)
+        };
+        check(MenuFocus.Initial(top) == 2, "pause menu prefers Continue over higher settings/exit buttons");
+        top[2].Priority = MenuFocus.TopLevelPriority("PressedContinueMainMenu");
+        check(MenuFocus.Initial(top) == 2, "title menu prefers native Continue when available");
+        top[2].Eligible = false;
+        top[1].Priority = MenuFocus.TopLevelPriority("PressedNewStart");
+        check(MenuFocus.Initial(top) == 1, "title menu without Continue prefers New Game over Exit");
+        top[2].Eligible = true;
+        top[2].Priority = MenuFocus.TopLevelPriority("PressedStart");
+        check(MenuFocus.Initial(top) == 1, "equally preferred start buttons use stable screen order");
         var save = new[]
         {
             new MenuFocusTarget(50, 700, 0, false), // metadata/path is excluded

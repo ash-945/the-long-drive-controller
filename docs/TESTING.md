@@ -73,3 +73,7 @@ The earlier on-screen-keyboard test steps are historical and no longer apply. Th
 ## 0.5.2 action labels and exit confirmation
 
 Check all five uncommon-action pages: text should lie inside the light button face, with a thin black outline and complete labels/hints. Check selected and unselected cards, Close text and B glyph, and compact settings buttons. In the in-game pause menu, open Exit and confirm No receives focus. D-pad/LS should reach Yes and No without leaving the dialog; B should return to the pause menu. Repeat with the virtual pointer. These checks are pending; no automatic test invokes Exit Yes.
+
+## 0.5.3 top-level menu selection
+
+Opening the pause menu or returning from Save/Load, settings, or Exit should select Continue. The title screen prefers Continue when available, otherwise New Game. D-pad/LS and the virtual pointer stay within the active top-level menu. Keyboard/mouse use keeps native navigation; returning to controller use selects the default again. Four new focus-policy checks cover resume, title Continue, unavailable Continue, and stable fallback ordering; 1,436 core checks pass. In-game verification is pending.

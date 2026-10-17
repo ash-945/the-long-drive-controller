@@ -21,6 +21,7 @@ namespace LongDrive.Controller
         private BaseInputModule[] modalModules;
         private readonly SaveMenuNavigation saveMenu = new SaveMenuNavigation();
         private readonly ExitMenuNavigation exitMenu = new ExitMenuNavigation();
+        private readonly TopMenuNavigation topMenu = new TopMenuNavigation();
         private readonly List<Selectable> focusControls = new List<Selectable>();
         private readonly List<MenuFocusTarget> focusTargets = new List<MenuFocusTarget>();
 
@@ -96,6 +97,7 @@ namespace LongDrive.Controller
                 system.sendNavigationEvents = originalNavigation; ownsNavigation = false; pointerMode = false;
                 saveMenu.Release();
                 exitMenu.Release();
+                topMenu.Release();
             }
             bool controller = pad.Buttons != 0 || pad.LX != 0 || pad.LY != 0 || pad.RX != 0 || pad.RY != 0 || pad.LT != 0 || pad.RT != 0;
             if (!ownsNavigation && !keyboard && controller) { system.sendNavigationEvents = false; ownsNavigation = true; }
@@ -107,6 +109,7 @@ namespace LongDrive.Controller
             if (!Prepare(pad) || !ownsNavigation) return;
             bool scopeChanged = saveMenu.UpdateScope();
             scopeChanged |= exitMenu.UpdateScope();
+            scopeChanged |= topMenu.UpdateScope(saveMenu.Active || exitMenu.Active);
             if (scopeChanged)
             {
                 PointerUp(false);
@@ -152,7 +155,7 @@ namespace LongDrive.Controller
                         var move = new AxisEventData(system) { moveVector = cardinal, moveDir = cardinal.x < 0 ? MoveDirection.Left : cardinal.x > 0 ? MoveDirection.Right : cardinal.y > 0 ? MoveDirection.Up : MoveDirection.Down };
                         bool editing = selected.GetComponent<TMP_InputField>() != null || selected.GetComponent<InputField>() != null;
                         if (editing) SaveMenuNavigation.DeactivateInput(selected);
-                        if (saveMenu.Active || exitMenu.Active || editing) GeometricMove(selected, cardinal);
+                        if (saveMenu.Active || exitMenu.Active || topMenu.Active || editing) GeometricMove(selected, cardinal);
                         else
                         {
                             ExecuteEvents.Execute(selected, move, ExecuteEvents.moveHandler);
@@ -182,7 +185,7 @@ namespace LongDrive.Controller
                 system.RaycastAll(pointer, hits);
                 pointer.pointerCurrentRaycast = hits.Count > 0 ? hits[0] : default;
                 GameObject hit = hits.Count > 0 ? hits[0].gameObject : null;
-                if ((saveMenu.Active || exitMenu.Active) && hit != null)
+                if ((saveMenu.Active || exitMenu.Active || topMenu.Active) && hit != null)
                 {
                     var target = hit.GetComponentInParent<Selectable>();
                     if (target == null || !Usable(target)) hit = null;
@@ -247,7 +250,7 @@ namespace LongDrive.Controller
 
         private bool Usable(Selectable selectable)
         {
-            if (selectable == null || !selectable.isActiveAndEnabled || !selectable.IsInteractable() || !saveMenu.Allows(selectable) || !exitMenu.Allows(selectable)) return false;
+            if (selectable == null || !selectable.isActiveAndEnabled || !selectable.IsInteractable() || !saveMenu.Allows(selectable) || !exitMenu.Allows(selectable) || !topMenu.Allows(selectable)) return false;
             if (selectable is TMP_InputField tmp && tmp.readOnly || selectable is InputField legacy && legacy.readOnly) return false;
             return true;
         }
@@ -266,7 +269,7 @@ namespace LongDrive.Controller
                 if (!Usable(item)) continue;
                 Vector2 center = Center(item);
                 bool visible = center.x >= 0 && center.x <= Screen.width && center.y >= 0 && center.y <= Screen.height;
-                int priority = exitMenu.Active ? exitMenu.Priority(item) : saveMenu.Active ? saveMenu.Priority(item) : item is TMP_InputField || item is InputField ? 2 : 1;
+                int priority = exitMenu.Active ? exitMenu.Priority(item) : saveMenu.Active ? saveMenu.Priority(item) : topMenu.Active ? topMenu.Priority(item) : item is TMP_InputField || item is InputField ? 2 : 1;
                 focusControls.Add(item);
                 focusTargets.Add(new MenuFocusTarget(center.x, center.y, priority, visible));
             }
@@ -289,7 +292,7 @@ namespace LongDrive.Controller
             var from = selected.GetComponent<Selectable>();
             if (from == null) return;
             CollectFocusTargets();
-            if (!saveMenu.Active && !exitMenu.Active)
+            if (!saveMenu.Active && !exitMenu.Active && !topMenu.Active)
             {
                 // A native scrolling list may contain the next item outside the screen;
                 // KeepSelectionVisible scrolls to it after selection.
@@ -319,6 +322,7 @@ namespace LongDrive.Controller
             SetModal(false);
             saveMenu.Release();
             exitMenu.Release();
+            topMenu.Release();
             PointerUp(false);
             if (hover != null && pointer != null) ExecuteEvents.Execute(hover, pointer, ExecuteEvents.pointerExitHandler);
             hover = null;
