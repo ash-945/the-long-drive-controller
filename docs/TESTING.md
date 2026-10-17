@@ -93,3 +93,7 @@ The user completed the final interactive Linux/Proton test and approved release 
 ## 0.6.0 controller families
 
 See [CONTROLLER_FAMILIES.md](CONTROLLER_FAMILIES.md) for backend, identity, UI coverage, and hardware testing. The build passes 1,509 core checks; a Proton run passed 139 isolated native virtual-controller/UI checks and parsed 81/81 sprites. Physical PlayStation/Nintendo USB/Bluetooth checks and native Windows remain pending.
+
+## 0.6.1 Nintendo face buttons
+
+Nintendo input follows printed letters across gameplay, menus, binding capture, and sprites: A right confirms, B lower cancels, X upper, Y left. Core checks cover all four translations, unchanged Xbox/PlayStation layout, simultaneous face buttons, modifiers, and neutral. Native diagnostics expect Nintendo letters from the actual physical positions. Retest on the connected Nintendo-mode controller.

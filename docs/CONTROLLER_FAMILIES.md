@@ -1,11 +1,12 @@
-# Controller families and input — 0.6.0 development
+# Controller families and input — 0.6.1 development
 
-The mod normalizes input into physical positions: A is the lower face button,
-B the right, X the left, and Y the upper. Existing saved bindings continue to
-work without conversion. PlayStation therefore uses Cross to confirm and
-Circle to cancel. Nintendo uses its lower face button (B) to confirm and right
-face button (A) to cancel; supplied position diagrams show the intended button.
-This avoids changing gameplay or menu semantics when switching controllers.
+Xbox and PlayStation use their usual physical layout: Cross confirms and Circle
+cancels on PlayStation. Nintendo follows the letters printed on its buttons:
+A (right) confirms, B (lower) cancels, X is upper, and Y is left. A/B and X/Y
+are swapped at the input boundary, and sprites follow the same letter mapping.
+Gameplay defaults, saved bindings, menu navigation, and capture all consume
+these normalized controls. Existing binding strings do not need conversion.
+The 0.6.0 positional Nintendo mapping was corrected after the physical test.
 
 ## Input backend
 
@@ -14,7 +15,7 @@ HIDAPI through one controller layer. It runs inside the Windows game on both
 Windows and Proton. No native Linux plugin is required. SDL is initialized only
 for joystick/game-controller input, not audio or video; the mod never replaces
 Unity's event system. SDL's Nintendo label-swapping hint is explicitly disabled
-so input matches the physical-position vocabulary used by the saved bindings.
+so the mod applies its Nintendo letter remapping exactly once.
 
 SDL's built-in mappings normalize recognized PlayStation/Nintendo controllers,
 including separate sticks, triggers, D-pad, shoulder buttons, and menu buttons.
@@ -70,7 +71,7 @@ Text fallback uses family-correct button names if sprite rendering is unavailabl
 
 ## Verification
 
-The current build passes 1,509 core checks. In an isolated Proton run, 139 native
+The current build passes 1,524 core checks. In an isolated Proton run, 139 native
 virtual-device/UI checks passed: mapped Xbox, PlayStation, Nintendo, unknown,
 and unmapped joystick routes; isolated buttons; independent triggers; stick
 signs; diagonal raw POV input; disconnection; and existing legacy/TMP labels
@@ -96,3 +97,5 @@ hotplug and that toggled sprint/crouch/holds clear on device loss.
 SDL references: [controller API](https://wiki.libsdl.org/SDL2/CategoryGameController),
 [physical versus label mapping](https://wiki.libsdl.org/SDL2/SDL_HINT_GAMECONTROLLER_USE_BUTTON_LABELS),
 [virtual diagnostic API](https://wiki.libsdl.org/SDL2/SDL_JoystickAttachVirtualEx).
+
+The user confirmed Nintendo-mode gameplay works, then reported A/B and X/Y should follow their printed labels. Version 0.6.1 corrects input normalization, all four face-button sprite positions, and fallback text together. A hands-on retest of that correction and PlayStation-mode testing remain pending.

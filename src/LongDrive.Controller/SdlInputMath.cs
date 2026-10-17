@@ -5,6 +5,18 @@ namespace LongDrive.Controller
     internal static class SdlInputMath
     {
         internal static readonly Buttons[] ButtonMap = { Buttons.A, Buttons.B, Buttons.X, Buttons.Y, Buttons.Back, 0, Buttons.Start, Buttons.LS, Buttons.RS, Buttons.LB, Buttons.RB, Buttons.Up, Buttons.Down, Buttons.Left, Buttons.Right };
+        internal static Buttons FamilyButtons(Buttons physical, ControllerFamily family)
+        {
+            if (family != ControllerFamily.Nintendo) return physical;
+            // SDL is held in positional mode. Translate Nintendo's printed face
+            // labels once, before gameplay, UI navigation, and binding capture.
+            var result = physical & ~(Buttons.A | Buttons.B | Buttons.X | Buttons.Y);
+            if ((physical & Buttons.A) != 0) result |= Buttons.B;
+            if ((physical & Buttons.B) != 0) result |= Buttons.A;
+            if ((physical & Buttons.X) != 0) result |= Buttons.Y;
+            if ((physical & Buttons.Y) != 0) result |= Buttons.X;
+            return result;
+        }
         internal static void Stick(short rawX, short rawY, float deadzone, out float x, out float y)
         {
             x = PadMath.Axis(rawX); y = -PadMath.Axis(rawY);

@@ -78,6 +78,11 @@ namespace LongDrive.Controller
                 int[] indices = generic ? new[] { 1, 2, 0, 3, 4, 5, 8, 9, 10, 11 } : new[] { 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
                 Buttons[] expected = generic ? new[] { Buttons.A, Buttons.B, Buttons.X, Buttons.Y, Buttons.LB, Buttons.RB, Buttons.Back, Buttons.Start, Buttons.LS, Buttons.RS } :
                     new[] { Buttons.A, Buttons.B, Buttons.X, Buttons.Y, Buttons.Back, Buttons.Start, Buttons.LS, Buttons.RS, Buttons.LB, Buttons.RB, Buttons.Up, Buttons.Down, Buttons.Left, Buttons.Right };
+                if (family == ControllerFamily.Nintendo)
+                {
+                    expected[0] = Buttons.B; expected[1] = Buttons.A;
+                    expected[2] = Buttons.Y; expected[3] = Buttons.X;
+                }
                 for (int i = 0; i < indices.Length; i++)
                 {
                     SDL_JoystickSetVirtualButton(stick, indices[i], 1); SdlNative.SDL_JoystickUpdate();
@@ -140,10 +145,10 @@ namespace LongDrive.Controller
                 int revision = hub.Revision;
                 for (int i = 0; i < 3; i++) hub.Poll(.18f, .08f, _ => { });
                 Require(hub.Revision == revision, "Idle second controller cannot steal selection");
-                SDL_JoystickSetVirtualButton(second, 0, 1); SdlNative.SDL_JoystickUpdate();
+                SDL_JoystickSetVirtualButton(second, 1, 1); SdlNative.SDL_JoystickUpdate();
                 Require(!hub.Poll(.18f, .08f, _ => { }).Connected && hub.Family == ControllerFamily.Nintendo, "Activity switches family with a clean input boundary");
-                Require(hub.Poll(.18f, .08f, _ => { }).Held(Buttons.A), "Selected Nintendo controller supplies canonical lower face input");
-                SDL_JoystickSetVirtualButton(second, 0, 0); SDL_JoystickSetVirtualButton(first, 1, 1); SdlNative.SDL_JoystickUpdate();
+                Require(hub.Poll(.18f, .08f, _ => { }).Held(Buttons.A), "Selected Nintendo controller supplies printed A from the right face button");
+                SDL_JoystickSetVirtualButton(second, 1, 0); SDL_JoystickSetVirtualButton(first, 1, 1); SdlNative.SDL_JoystickUpdate();
                 Require(!hub.Poll(.18f, .08f, _ => { }).Connected && hub.Family == ControllerFamily.PlayStation, "Fresh first-controller activity switches back safely");
                 Require(hub.Poll(.18f, .08f, _ => { }).Held(Buttons.B), "Selected PlayStation controller supplies canonical cancel input");
                 SDL_JoystickDetachVirtual(firstIndex); firstIndex = -1;

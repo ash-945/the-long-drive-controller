@@ -42,7 +42,6 @@ namespace LongDrive.Controller
             if (family == ControllerFamily.Nintendo)
                 switch (canonical)
                 {
-                    case "A": return "B"; case "B": return "A"; case "X": return "Y"; case "Y": return "X";
                     case "LB": return "L"; case "RB": return "R"; case "LT": return "ZL"; case "RT": return "ZR";
                     case "Select": return "Minus"; case "Start": return "Plus";
                 }

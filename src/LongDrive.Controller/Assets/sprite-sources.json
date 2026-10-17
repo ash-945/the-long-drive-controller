@@ -216,20 +216,20 @@
     "sha256": "a7cca7c77a257d6fec2040725b80c31df8d619c3540981a6bac588764c55102f"
   },
   "Nintendo/A": {
-    "source": "Nintendo Switch/switch_buttons_down_outline.png",
-    "sha256": "64b5b5bb0131d071cd22ccd02f7718d69df15915f2d24a317ac1be119485436b"
-  },
-  "Nintendo/B": {
     "source": "Nintendo Switch/switch_buttons_right_outline.png",
     "sha256": "38f980aaace3e6f2db0780a5c5c17776dfa50ea7f7752b561cf4712bcbefe389"
   },
-  "Nintendo/X": {
-    "source": "Nintendo Switch/switch_buttons_left_outline.png",
-    "sha256": "41ad787e8775e6f42e4e61c8582eb68707cd418f5480f0dd468a8fc4b094c4cc"
+  "Nintendo/B": {
+    "source": "Nintendo Switch/switch_buttons_down_outline.png",
+    "sha256": "64b5b5bb0131d071cd22ccd02f7718d69df15915f2d24a317ac1be119485436b"
   },
-  "Nintendo/Y": {
+  "Nintendo/X": {
     "source": "Nintendo Switch/switch_buttons_up_outline.png",
     "sha256": "34527ab1a2d9cea4624ab5e1f384dfcdd2bb0a9511665ca431ca48224ba33756"
+  },
+  "Nintendo/Y": {
+    "source": "Nintendo Switch/switch_buttons_left_outline.png",
+    "sha256": "41ad787e8775e6f42e4e61c8582eb68707cd418f5480f0dd468a8fc4b094c4cc"
   },
   "Nintendo/LB": {
     "source": "Nintendo Switch/switch_button_l_outline.png",

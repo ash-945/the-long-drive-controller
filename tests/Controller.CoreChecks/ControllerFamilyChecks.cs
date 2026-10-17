@@ -22,10 +22,23 @@ internal static class ControllerFamilyChecks
         check(ControllerIdentity.Detect(0x2dc8, "Unknown 8BitDo Controller", 0, ControllerTransport.DirectInput) == ControllerFamily.PlayStation, "third-party vendor alone never implies Xbox or Nintendo");
         foreach (int type in new[] { 3, 4, 7 }) check(ControllerIdentity.Detect(0, "Wireless Controller", type, ControllerTransport.DirectInput) == ControllerFamily.PlayStation, "SDL PlayStation type " + type);
         foreach (int type in new[] { 5, 11, 12, 13 }) check(ControllerIdentity.Detect(0, "Pro Controller", type, ControllerTransport.XInput) == ControllerFamily.Nintendo, "SDL Nintendo type " + type);
-        check(ControllerIdentity.ButtonName("A", ControllerFamily.Nintendo) == "B" && ControllerIdentity.ButtonName("B", ControllerFamily.Nintendo) == "A", "Nintendo lower/right face labels follow physical positions");
-        check(ControllerIdentity.ButtonName("X", ControllerFamily.Nintendo) == "Y" && ControllerIdentity.ButtonName("Y", ControllerFamily.Nintendo) == "X", "Nintendo left/top face labels follow physical positions");
+        check(ControllerIdentity.ButtonName("A", ControllerFamily.Nintendo) == "A" && ControllerIdentity.ButtonName("B", ControllerFamily.Nintendo) == "B", "Nintendo A/B text follows printed labels");
+        check(ControllerIdentity.ButtonName("X", ControllerFamily.Nintendo) == "X" && ControllerIdentity.ButtonName("Y", ControllerFamily.Nintendo) == "Y", "Nintendo X/Y text follows printed labels");
         check(ControllerIdentity.ButtonName("A", ControllerFamily.PlayStation) == "Cross" && ControllerIdentity.ButtonName("LB", ControllerFamily.PlayStation) == "L1", "PlayStation text fallback uses matching buttons");
         check(ControllerIdentity.ButtonName("Start", ControllerFamily.Nintendo) == "Plus" && ControllerIdentity.ButtonName("Select", ControllerFamily.Nintendo) == "Minus", "Nintendo menu aliases");
+        var positions = new[] { Buttons.A, Buttons.B, Buttons.X, Buttons.Y };
+        var nintendo = new[] { Buttons.B, Buttons.A, Buttons.Y, Buttons.X };
+        for (int i = 0; i < positions.Length; i++)
+        {
+            check(SdlInputMath.FamilyButtons(positions[i], ControllerFamily.Nintendo) == nintendo[i], "Nintendo physical face position maps to printed " + nintendo[i]);
+            check(SdlInputMath.FamilyButtons(positions[i], ControllerFamily.Xbox) == positions[i], "Xbox face mapping remains unchanged " + positions[i]);
+            check(SdlInputMath.FamilyButtons(positions[i], ControllerFamily.PlayStation) == positions[i], "PlayStation face mapping remains unchanged " + positions[i]);
+        }
+        check(SdlInputMath.FamilyButtons(Buttons.B | Buttons.Y | Buttons.LB | Buttons.Start | Buttons.Up, ControllerFamily.Nintendo) ==
+            (Buttons.A | Buttons.X | Buttons.LB | Buttons.Start | Buttons.Up), "Nintendo compound inputs preserve modifiers, menu buttons, and D-pad");
+        check(SdlInputMath.FamilyButtons(Buttons.A | Buttons.B | Buttons.X | Buttons.Y, ControllerFamily.Nintendo) ==
+            (Buttons.A | Buttons.B | Buttons.X | Buttons.Y), "Nintendo simultaneous face buttons are remapped from the original mask");
+        check(SdlInputMath.FamilyButtons(0, ControllerFamily.Nintendo) == 0, "Nintendo neutral remains neutral");
         SdlInputMath.Stick(0, short.MinValue, .18f, out float x, out float y);
         check(x == 0 && y == 1, "SDL full up avoids signed-short overflow");
         SdlInputMath.Stick(0, short.MaxValue, .18f, out x, out y);
