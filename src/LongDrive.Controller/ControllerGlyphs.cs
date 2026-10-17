@@ -237,16 +237,28 @@ namespace LongDrive.Controller
                 text.font = TMP_Settings.defaultFontAsset;
                 text.fontSize = 32;
                 text.rectTransform.sizeDelta = new Vector2(1600, 200);
+                var expectedNames = new List<string>(Textures.Keys);
                 var content = new StringBuilder();
-                foreach (string name in Textures.Keys) content.Append("<sprite=\"" + AssetName + "\" index=" + Indices[name] + " tint=0> ");
+                foreach (string name in expectedNames) content.Append("<sprite=\"" + AssetName + "\" index=" + Indices[name] + " tint=0> ");
                 text.text = content.ToString();
                 text.ForceMeshUpdate(true, true);
                 int parsed = 0;
                 // This game's TMP never updates m_spriteCount during mesh generation;
                 // inspect the actual parsed elements rather than its stale summary counter.
                 for (int i = 0; i < text.textInfo.characterCount; i++)
-                    if (text.textInfo.characterInfo[i].elementType == TMP_TextElementType.Sprite) parsed++;
-                log.LogInfo("TMP glyph verification: " + parsed + "/81 sprites parsed; diagnostic overlay removed.");
+                {
+                    var character = text.textInfo.characterInfo[i];
+                    if (character.elementType != TMP_TextElementType.Sprite) continue;
+                    string expected = parsed < expectedNames.Count ? expectedNames[parsed] : "unexpected extra sprite";
+                    int expectedIndex = Indices.TryGetValue(expected, out int index) ? index : -1;
+                    if (character.spriteAsset != asset || character.spriteIndex != expectedIndex ||
+                        character.textElement != asset.spriteCharacterTable[expectedIndex])
+                        throw new InvalidOperationException("Sprite identity mismatch: expected " + expected +
+                            " at " + expectedIndex + ", parsed " + character.spriteIndex);
+                    parsed++;
+                }
+                if (parsed != expectedNames.Count) throw new InvalidOperationException("Missing parsed sprites: " + parsed + "/" + expectedNames.Count);
+                log.LogInfo("TMP glyph verification: " + parsed + "/81 sprite identities verified; diagnostic overlay removed.");
             }
             catch (Exception ex) { log.LogWarning("TMP glyph verification failed: " + ex); }
             finally { if (canvasObject != null) UnityEngine.Object.Destroy(canvasObject); }

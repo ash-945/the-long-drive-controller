@@ -1,4 +1,4 @@
-# Controller families and input — 0.6.3 development
+# Controller families and input — 0.6.4 development
 
 Xbox and PlayStation use their usual physical layout: Cross confirms and Circle
 cancels on PlayStation. Nintendo follows the letters printed on its buttons:
@@ -76,18 +76,21 @@ Text fallback uses family-correct button names if sprite rendering is unavailabl
 
 ## Verification
 
-Version 0.6.3 passes 1,511 core checks. Earlier isolated Proton runs passed
-139 native virtual-device/UI checks on 0.6.0 and 0.6.1: mapped Xbox, PlayStation, Nintendo, unknown,
+Version 0.6.4 passes 1,511 core checks and 139 isolated native virtual-device/UI
+checks under Proton: mapped Xbox, PlayStation, Nintendo, unknown,
 and unmapped joystick routes; isolated buttons; independent triggers; stick
 signs; diagonal raw POV input; disconnection; and existing legacy/TMP labels
 switching families and back. Four-axis digital-trigger pads and multi-controller
 activity selection/disconnect boundaries are covered too. A Save-button caption
 also restores correctly if family switching precedes its next UI update. The actual game text renderer parsed all 81 sprites.
-The changed diagnostic expectations have not yet been rerun. These are
-simulated devices, not proof of every physical USB/Bluetooth mapping.
+All 81 parsed TMP icons resolve to their intended sprite asset, index, and
+character entry. These are simulated devices, not proof of every physical
+USB/Bluetooth mapping.
 Nintendo-mode gameplay and camera have been tested on an 8BitDo controller
 under Proton. The user confirmed the 0.6.2 Nintendo face-button correction works. PlayStation
-mode and native Windows still need hands-on validation.
+mode was also confirmed working by the user on 0.6.4, including the corrected
+Square/Cross and Push hints. Native Windows hardware testing remains outside
+this Proton validation.
 
 For an isolated opt-in diagnostic run, use `python3 tools/launch.py --capture --self-test`.
 Virtual input is read directly by diagnostics and detached before gameplay
@@ -112,5 +115,7 @@ SDL references: [controller API](https://wiki.libsdl.org/SDL2/CategoryGameContro
 Nintendo-mode testing exposed two separate mismatches: 0.6.0 used positional
 sprites, and 0.6.1 then also swapped input already normalized by Proton.
 Version 0.6.2 removed that extra input swap; the user confirmed it works.
-Version 0.6.3 also scopes the Xbox-mode exception to its tested device ID so
-unknown DirectInput modes can use PlayStation sprites.
+Version 0.6.3 scoped the Xbox-mode exception to its tested device ID so
+unknown DirectInput modes can use PlayStation sprites. Version 0.6.4 adds
+verification of all 81 parsed sprite identities; the user confirmed the
+PlayStation-mode correction works.
