@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LongDrive.Controller
 {
-    [BepInPlugin(Id, "The Long Drive Controller", "0.6.5")]
+    [BepInPlugin(Id, "The Long Drive Controller", "0.6.6")]
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ashley.thelongdrive.controller";
@@ -59,7 +59,7 @@ namespace LongDrive.Controller
             menus = new MenuControls();
             ControllerGlyphs.Load(Logger);
             RefreshControllerFamily();
-            Logger.LogInfo("Controller 0.6.5; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
+            Logger.LogInfo("Controller 0.6.6; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
             if (!supported) { Logger.LogError("Unsupported game version. Controller hooks disabled."); return; }
             patches = new Harmony(Id);
             patches.PatchAll(typeof(Plugin).Assembly);

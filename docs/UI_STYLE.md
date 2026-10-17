@@ -32,3 +32,9 @@ The user tested and approved the 0.6.5 options and centered cards under Proton.
 The captured General page shows all ten settings without overlapping the footer;
 the captured Survival action cards show centered single- and two-line captions,
 including the longer Defecate instruction.
+
+In 0.6.6 the uncommon-actions and controller-settings buttons tint their native
+texture to 55% brightness. Selected buttons retain a subtle warm tint. The pale
+outlined lettering, original icon colors, and royal-blue focus border are drawn
+at full brightness after the background tint is restored. All button states use
+the darker background, including tabs, binding rows, and small action buttons.

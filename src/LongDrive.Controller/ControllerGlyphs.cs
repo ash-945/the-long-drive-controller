@@ -122,7 +122,9 @@ namespace LongDrive.Controller
         public static bool Button(Rect area, string text, GUIStyle style, bool selected = false, bool glyphs = true, bool outline = false)
         {
             Color background = GUI.backgroundColor;
-            GUI.backgroundColor = selected ? new Color(1, .98f, .82f) : Color.white;
+            // Tint only the textured button background; draw labels, icons and
+            // the focus border after restoring the GUI color for clear contrast.
+            GUI.backgroundColor = selected ? new Color(.55f, .539f, .451f) : new Color(.55f, .55f, .55f);
             bool clicked = GUI.Button(area, GUIContent.none, style);
             GUI.backgroundColor = background;
             if (selected && GUI.enabled) GameMenuSkin.Focus(area);
