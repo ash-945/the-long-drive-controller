@@ -11,6 +11,8 @@ DOCS = ROOT / "release"
 
 
 def main():
+    if f"Version {VERSION}" not in (DOCS / "NEXUS_DESCRIPTION.md").read_text():
+        raise SystemExit("Update player-facing release documents to " + VERSION + " before packaging a Nexus release.")
     source = ROOT / "dist" / ("ControllerPrototype-" + VERSION)
     build = json.loads((source / "build-info.json").read_text())
     plugin_name = "BepInEx/plugins/LongDrive.Controller/LongDrive.Controller.dll"
@@ -33,6 +35,11 @@ def main():
     (DOCS / "NEXUS_DESCRIPTION_BBCODE.txt").write_text(bbcode)
 
     files = {plugin_name: plugin, "LICENSE": (ROOT / "LICENSE").read_bytes()}
+    for name, checksum in build.get("runtime_files", {}).items():
+        data = (source / name).read_bytes()
+        if hashlib.sha256(data).hexdigest() != checksum:
+            raise SystemExit("Runtime manifest mismatch: " + name)
+        files[name] = data
     for name in ("INSTALL.txt", "CONTROLS.md", "CHANGELOG.txt", "CREDITS.txt"):
         files[name] = (DOCS / name).read_bytes()
     manifest = dict(build, release_channel="beta", installation="manual-game-root",

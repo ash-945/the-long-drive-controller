@@ -6,12 +6,12 @@ using UnityEngine;
 
 namespace LongDrive.Controller
 {
-    [BepInPlugin(Id, "The Long Drive Controller", "0.5.5")]
+    [BepInPlugin(Id, "The Long Drive Controller", "0.6.0")]
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ashley.thelongdrive.controller";
         internal static Plugin Instance;
-        private readonly XInputPad device = new XInputPad();
+        private readonly ControllerHub device = new ControllerHub();
         private readonly InputGate gate = new InputGate();
         private PadState raw, previousRaw, current, previous;
         private int sampled = -1, blockUntil;
@@ -54,7 +54,7 @@ namespace LongDrive.Controller
             if (!ActionCatalog.Bindings.TryLoad(drivingBindings.Value, true)) Logger.LogWarning("Invalid driving bindings; using defaults.");
             menus = new MenuControls();
             ControllerGlyphs.Load(Logger);
-            Logger.LogInfo("Controller 0.5.5; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
+            Logger.LogInfo("Controller 0.6.0; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
             if (!supported) { Logger.LogError("Unsupported game version. Controller hooks disabled."); return; }
             patches = new Harmony(Id);
             patches.PatchAll(typeof(Plugin).Assembly);
@@ -74,12 +74,13 @@ namespace LongDrive.Controller
             sampled = Time.frameCount;
             if (!firstSample) { firstSample = true; Logger.LogInfo("First controller poll at frame " + Time.frameCount); }
             previousRaw = raw;
-            raw = device.Poll(deadzone.Value, triggerThreshold.Value);
+            raw = device.Poll(deadzone.Value, triggerThreshold.Value, message => Logger.LogInfo(message));
             if (raw.Connected != wasConnected)
             {
-                Logger.LogInfo(raw.Connected ? "Connected XInput slot " + device.Index + " via " + device.Backend : "Controller disconnected; clearing controller input.");
+                Logger.LogInfo(raw.Connected ? "Connected " + device.Description : "Controller disconnected; clearing controller input.");
                 wasConnected = raw.Connected;
             }
+            if (raw.Connected) ControllerGlyphs.SelectFamily(device.Family);
             previous = current;
             context = !supported ? "unsupported build" : !Application.isFocused ? "unfocused" :
                 inputscript.i != null && inputscript.i.usingComputer ? "computer" : MenuOpen ? "menu" : mainscript.s.SomeInputSelected() ? "text" : Driving ? "driving" : "walking";
@@ -167,6 +168,7 @@ namespace LongDrive.Controller
             {
                 reportedRuntime = true;
                 Logger.LogInfo("Runtime check: input=" + (inputscript.i != null) + "; EventSystem=" + (UnityEngine.EventSystems.EventSystem.current != null) + "; active Selectables=" + UnityEngine.UI.Selectable.allSelectablesArray.Length + "; hook calls axis/buttons/look=" + AxisCalls + "/" + ButtonCalls + "/" + LookCalls);
+                if (Array.IndexOf(Environment.GetCommandLineArgs(), "--controller-self-test") >= 0) ControllerDiagnostics.Run(Logger);
                 if (captureRequested)
                 {
                     ControllerGlyphs.Verify(Logger);
@@ -349,6 +351,8 @@ namespace LongDrive.Controller
             Actions.Clear();
             menus?.Release();
             patches?.UnpatchSelf();
+            device.Dispose();
+            SdlNative.Dispose();
             ControllerGlyphs.Dispose();
             GameMenuSkin.Dispose();
             if (Instance == this) Instance = null;

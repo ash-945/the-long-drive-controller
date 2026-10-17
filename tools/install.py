@@ -44,6 +44,13 @@ def main():
         if not backup.exists():
             shutil.copy2(target, backup)
     copies.append((source, target))
+    for relative, checksum in manifest.get("runtime_files", {}).items():
+        if Path(relative).is_absolute() or ".." in Path(relative).parts:
+            parser.error("Unsafe runtime path: " + relative)
+        runtime_source = stage / relative
+        if hashlib.sha256(runtime_source.read_bytes()).hexdigest() != checksum:
+            parser.error("Controller runtime manifest mismatch: " + relative)
+        copies.append((runtime_source, game / relative))
     for source, target in copies:
         target.parent.mkdir(parents=True, exist_ok=True)
         # Replace the file atomically so a running game's mapped plugin remains

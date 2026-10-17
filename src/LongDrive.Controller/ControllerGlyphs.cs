@@ -13,41 +13,48 @@ namespace LongDrive.Controller
 {
     internal static class ControllerGlyphs
     {
-        private const string AssetName = "TLDXbox";
+        internal const string AssetName = "TLDController";
+        internal static ControllerFamily Family { get; private set; }
+        internal static int Revision { get; private set; }
+        private static string Key(string name) => Family + "/" + name;
         private static readonly Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
         private static readonly Dictionary<string, int> Indices = new Dictionary<string, int>();
         private static readonly Dictionary<string, string> RichCache = new Dictionary<string, string>();
         private static TMP_SpriteAsset asset;
         private static Texture2D atlas;
         private static Material material;
-        public static readonly string[] SpriteNames = { "A", "B", "X", "Y", "LB", "RB", "LT", "RT", "L3", "R3", "Select", "Start", "DPad_UP", "DPad_Down", "DPad_Left", "DPad_Right" };
+        public static readonly string[] SpriteNames = { "A", "B", "X", "Y", "LB", "RB", "LT", "RT", "L3", "R3", "Select", "Start", "DPad_UP", "DPad_Down", "DPad_Left", "DPad_Right", "LS", "RS", "DPad", "LS_Up", "LS_Down", "LS_Left", "LS_Right", "RS_Up", "RS_Down", "RS_Left", "RS_Right" };
 
         public static void Load(ManualLogSource log)
         {
             var assembly = Assembly.GetExecutingAssembly();
+            foreach (ControllerFamily family in Enum.GetValues(typeof(ControllerFamily)))
             foreach (string name in SpriteNames)
             {
-                using (var stream = assembly.GetManifestResourceStream("LongDrive.Controller.Xbox." + name + ".png"))
+                using (var stream = assembly.GetManifestResourceStream("LongDrive.Controller." + family + "." + name + ".png"))
                 {
-                    if (stream == null) { log.LogWarning("Missing controller sprite: " + name); continue; }
+                    if (stream == null) { log.LogWarning("Missing controller sprite: " + family + "/" + name); continue; }
                     using (var data = new MemoryStream())
                     {
                         stream.CopyTo(data);
-                        var texture = new Texture2D(2, 2, TextureFormat.RGBA32, true) { name = "Xbox " + name, filterMode = FilterMode.Trilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
-                        if (ImageConversion.LoadImage(texture, data.ToArray())) Textures[name] = texture;
+                        var texture = new Texture2D(2, 2, TextureFormat.RGBA32, true) { name = family + " " + name, filterMode = FilterMode.Trilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
+                        if (ImageConversion.LoadImage(texture, data.ToArray())) Textures[family + "/" + name] = texture;
                         else UnityEngine.Object.Destroy(texture);
                     }
                 }
             }
             try { BuildSpriteAsset(); }
             catch (Exception ex) { asset = null; log.LogWarning("Inline controller sprites unavailable; using text fallback. " + ex.Message); }
-            log.LogInfo("Xbox glyphs: " + Textures.Count + "/16 embedded images; TMP atlas=" + (asset != null));
+            log.LogInfo("Controller glyphs: " + Textures.Count + "/81 embedded images; TMP atlas=" + (asset != null));
         }
 
         private static void BuildSpriteAsset()
         {
             if (Textures.Count == 0) return;
-            var names = new List<string>(Textures.Keys);
+            var names = new List<string>();
+            foreach (ControllerFamily family in Enum.GetValues(typeof(ControllerFamily)))
+                foreach (string name in SpriteNames)
+                    if (Textures.ContainsKey(family + "/" + name)) names.Add(family + "/" + name);
             var images = new Texture2D[names.Count];
             for (int i = 0; i < names.Count; i++) images[i] = Textures[names[i]];
             atlas = new Texture2D(4, 4, TextureFormat.RGBA32, true) { name = AssetName + " Atlas", filterMode = FilterMode.Trilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.HideAndDontSave };
@@ -82,14 +89,33 @@ namespace LongDrive.Controller
         }
         private static TMP_SpriteAsset FindAsset(int hash, string name) => name == AssetName ? asset : null;
 
+        internal static void SelectFamily(ControllerFamily family)
+        {
+            if (Family == family) return;
+            Family = family; Revision++; RichCache.Clear();
+            foreach (var text in UnityEngine.Object.FindObjectsOfType<TMP_Text>(true))
+                if (ContainsMarkup(text.text)) text.text = Retarget(text.text);
+            foreach (var text in UnityEngine.Object.FindObjectsOfType<UnityEngine.UI.Text>(true))
+                if (ContainsMarkup(text.text)) text.text = Retarget(text.text);
+        }
+        internal static bool ContainsMarkup(string text) => text != null && text.Contains("<sprite=\"" + AssetName + "\"");
+        internal static string Retarget(string text) => text == null ? null : System.Text.RegularExpressions.Regex.Replace(text,
+            "<sprite=\"" + AssetName + "\" index=([0-9]+) tint=0>", match =>
+            {
+                int old = int.Parse(match.Groups[1].Value);
+                if (old < 0 || old >= SpriteNames.Length * 3) return match.Value;
+                string key = Key(SpriteNames[old % SpriteNames.Length]);
+                return Indices.TryGetValue(key, out int index) ? "<sprite=\"" + AssetName + "\" index=" + index + " tint=0>" : match.Value;
+            });
+
         public static string Tmp(string text)
         {
-            if (asset == null) return text;
+
             if (RichCache.TryGetValue(text, out string existing)) return existing;
             var result = new StringBuilder();
             foreach (var run in GlyphTokens.Parse(text))
-                if (run.Sprite != null && Textures.ContainsKey(run.Sprite)) result.Append("<sprite=\"" + AssetName + "\" index=" + Indices[run.Sprite] + " tint=0>");
-                else result.Append(run.Text);
+                if (asset != null && run.Sprite != null && Textures.ContainsKey(Key(run.Sprite))) result.Append("<sprite=\"" + AssetName + "\" index=" + Indices[Key(run.Sprite)] + " tint=0>");
+                else result.Append(run.Sprite != null ? ControllerIdentity.ButtonName(run.Sprite, Family) : run.Text);
             return RichCache[text] = result.ToString();
         }
 
@@ -152,7 +178,7 @@ namespace LongDrive.Controller
             labelStyle.normal.textColor = style.normal.textColor;
             foreach (var run in GlyphTokens.Parse(text))
             {
-                if (run.Sprite != null && Textures.TryGetValue(run.Sprite, out var image))
+                if (run.Sprite != null && Textures.TryGetValue(Key(run.Sprite), out var image))
                 {
                     float width = iconHeight * image.width / image.height;
                     if (x > area.x && x + width > area.xMax) { x = area.x; y += line; }
@@ -160,7 +186,7 @@ namespace LongDrive.Controller
                     x += width + 2;
                     continue;
                 }
-                foreach (string token in System.Text.RegularExpressions.Regex.Split(run.Text, @"(\n|[ \t]+)"))
+                foreach (string token in System.Text.RegularExpressions.Regex.Split(run.Sprite != null ? ControllerIdentity.ButtonName(run.Sprite, Family) : run.Text, @"(\n|[ \t]+)"))
                 {
                     if (token.Length == 0) continue;
                     if (token == "\n") { x = area.x; y += line; continue; }
@@ -212,7 +238,7 @@ namespace LongDrive.Controller
                 text.fontSize = 32;
                 text.rectTransform.sizeDelta = new Vector2(1600, 200);
                 var content = new StringBuilder();
-                foreach (string name in SpriteNames) content.Append("<sprite=\"" + AssetName + "\" index=" + Indices[name] + " tint=0> ");
+                foreach (string name in Textures.Keys) content.Append("<sprite=\"" + AssetName + "\" index=" + Indices[name] + " tint=0> ");
                 text.text = content.ToString();
                 text.ForceMeshUpdate(true, true);
                 int parsed = 0;
@@ -220,7 +246,7 @@ namespace LongDrive.Controller
                 // inspect the actual parsed elements rather than its stale summary counter.
                 for (int i = 0; i < text.textInfo.characterCount; i++)
                     if (text.textInfo.characterInfo[i].elementType == TMP_TextElementType.Sprite) parsed++;
-                log.LogInfo("TMP glyph verification: " + parsed + "/16 sprites parsed; diagnostic overlay removed.");
+                log.LogInfo("TMP glyph verification: " + parsed + "/81 sprites parsed; diagnostic overlay removed.");
             }
             catch (Exception ex) { log.LogWarning("TMP glyph verification failed: " + ex); }
             finally { if (canvasObject != null) UnityEngine.Object.Destroy(canvasObject); }
@@ -243,7 +269,7 @@ namespace LongDrive.Controller
     {
         private static void Prefix(TMP_Text __instance, string value)
         {
-            if (value != null && value.IndexOf("<sprite=\"TLDXbox\"", StringComparison.Ordinal) >= 0) __instance.richText = true;
+            if (value != null && value.IndexOf("<sprite=\"TLDController\"", StringComparison.Ordinal) >= 0) __instance.richText = true;
         }
     }
 }

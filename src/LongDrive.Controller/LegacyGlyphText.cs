@@ -17,7 +17,7 @@ namespace LongDrive.Controller
         internal void Refresh(string value)
         {
             original = GetComponent<Text>();
-            showing = value != null && value.Contains("<sprite=\"TLDXbox\"");
+            showing = ControllerGlyphs.ContainsMarkup(value);
             if (showing && replacement == null)
             {
                 var child = new GameObject("Controller prompt icons", typeof(RectTransform), typeof(TextMeshProUGUI));
@@ -79,7 +79,7 @@ namespace LongDrive.Controller
         private static void Postfix(Text __instance, string value)
         {
             var bridge = __instance.GetComponent<LegacyGlyphText>();
-            if (bridge == null && value != null && value.Contains("<sprite=\"TLDXbox\"")) bridge = __instance.gameObject.AddComponent<LegacyGlyphText>();
+            if (bridge == null && ControllerGlyphs.ContainsMarkup(value)) bridge = __instance.gameObject.AddComponent<LegacyGlyphText>();
             if (bridge != null) bridge.Refresh(value);
         }
     }

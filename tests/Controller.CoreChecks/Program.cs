@@ -187,6 +187,7 @@ internal static class Program
         Check(!latch.Held(GameAction.looklean) && latch.Value(GameAction.looklean) == 0, "context transition clears held modifiers");
         BindingChecks.Run(Check);
         MenuFocusChecks.Run(Check);
+        ControllerFamilyChecks.Run(Check);
         if (args.Length < 1) throw new Exception("Pass the installed game's Assembly-CSharp.dll to verify the actual action inventory.");
         using var stream = File.OpenRead(args[0]);
         using var pe = new PEReader(stream);

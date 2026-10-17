@@ -13,6 +13,7 @@ def main():
     parser.add_argument("--game-dir", type=Path, default=ROOT / ".local/test-game")
     parser.add_argument("--seconds", type=int, help="Bounded graphical smoke test; otherwise stays open until quit")
     parser.add_argument("--capture", action="store_true", help="Capture the game window after its menu initializes")
+    parser.add_argument("--self-test", action="store_true", help="Read opt-in virtual controllers in isolation; do not drive gameplay")
     parser.add_argument("--vanilla", action="store_true", help="Bypass the loader for a baseline comparison")
     args = parser.parse_args()
     game = args.game_dir.resolve()
@@ -27,6 +28,8 @@ def main():
     command = [str(args.proton), "run", str(game / "TheLongDrive.exe"), "-screen-fullscreen", "0", "-screen-width", "1280", "-screen-height", "720", "-logFile", log]
     if args.capture:
         command.append("--controller-capture")
+    if args.self_test:
+        command.append("--controller-self-test")
     if args.seconds:
         command = ["timeout", "--signal=TERM", "--kill-after=5s", str(args.seconds) + "s"] + command
     print("Starting isolated game copy; log:", log_path, flush=True)

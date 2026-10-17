@@ -38,8 +38,23 @@ def main():
     shutil.copy2(ROOT / "docs/BINDINGS.md", stage / "docs/BINDINGS.md")
     shutil.copy2(ROOT / "docs/UI_STYLE.md", stage / "docs/UI_STYLE.md")
     shutil.copy2(ROOT / "docs/SAVE_MENU.md", stage / "docs/SAVE_MENU.md")
+    runtime = ROOT / ".tools/sdl2/runtime/SDL2.dll"
+    if not runtime.is_file():
+        raise SystemExit("Run python3 tools/fetch_controller_runtime.py before building.")
+    from fetch_controller_runtime import SHA256 as runtime_archive_hash, VERSION as runtime_version, verify_runtime
+    verify_runtime()
+    runtime_files = {
+        "BepInEx/plugins/LongDrive.Controller/TLDControllerSDL2.dll": runtime,
+        "BepInEx/plugins/LongDrive.Controller/SDL2-LICENSE.txt": ROOT / "third_party/SDL2-LICENSE.txt",
+        "BepInEx/plugins/LongDrive.Controller/README-SDL.txt": ROOT / "third_party/README-SDL.txt",
+    }
+    for relative, source in runtime_files.items():
+        shutil.copy2(source, stage / relative)
+    shutil.copy2(ROOT / "docs/CONTROLLER_FAMILIES.md", stage / "docs/CONTROLLER_FAMILIES.md")
     manifest = {
         "version": VERSION,
+        "controller_runtime": {"name": "SDL2", "version": runtime_version, "source_archive_sha256": runtime_archive_hash},
+        "runtime_files": {name: hashlib.sha256((stage / name).read_bytes()).hexdigest() for name in runtime_files},
         "game_version": "2024.11.26b_test",
         "loader": "BepInEx 5.4.23.5 Windows x64 (separate download)",
         "plugin_sha256": hashlib.sha256(plugin.read_bytes()).hexdigest(),
@@ -48,7 +63,7 @@ def main():
     (stage / "build-info.json").write_text(json.dumps(manifest, indent=2) + "\n")
     archive = Path(str(stage) + ".zip")
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as output:
-        for path in [plugin, stage / "README.md", stage / "LICENSE", stage / "docs/TESTING.md", stage / "docs/COMPATIBILITY.md", stage / "docs/ACTIONS.md", stage / "docs/BINDINGS.md", stage / "docs/UI_STYLE.md", stage / "docs/SAVE_MENU.md", stage / "build-info.json"]:
+        for path in [plugin, stage / "README.md", stage / "LICENSE", stage / "docs/TESTING.md", stage / "docs/COMPATIBILITY.md", stage / "docs/ACTIONS.md", stage / "docs/BINDINGS.md", stage / "docs/UI_STYLE.md", stage / "docs/SAVE_MENU.md", stage / "docs/CONTROLLER_FAMILIES.md", stage / "build-info.json"] + [stage / name for name in runtime_files]:
             output.write(path, path.relative_to(stage))
     print(f"Ready: {archive}")
 

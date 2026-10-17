@@ -89,3 +89,7 @@ Check the slightly thicker blue borders in native and custom menus. In controlle
 ## 0.5.5 release verification
 
 The user completed the final interactive Linux/Proton test and approved release packaging after the settings readability and border-width changes. The tested DLL is preserved unchanged in the release archive. Build output records zero warnings/errors and all 1,436 core checks passing. Archive CRCs, file hashes, and equality with the tested installation are checked during packaging. This supersedes the pending notes above for the reported menu fixes; it does not claim every historical checklist item, resolution, device, vehicle, or platform was tested. Native Windows remains unverified.
+
+## 0.6.0 controller families
+
+See [CONTROLLER_FAMILIES.md](CONTROLLER_FAMILIES.md) for backend, identity, UI coverage, and hardware testing. The build passes 1,509 core checks; a Proton run passed 139 isolated native virtual-controller/UI checks and parsed 81/81 sprites. Physical PlayStation/Nintendo USB/Bluetooth checks and native Windows remain pending.

@@ -1,6 +1,12 @@
-# The Long Drive — XInput Controller Support
+# The Long Drive — Controller Support
 
-Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), XInput controllers, Windows x64 and Linux running the Windows game under Proton. The original game assemblies and keyboard bindings are not modified on disk.
+Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), Xbox, PlayStation, and Nintendo controllers, Windows x64 and Linux running the Windows game under Proton. The original game assemblies and keyboard bindings are not modified on disk.
+
+## Development: 0.6.0
+
+Adds DirectInput/HID controller input, automatic Xbox/PlayStation/Nintendo sprite selection, and updated Xbox art. All 81 supplied sprites share one UI path, including existing native labels when changing controllers. Unknown devices use Xbox for XInput and PlayStation for DirectInput. Existing saved bindings keep physical button positions: PlayStation Cross and Nintendo's lower face button confirm menus.
+
+The development package includes a private SDL2 Windows x64 runtime and its license; extract the whole plugin folder. No additional Linux library is needed under Proton. See [controller families and verification](docs/CONTROLLER_FAMILIES.md) for detection, mapping overrides, tests, and hardware checks still pending. The tested 0.5.5 release remains available on Nexus.
 
 ## Current release
 
@@ -74,7 +80,7 @@ Version 0.5.5 passes 1,436 automated checks and has been tested interactively un
 
 The core checks compare all action names/ordinals with the actual installed game's metadata and exercise action edges, menu queues, modifiers, toggle behavior, safe input gating, trigger independence, and rotation rate calculations. Runtime testing confirms Proton loading, controller detection, rewritten prompt paths, and rendered controller panels. See [testing](docs/TESTING.md), [integration details](docs/COMPATIBILITY.md), and [action inventory](docs/ACTIONS.md).
 
-Every named action has an implementation route; individual activities, multiplayer/VR, native Windows, and every menu/device combination still require hands-on validation. Developer-only/debug shortcuts outside the game's 68 bindable actions are not part of this mapping. The 16 supplied Xbox PNGs are embedded in the plugin and appear inline in interaction prompts, Controls rows, and custom panels. Stick movement remains text because the supplied stick images depict clicks. Arbitrary third-party mod menus are not yet covered. The Bindings page supports all 68 named game actions, including analog directions and combinations of up to three controls. Start/View and menu-navigation buttons remain fixed for recovery.
+Every named action has an implementation route; individual activities, multiplayer/VR, native Windows, and every menu/device combination still require hands-on validation. Developer-only/debug shortcuts outside the game's 68 bindable actions are not part of this mapping. The development build embeds 81 supplied PNGs across three controller families, including stick movement artwork. Interaction prompts, Controls rows, and custom panels share the active family. Arbitrary third-party mod menus are not yet covered. The Bindings page supports all 68 named game actions, including analog directions and combinations of up to three controls. Start/View and menu-navigation buttons remain fixed for recovery.
 
 For problems, collect `BepInEx/LogOutput.log` and describe the exact control/context. View is available for menu recovery even while the gameplay neutral gate is blocked. Remove the plugin DLL to disable the mod; keep BepInEx if other mods need it.
 

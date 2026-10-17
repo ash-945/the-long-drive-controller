@@ -12,11 +12,12 @@ v2024.11.26b. Extract the official BepInEx 5.4.23.5 Windows x64 distribution int
 `.tools/bepinex`. Both Windows and Proton use the Windows loader and plugin.
 
 ```sh
+python3 tools/fetch_controller_runtime.py
 python3 tools/build.py "/path/to/The Long Drive"
 ```
 
 The build compiles against your local game assemblies, runs the core checks,
-and creates the plugin archive in `dist/`. Game assemblies are never committed
+and creates the plugin archive in `dist/`, including the pinned SDL2 input runtime and license. The download helper verifies its official archive SHA-256. Game assemblies are never committed
 or packaged. Core checks verify action metadata and input behavior; game UI and
 vehicle interactions also need hands-on testing.
 
@@ -34,3 +35,5 @@ python3 tools/package_nexus.py
 Install into a separate game copy for testing. Do not commit credentials,
 personal configuration, or game files. Preserve existing user settings when
 changing configuration or installation behavior.
+
+Controller-family detection and hardware validation are documented in [CONTROLLER_FAMILIES.md](docs/CONTROLLER_FAMILIES.md). SDL binaries remain in the ignored tools cache; only license notices and source/build tools are committed.
