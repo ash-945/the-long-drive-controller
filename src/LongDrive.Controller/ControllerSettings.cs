@@ -75,7 +75,7 @@ namespace LongDrive.Controller
             bool fresh = Down(Buttons.Left) || Down(Buttons.Right) || Mathf.Abs(pad.LX) > .5f && Mathf.Abs(previous.LX) <= .5f;
             if (delta != 0 && (fresh || Time.unscaledTime >= nextAdjustment))
             { plugin.AdjustSetting(selected, delta); nextAdjustment = Time.unscaledTime + .15f; }
-            if (Down(Buttons.A)) plugin.AdjustSetting(selected, selected == 6 ? 0 : 1);
+            if (Down(Buttons.A)) plugin.AdjustSetting(selected, selected == 6 || selected == 9 ? 0 : 1);
             if (Down(Buttons.Y)) plugin.ResetControllerSettings();
         }
         private void Confirm(Plugin plugin)
@@ -93,17 +93,17 @@ namespace LongDrive.Controller
             var area = PanelStyle.Begin(920, 610);
             PanelStyle.Heading(new Rect(area.x + 24, area.y + 8, 720, 40), "Controller settings");
             if (PanelStyle.Choice(new Rect(area.x + 764, area.y + 10, 128, 34), "Close [B]", false, true)) { Close(); plugin.MenuActivated(); }
-            if (PanelStyle.Choice(new Rect(area.x + 24, area.y + 52, 430, 35), "Sensitivity  [LB / RB]", page == 0, true)) ChangePage(0);
+            if (PanelStyle.Choice(new Rect(area.x + 24, area.y + 52, 430, 35), "General  [LB / RB]", page == 0, true)) ChangePage(0);
             if (PanelStyle.Choice(new Rect(area.x + 464, area.y + 52, 430, 35), "Bindings  [LB / RB]", page == 1, true)) ChangePage(1);
             if (page == 0)
             {
                 ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 96, 870, 35), "[D-pad / LS] select and adjust    [A] increase / toggle    [Y] defaults", PanelStyle.Text);
                 for (int i = 0; i < plugin.SettingCount; i++)
                 {
-                    float y = area.y + 140 + i * 44;
-                    if (PanelStyle.Choice(new Rect(area.x + 24, y, 700, 38), plugin.SettingText(i), selected == i)) selected = i;
-                    if (PanelStyle.Choice(new Rect(area.x + 736, y, 70, 38), "-", false)) { selected = i; plugin.AdjustSetting(i, -1); }
-                    if (PanelStyle.Choice(new Rect(area.x + 818, y, 70, 38), "+", false)) { selected = i; plugin.AdjustSetting(i, 1); }
+                    float y = area.y + 140 + i * 36;
+                    if (PanelStyle.Choice(new Rect(area.x + 24, y, 700, 32), plugin.SettingText(i), selected == i)) selected = i;
+                    if (PanelStyle.Choice(new Rect(area.x + 736, y, 70, 32), "-", false)) { selected = i; plugin.AdjustSetting(i, -1); }
+                    if (PanelStyle.Choice(new Rect(area.x + 818, y, 70, 32), "+", false)) { selected = i; plugin.AdjustSetting(i, 1); }
                 }
                 ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 535, 870, 60), "Settings save automatically. Sprint: " + ActionCatalog.Hint(GameAction.run, false) + ".\nCrouch: " + ActionCatalog.Hint(GameAction.duck, false) + ". [B / Start / View] closes.", PanelStyle.Text);
             }

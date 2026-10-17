@@ -166,42 +166,63 @@ namespace LongDrive.Controller
 
         public static float MeasureHeight(string text, float width, GUIStyle style) => Label(new Rect(0, 0, width, 100000), text, style, false);
 
+        private struct LabelPart
+        {
+            internal float X, Width;
+            internal int Row;
+            internal string Text;
+            internal Texture2D Image;
+        }
         public static float Label(Rect area, string text, GUIStyle style, bool draw = true, bool outline = false)
         {
-            // Use fixed inline boxes with preserved aspect ratios, then wrap normal text at
-            // spaces. Font labels and game settings are never parsed as controller commands.
+            // Lay out each complete line before drawing so text and button icons
+            // share one center, including wrapped and explicit two-line captions.
             int fontSize = style.fontSize > 0 ? style.fontSize : 17;
             float line = Mathf.Max(style.lineHeight, fontSize * 1.45f);
             float iconHeight = fontSize * 1.35f;
-            float x = area.x, y = area.y;
             var labelStyle = new GUIStyle(GUI.skin.label) { font = style.font, fontSize = fontSize, fontStyle = style.fontStyle, padding = new RectOffset(), alignment = TextAnchor.MiddleLeft, wordWrap = false };
             labelStyle.normal.textColor = style.normal.textColor;
+            var parts = new List<LabelPart>();
+            var widths = new List<float> { 0 };
+            float x = 0;
+            int row = 0;
+            void NewLine() { row++; widths.Add(0); x = 0; }
+            void Add(float width, string word, Texture2D image)
+            {
+                if (x > 0 && x + width > area.width) NewLine();
+                parts.Add(new LabelPart { X = x, Row = row, Width = width, Text = word, Image = image });
+                widths[row] = x + width;
+                x += width + (image != null ? 2 : 0);
+            }
             foreach (var run in GlyphTokens.Parse(text))
             {
                 if (run.Sprite != null && Textures.TryGetValue(Key(run.Sprite), out var image))
                 {
-                    float width = iconHeight * image.width / image.height;
-                    if (x > area.x && x + width > area.xMax) { x = area.x; y += line; }
-                    if (draw && y + line <= area.yMax + 1) GUI.DrawTexture(new Rect(x, y + (line - iconHeight) / 2, width, iconHeight), image, ScaleMode.ScaleToFit, true);
-                    x += width + 2;
+                    Add(iconHeight * image.width / image.height, null, image);
                     continue;
                 }
                 foreach (string token in System.Text.RegularExpressions.Regex.Split(run.Sprite != null ? ControllerIdentity.ButtonName(run.Sprite, Family) : run.Text, @"(\n|[ \t]+)"))
                 {
                     if (token.Length == 0) continue;
-                    if (token == "\n") { x = area.x; y += line; continue; }
+                    if (token == "\n") { NewLine(); continue; }
                     float width = labelStyle.CalcSize(new GUIContent(token)).x;
-                    bool space = string.IsNullOrWhiteSpace(token);
-                    if (!space && x > area.x && x + width > area.xMax) { x = area.x; y += line; }
-                    if (draw && !space && y + line <= area.yMax + 1)
-                    {
-                        var word = new Rect(x, y, width + 1, line);
-                        DrawText(word, token, labelStyle, outline);
-                    }
-                    if (x > area.x || !space) x += width;
+                    if (string.IsNullOrWhiteSpace(token)) { if (x > 0) x += width; }
+                    else Add(width, token, null);
                 }
             }
-            return y + line - area.y;
+            bool centered = style.alignment == TextAnchor.UpperCenter || style.alignment == TextAnchor.MiddleCenter || style.alignment == TextAnchor.LowerCenter;
+            if (draw)
+                foreach (var part in parts)
+                {
+                    float y = area.y + part.Row * line;
+                    if (y + line > area.yMax + 1) continue;
+                    float offset = centered ? Mathf.Max(0, (area.width - widths[part.Row]) / 2) : 0;
+                    float left = area.x + offset + part.X;
+                    if (part.Image != null)
+                        GUI.DrawTexture(new Rect(left, y + (line - iconHeight) / 2, part.Width, iconHeight), part.Image, ScaleMode.ScaleToFit, true);
+                    else DrawText(new Rect(left, y, part.Width + 1, line), part.Text, labelStyle, outline);
+                }
+            return widths.Count * line;
         }
 
         private static void DrawText(Rect area, string text, GUIStyle style, bool outline)

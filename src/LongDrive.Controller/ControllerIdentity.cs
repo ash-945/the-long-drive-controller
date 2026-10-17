@@ -3,10 +3,24 @@ using System;
 namespace LongDrive.Controller
 {
     internal enum ControllerFamily { Xbox, PlayStation, Nintendo }
+    internal enum ControllerFamilySelection { Auto, Xbox, PlayStation, Nintendo }
     internal enum ControllerTransport { XInput, DirectInput, Hid, Virtual }
 
     internal static class ControllerIdentity
     {
+        internal static ControllerFamily Resolve(ControllerFamilySelection selection, ControllerFamily detected)
+        {
+            switch (selection)
+            {
+                case ControllerFamilySelection.Xbox: return ControllerFamily.Xbox;
+                case ControllerFamilySelection.PlayStation: return ControllerFamily.PlayStation;
+                case ControllerFamilySelection.Nintendo: return ControllerFamily.Nintendo;
+                default: return detected;
+            }
+        }
+        internal static ControllerFamilySelection Cycle(ControllerFamilySelection selection, int direction) =>
+            (ControllerFamilySelection)(((int)selection + (direction < 0 ? 3 : 1)) % 4);
+
         internal static ControllerFamily Detect(ushort vendor, string name, int sdlType, ControllerTransport transport, ushort product = 0)
         {
             // Physical identity takes precedence over a driver's normalized button layout.

@@ -1,6 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
 using BepInEx.Logging;
+using BepInEx.Configuration;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -44,10 +46,34 @@ namespace LongDrive.Controller
                 Probe(0x1234, 0x9874, "Four-axis unmapped virtual probe", ControllerFamily.PlayStation, true, 4);
                 VerifySwitching();
                 VerifyLabels();
+                VerifySavedPreferences();
                 log.LogInfo("Controller diagnostics PASS: " + checks + " native virtual-input and UI-family checks; no gameplay input generated.");
             }
             catch (Exception ex) { log.LogError("Controller diagnostics FAILED after " + checks + " checks: " + ex); }
         }
+        private static void VerifySavedPreferences()
+        {
+            string path = Path.Combine(Path.GetTempPath(), "tld-controller-preferences-" + Guid.NewGuid().ToString("N") + ".cfg");
+            try
+            {
+                foreach (ControllerFamilySelection choice in Enum.GetValues(typeof(ControllerFamilySelection)))
+                {
+                    var config = new ConfigFile(path, false);
+                    var family = config.Bind("UI", "ControllerFamily", ControllerFamilySelection.Auto);
+                    var hints = config.Bind("UI", "ShowDrivingHints", true);
+                    Require(config.SaveOnConfigSet, "Preference changes save automatically");
+                    family.Value = choice; hints.Value = false;
+                    var restarted = new ConfigFile(path, false);
+                    var savedFamily = restarted.Bind("UI", "ControllerFamily", ControllerFamilySelection.Auto);
+                    var savedHints = restarted.Bind("UI", "ShowDrivingHints", true);
+                    Require(savedFamily.Value == choice && !savedHints.Value, "Family and hidden driving hints survive config restart: " + choice);
+                    foreach (ControllerFamily detected in Enum.GetValues(typeof(ControllerFamily)))
+                        Require(ControllerIdentity.Resolve(savedFamily.Value, detected) == ControllerIdentity.Resolve(choice, detected), "Saved override resolves against new detected " + detected);
+                }
+            }
+            finally { if (File.Exists(path)) File.Delete(path); }
+        }
+
         private static void Probe(ushort vendor, ushort product, string name, ControllerFamily family, bool generic, ushort axisCount = 6)
         {
             IntPtr nativeName = Marshal.StringToHGlobalAnsi(name), stick = IntPtr.Zero;

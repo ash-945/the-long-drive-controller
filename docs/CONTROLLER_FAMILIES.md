@@ -1,4 +1,4 @@
-# Controller families and input — 0.6.4 development
+# Controller families and input — 0.6.5 development
 
 Xbox and PlayStation use their usual physical layout: Cross confirms and Circle
 cancels on PlayStation. Nintendo follows the letters printed on its buttons:
@@ -76,7 +76,7 @@ Text fallback uses family-correct button names if sprite rendering is unavailabl
 
 ## Verification
 
-Version 0.6.4 passes 1,511 core checks and 139 isolated native virtual-device/UI
+Version 0.6.5 passes 1,525 core checks and 159 isolated native virtual-device/UI
 checks under Proton: mapped Xbox, PlayStation, Nintendo, unknown,
 and unmapped joystick routes; isolated buttons; independent triggers; stick
 signs; diagonal raw POV input; disconnection; and existing legacy/TMP labels
@@ -119,3 +119,23 @@ Version 0.6.3 scoped the Xbox-mode exception to its tested device ID so
 unknown DirectInput modes can use PlayStation sprites. Version 0.6.4 adds
 verification of all 81 parsed sprite identities; the user confirmed the
 PlayStation-mode correction works.
+
+## Manual family and driving-hint preferences — 0.6.5
+
+Open Controller settings and use the General tab. Controller family cycles
+through Auto, Xbox, PlayStation, and Nintendo with left/right, +/- or confirm.
+A manual choice takes priority over detection immediately and after restarting,
+reconnecting, or changing active controllers. Select Auto to follow detection
+again. This changes button icons; SDL continues to normalize the physical input.
+Driving hint box toggles the entire driving helper panel; other interaction
+prompts remain available. Both preferences save automatically in the plugin's
+BepInEx config, under UI: ControllerFamily and ShowDrivingHints. New installations
+use Auto and show driving hints. General defaults restores those two defaults
+along with the existing sensitivity settings; saved bindings are separate.
+
+The 0.6.5 diagnostic run also verifies actual BepInEx config save-and-reload
+for all four family choices with driving hints disabled. The user confirmed all
+three changes work. Captured settings show ten accessible rows; captured action
+cards show centered labels/icons and a manual PlayStation selection while the
+connected device is detected as Xbox. The override and hint toggle remain saved
+in the installed test config. This validation was performed under Proton.

@@ -21,3 +21,14 @@ The startup log should identify sampled native button/panel/frame names, or repo
 In 0.5.4 the native menu focus outline, custom panel focus outline, and virtual pointer share an opaque royal-blue color to contrast with tan menu backgrounds. Input/navigation behavior is unchanged. The final color was approved in the interactive test.
 
 In 0.5.5 focus borders increase by one pixel: native-menu outlines are four pixels, custom-panel outlines three reference pixels. The pointer size is unchanged. Settings tabs, sensitivity rows, binding names/values, and dialog buttons now share the outlined lettering treatment. The final styling was approved in the interactive test.
+
+In 0.6.5 the General tab fits ten settings, including the saved controller-family
+override and driving hint toggle. Uncommon-action cards center each wrapped or
+explicit caption line as a group of text and controller icons, within symmetric
+horizontal insets. The existing light button face, outlined lettering, and blue
+focus border remain in use.
+
+The user tested and approved the 0.6.5 options and centered cards under Proton.
+The captured General page shows all ten settings without overlapping the footer;
+the captured Survival action cards show centered single- and two-line captions,
+including the longer Defecate instruction.

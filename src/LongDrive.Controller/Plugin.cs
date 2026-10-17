@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace LongDrive.Controller
 {
-    [BepInPlugin(Id, "The Long Drive Controller", "0.6.4")]
+    [BepInPlugin(Id, "The Long Drive Controller", "0.6.5")]
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ashley.thelongdrive.controller";
@@ -23,7 +23,8 @@ namespace LongDrive.Controller
         private readonly ActionMenu actionMenu = new ActionMenu();
         private readonly ControllerSettings controllerSettings = new ControllerSettings();
         private ConfigEntry<float> deadzone, triggerThreshold, lookSpeed, pointerSpeed, manipulationSpeed, rotationSpeed, steeringSensitivity;
-        private ConfigEntry<bool> invertY;
+        private ConfigEntry<bool> invertY, showDrivingHints;
+        private ConfigEntry<ControllerFamilySelection> familySelection;
         private ConfigEntry<string> walkingBindings, drivingBindings;
         private bool reportedRuntime;
         private bool captureRequested;
@@ -48,13 +49,17 @@ namespace LongDrive.Controller
             pointerSpeed = Config.Bind("UI", "PointerSpeed", 850f, new ConfigDescription("Virtual cursor pixels per second.", new AcceptableValueRange<float>(100, 2000)));
             steeringSensitivity = Config.Bind("Input", "SteeringStickSensitivity", 1f, new ConfigDescription("Steering stick response: lower gives finer small corrections; higher responds sooner. Full stick travel always reaches full steering. Does not affect walking or camera sensitivity.", new AcceptableValueRange<float>(.25f, 2f)));
             invertY = Config.Bind("Input", "InvertLookY", false, "Invert controller look independently of the mouse.");
+            familySelection = Config.Bind("UI", "ControllerFamily", ControllerFamilySelection.Auto,
+                "Button icon family: Auto, Xbox, PlayStation, or Nintendo. A manual choice overrides detection until Auto is selected.");
+            showDrivingHints = Config.Bind("UI", "ShowDrivingHints", true, "Show the controller hint box while driving.");
             walkingBindings = Config.Bind("Bindings", "OnFoot", "", "Saved controller bindings for on-foot gameplay. Edit using the Bindings page in controller settings.");
             drivingBindings = Config.Bind("Bindings", "Driving", "", "Saved controller bindings for driving. Edit using the Bindings page in controller settings.");
             if (!ActionCatalog.Bindings.TryLoad(walkingBindings.Value, false)) Logger.LogWarning("Invalid on-foot bindings; using defaults.");
             if (!ActionCatalog.Bindings.TryLoad(drivingBindings.Value, true)) Logger.LogWarning("Invalid driving bindings; using defaults.");
             menus = new MenuControls();
             ControllerGlyphs.Load(Logger);
-            Logger.LogInfo("Controller 0.6.4; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
+            RefreshControllerFamily();
+            Logger.LogInfo("Controller 0.6.5; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
             if (!supported) { Logger.LogError("Unsupported game version. Controller hooks disabled."); return; }
             patches = new Harmony(Id);
             patches.PatchAll(typeof(Plugin).Assembly);
@@ -65,6 +70,8 @@ namespace LongDrive.Controller
         internal bool Driving => mainscript.s != null && mainscript.s.player != null && mainscript.s.player.Car != null;
         internal bool InGameplay => context == "walking" || context == "driving";
         internal bool ControllerConnected => supported && raw.Connected;
+        internal bool ShowDrivingHints => showDrivingHints.Value;
+        private void RefreshControllerFamily() => ControllerGlyphs.SelectFamily(ControllerIdentity.Resolve(familySelection.Value, device.Family));
         internal bool CustomPanel => actionMenu.Open || controllerSettings.Open;
         private bool MenuOpen => !menuhandler.isStarted() || DataFromMenuScript.s == null || DataFromMenuScript.s.mainmenu || mainscript.s == null || mainscript.s.SomeMenuOpen();
 
@@ -80,7 +87,7 @@ namespace LongDrive.Controller
                 Logger.LogInfo(raw.Connected ? "Connected " + device.Description : "Controller disconnected; clearing controller input.");
                 wasConnected = raw.Connected;
             }
-            if (raw.Connected) ControllerGlyphs.SelectFamily(device.Family);
+            RefreshControllerFamily();
             previous = current;
             context = !supported ? "unsupported build" : !Application.isFocused ? "unfocused" :
                 inputscript.i != null && inputscript.i.usingComputer ? "computer" : MenuOpen ? "menu" : mainscript.s.SomeInputSelected() ? "text" : Driving ? "driving" : "walking";
@@ -234,7 +241,7 @@ namespace LongDrive.Controller
             previousRaw = raw; menus.Release(); SuppressTransition();
         }
         internal bool UiDown(Buttons b) => Application.isFocused && raw.Held(b) && !previousRaw.Held(b);
-        internal int SettingCount => 8;
+        internal int SettingCount => 10;
         internal string SettingText(int index)
         {
             switch (index)
@@ -247,6 +254,9 @@ namespace LongDrive.Controller
                 case 5: return $"Trigger deadzone:  {triggerThreshold.Value:0.00}";
                 case 6: return "Invert camera Y:  " + (invertY.Value ? "On" : "Off");
                 case 7: return $"Steering stick sensitivity:  {steeringSensitivity.Value:0.00}  (lower = gentler)";
+                case 8: return "Controller family:  " + (familySelection.Value == ControllerFamilySelection.Auto
+                    ? "Auto (" + device.Family + ")" : familySelection.Value.ToString());
+                case 9: return "Driving hint box:  " + (showDrivingHints.Value ? "On" : "Off");
                 default: return "";
             }
         }
@@ -262,6 +272,8 @@ namespace LongDrive.Controller
                 case 5: triggerThreshold.Value = Mathf.Clamp(triggerThreshold.Value + delta * .02f, 0, .5f); break;
                 case 6: invertY.Value = delta == 0 ? !invertY.Value : delta > 0; break;
                 case 7: steeringSensitivity.Value = Mathf.Clamp(steeringSensitivity.Value + delta * .1f, .25f, 2f); break;
+                case 8: familySelection.Value = ControllerIdentity.Cycle(familySelection.Value, delta); RefreshControllerFamily(); break;
+                case 9: showDrivingHints.Value = delta == 0 ? !showDrivingHints.Value : delta > 0; break;
             }
         }
         internal void ResetControllerSettings()
@@ -269,6 +281,8 @@ namespace LongDrive.Controller
             lookSpeed.Value = 140; rotationSpeed.Value = 120; manipulationSpeed.Value = 3;
             pointerSpeed.Value = 850; deadzone.Value = .18f; triggerThreshold.Value = .08f;
             invertY.Value = false; steeringSensitivity.Value = 1;
+            familySelection.Value = ControllerFamilySelection.Auto; showDrivingHints.Value = true;
+            RefreshControllerFamily();
         }
         internal PadState ComputerCursorPad() { Sample(); return context == "computer" ? current : default; }
 

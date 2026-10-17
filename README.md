@@ -2,7 +2,9 @@
 
 Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), Xbox, PlayStation, and Nintendo controllers, Windows x64 and Linux running the Windows game under Proton. The original game assemblies and keyboard bindings are not modified on disk.
 
-## Development: 0.6.4
+## Development: 0.6.5
+
+Controller settings now include a saved **Controller family** choice (Auto, Xbox, PlayStation, Nintendo) and a **Driving hint box** toggle. Manual family choices take priority over detection until Auto is restored. The uncommon-actions buttons center their text and icons.
 
 Adds DirectInput/HID controller input, automatic Xbox/PlayStation/Nintendo sprite selection, and updated Xbox art. All 81 supplied sprites share one UI path, including existing native labels when changing controllers. Unknown devices use Xbox for XInput and PlayStation for DirectInput. PlayStation Cross confirms menus; Nintendo uses printed A to confirm and B to cancel. Nintendo A/B and X/Y mappings and sprites follow their printed letters.
 

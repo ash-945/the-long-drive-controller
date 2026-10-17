@@ -6,6 +6,15 @@ internal static class ControllerFamilyChecks
 {
     internal static void Run(Action<bool, string> check)
     {
+        foreach (ControllerFamily detected in Enum.GetValues(typeof(ControllerFamily)))
+        {
+            check(ControllerIdentity.Resolve(ControllerFamilySelection.Auto, detected) == detected, "Auto follows detected family " + detected);
+            check(ControllerIdentity.Resolve(ControllerFamilySelection.Xbox, detected) == ControllerFamily.Xbox, "Manual Xbox survives detected " + detected);
+            check(ControllerIdentity.Resolve(ControllerFamilySelection.PlayStation, detected) == ControllerFamily.PlayStation, "Manual PlayStation survives detected " + detected);
+            check(ControllerIdentity.Resolve(ControllerFamilySelection.Nintendo, detected) == ControllerFamily.Nintendo, "Manual Nintendo survives detected " + detected);
+        }
+        check(ControllerIdentity.Cycle(ControllerFamilySelection.Nintendo, 1) == ControllerFamilySelection.Auto, "Family selector wraps forward to Auto");
+        check(ControllerIdentity.Cycle(ControllerFamilySelection.Auto, -1) == ControllerFamilySelection.Nintendo, "Family selector wraps backward");
         foreach (ControllerTransport transport in Enum.GetValues(typeof(ControllerTransport)))
         {
             check(ControllerIdentity.Detect(0x054c, "Wireless Controller", 0, transport) == ControllerFamily.PlayStation, "Sony USB identity over " + transport);
