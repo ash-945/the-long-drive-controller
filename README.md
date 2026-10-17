@@ -4,7 +4,7 @@ Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), XInput controllers
 
 ## Development preview
 
-Version 0.5.1 restyles the controller windows to match the game's pale menu panels and textured buttons. It also removes the on-screen keyboard and improves controller navigation in Save/Load. The local test build passes 1,432 core checks; its in-game appearance is awaiting visual verification. The latest tested release is 0.4.0.
+Version 0.5.2 builds on the tested 0.5.1 menu styling, keyboard removal, and Save/Load navigation. Uncommon-action labels now sit inside the lighter button face with a thin black outline. The in-game exit confirmation restricts navigation to its own buttons, defaults to No, and supports B to cancel. The build passes 1,432 core checks; these latest visual and exit-navigation changes still need an in-game check. The latest packaged stable release is 0.4.0.
 
 ## Features
 

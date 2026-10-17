@@ -21,7 +21,7 @@ namespace LongDrive.Controller
 
     internal static class PanelStyle
     {
-        public static GUIStyle Title, Text, Button;
+        public static GUIStyle Title, Text, Button, ActionButton;
         private static int skinRevision = -1;
         public static void Init()
         {
@@ -33,6 +33,7 @@ namespace LongDrive.Controller
             Button = new GUIStyle(GUI.skin.button) { font = GameMenuSkin.Font, fontSize = 18, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleLeft, padding = new RectOffset(14, 10, 6, 6) };
             Title.normal.textColor = Text.normal.textColor = GameMenuSkin.Ink;
             GameMenuSkin.ApplyButton(Button);
+            ActionButton = new GUIStyle(Button) { fontSize = 15, padding = new RectOffset(28, 24, 18, 12) };
         }
         public static Rect Begin(float width, float height)
         {
@@ -124,18 +125,18 @@ namespace LongDrive.Controller
             if (!Open || holding) return;
             var area = PanelStyle.Begin(920, 565);
             PanelStyle.Heading(new Rect(area.x + 24, area.y + 14, 720, 40), "Uncommon actions / " + ActionCatalog.MenuPages[page]);
-            if (PanelStyle.Choice(new Rect(area.x + 764, area.y + 16, 128, 34), "Back [B]", false, true)) { Close(); plugin.MenuActivated(); }
+            if (PanelStyle.Choice(new Rect(area.x + 764, area.y + 16, 128, 34), "Close [B]", false, true)) { Close(); plugin.MenuActivated(); }
             ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 60, 875, 45), "[LB] / [RB] change page     [D-pad / LS] select     [A] perform / hold     [X] toggle hold", PanelStyle.Text);
             var group = ActionCatalog.MenuGroups[page];
             for (int i = 0; i < ActionCatalog.MenuEntryCount(page); i++)
             {
                 bool defecate = ActionCatalog.IsDefecateEntry(page, i);
                 var action = defecate ? default : group[i];
-                string label = defecate ? "Defecate\n[A] perform (requires 30% bowel meter)" : (plugin.Actions.Held(action) ? "HOLDING  " : "") + ActionCatalog.Label(action) + "\n" + ActionCatalog.Hint(action, plugin.Driving);
-                if (PanelStyle.Choice(new Rect(area.x + 24 + i % 2 * 440, area.y + 115 + i / 2 * 78, 430, 70), label, selected == i, true))
+                string label = defecate ? "Defecate\n[A] perform (30% bowel meter)" : (plugin.Actions.Held(action) ? "HOLDING  " : "") + ActionCatalog.Label(action) + "\n" + ActionCatalog.Hint(action, plugin.Driving);
+                if (ControllerGlyphs.Button(new Rect(area.x + 24 + i % 2 * 440, area.y + 115 + i / 2 * 80, 430, 74), label, PanelStyle.ActionButton, selected == i, true, true))
                 { selected = i; Activate(plugin, false); }
             }
-            ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 438, 875, 65), message.Length > 0 ? message : "Hold [A] for continuous actions; release to stop. [X] toggles a hold after closing. [Y] releases toggled holds.", PanelStyle.Text);
+            ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 447, 875, 58), message.Length > 0 ? message : "Hold [A] for continuous actions; release to stop. [X] toggles a hold after closing. [Y] releases toggled holds.", PanelStyle.Text);
             ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 515, 875, 35), "[B / View] close   [Y] release holds   [Start] settings                 " + (page + 1) + " / " + ActionCatalog.MenuGroups.Length, PanelStyle.Text);
             GUI.matrix = Matrix4x4.identity;
         }

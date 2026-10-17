@@ -10,6 +10,12 @@ Save/load/delete confirmation dialogs restrict controller navigation to their ow
 
 ## Verification
 
-Build and 1,432 core checks pass, including initial Save priority, load-only fallback, hidden controls, geometric movement from the name field to Save and between save slots, and safe confirmation focus/scope. Actual native UI traversal, caption placement, and controller saving require an in-game check; the user plans to test later. No test writes or deletes a game save.
+Build and 1,432 core checks pass, including initial Save priority, load-only fallback, hidden controls, geometric movement from the name field to Save and between save slots, and safe confirmation focus/scope. The user tested 0.5.1 and reported that the Save/Load changes work. No test writes or deletes a game save.
 
 Later, open Save/Load during gameplay. Confirm Save is selected and no keyboard overlay appears. Use LB to visit slots and RB to return to Save. Use D-pad/LS between the list, name, and actions; try the pointer too. Open an overwrite confirmation and cancel it with B; no file should change. Use a disposable new save if testing actual Save. Check title-screen Load, keyboard typing, mouse handoff, and a disconnected controller separately.
+
+## Exit confirmation — 0.5.2
+
+The in-game exit confirmation uses the same scoped controller navigation: only its own controls are reachable by D-pad/LS or the virtual pointer, No receives initial focus, and B invokes the native cancel action. Opening or closing a dialog resets pointer interaction before focusing the new scope. A still invokes the selected native button. The title-screen immediate-exit behavior remains the game's own behavior.
+
+In-game verification is pending: open Exit from the pause menu, check that No is selected, move between Yes and No, and cancel with B. Check pointer navigation too. No automated check invokes Yes or quits the game.

@@ -5,7 +5,7 @@
     <NoStdLib>true</NoStdLib>
     <LangVersion>latest</LangVersion>
     <AssemblyName>LongDrive.Controller</AssemblyName>
-    <Version>0.5.1</Version>
+    <Version>0.5.2</Version>
     <GameDir Condition="'$(GameDir)' == ''">$(TLD_GAME_DIR)</GameDir>
     <ManagedDir>$(GameDir)/TheLongDrive_Data/Managed</ManagedDir>
     <LoaderDir>$(MSBuildProjectDirectory)/../../.tools/bepinex/BepInEx/core</LoaderDir>

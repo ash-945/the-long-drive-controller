@@ -92,7 +92,7 @@ namespace LongDrive.Controller
             if (!Open) return;
             var area = PanelStyle.Begin(920, 610);
             PanelStyle.Heading(new Rect(area.x + 24, area.y + 8, 720, 40), "Controller settings");
-            if (PanelStyle.Choice(new Rect(area.x + 764, area.y + 10, 128, 34), "Back [B]", false, true)) { Close(); plugin.MenuActivated(); }
+            if (PanelStyle.Choice(new Rect(area.x + 764, area.y + 10, 128, 34), "Close [B]", false, true)) { Close(); plugin.MenuActivated(); }
             if (PanelStyle.Choice(new Rect(area.x + 24, area.y + 52, 430, 35), "Sensitivity  [LB / RB]", page == 0, true)) ChangePage(0);
             if (PanelStyle.Choice(new Rect(area.x + 464, area.y + 52, 430, 35), "Bindings  [LB / RB]", page == 1, true)) ChangePage(1);
             if (page == 0)
