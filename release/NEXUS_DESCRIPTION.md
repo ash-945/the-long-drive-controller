@@ -2,9 +2,14 @@
 
 **Play The Long Drive with Xbox, PlayStation, and Nintendo controllers, including menus, driving, and object handling.** Automatic button icons, editable bindings, toggle sprint and crouch, and adjustable steering bring the controls together in one mod.
 
-**Version 0.6.6 beta • For game v2024.11.26b**
+**Version 0.6.7 beta • For game v2024.11.26b**
 
 ## New in this update
+
+- **Gradual steering:** holding full stick now approaches full lock over time. Releasing or reversing also moves gradually. The new **Steering time to full lock** option defaults to **0.75 seconds**; higher values turn more slowly.
+- **Separate curve and speed settings:** the existing sensitivity value is now labelled **Steering stick curve**. Existing saved values are preserved. Duplicate native joystick steering is blocked while the mod controls the pad, so it cannot override the ramp; keyboard steering remains available.
+
+Controller-family improvements included in this release:
 
 - **DirectInput and HID support** alongside XInput, with automatic Xbox, PlayStation, and Nintendo controller identification.
 - **81 controller sprites**, including refreshed Xbox artwork, used throughout interaction prompts, native Controls rows, driving hints, and controller menus.
@@ -66,6 +71,8 @@ The included **CONTROLS.md** covers modifiers, inventory, menus, bindings, and t
 
 In Controller settings, LB/RB switches General/Bindings. On General, select with up/down, adjust with left/right or +/−, confirm increases or toggles, and the upper face button restores defaults. **Controller family** saves a manual icon choice across restarts and reconnections; choose Auto to restore detection. **Driving hint box** hides or shows the seated helper without hiding other interaction prompts. General defaults restores Auto and enables driving hints; it does not reset bindings.
 
+**Steering time to full lock** is adjustable from **0.10 to 3.00 seconds** in General. It limits how quickly steering approaches the stick target, rather than limiting maximum steering. Holding full stick still reaches full lock. Release returns gradually toward center, and full left-to-right reversal takes roughly twice the center-to-lock time. The setting also controls pointer-steering rate and saves automatically. General defaults restores 0.75 seconds. **Steering stick curve** (0.25–2.00, default 1.00) separately shapes partial-stick input.
+
 On Bindings, the left face button switches profiles, LT/RT changes categories, confirm begins capture, and RS click clears a binding. Release all controls before entering a new combination, then release again to save. Occupied bindings require swap confirmation. Start/View and menu navigation remain fixed for recovery.
 
 ## Detection and compatibility
@@ -74,7 +81,7 @@ Known devices use their vendor identity, name, and SDL controller type. Unknown 
 
 Steam Input and other mappers may expose a physical controller as a virtual Xbox device. Avoid simultaneous controller-to-keyboard mappings that cause duplicate input. Unmapped DirectInput devices use a conventional PlayStation-style fallback; unusual layouts may need an SDL mapping in `gamecontrollerdb.txt` beside the plugin. Device-specific USB/Bluetooth behavior is not universal.
 
-This is a **beta**, tested interactively on Linux/Proton with an 8BitDo controller in Xbox, Nintendo, and generic DirectInput modes. Nintendo letter mapping and the PlayStation fallback prompts were confirmed during testing, as were manual family selection, driving-hint preferences, and centered action captions. Version 0.6.6 passes 1,525 core checks; the preceding 0.6.5 runtime passed 159 native input/UI/config checks and verified all 81 sprite identities. Native Windows hardware and genuine Sony-controller hardware have not been independently tested. Other game versions, every vehicle/menu, multiplayer/VR activity, and third-party mod menus have not been exhaustively tested.
+This is a **beta**, tested interactively on Linux/Proton with an 8BitDo controller in Xbox, Nintendo, and generic DirectInput modes. Nintendo letter mapping and the PlayStation fallback prompts were confirmed during testing, as were manual family selection, driving-hint preferences, and centered action captions. Version 0.6.7 passes 1,554 core checks and 172 native input/UI/config checks under Proton, including an inactive fixture exercising the actual game steering method and saved steering-time reload. All 81 sprite identities were verified. These checks do not replace exhaustive vehicle-physics or driving-feel testing. Native Windows hardware and genuine Sony-controller hardware have not been independently tested. Other game versions, every vehicle/menu, multiplayer/VR activity, and third-party mod menus have not been exhaustively tested.
 
 ## Text entry, removal, and support
 
@@ -82,7 +89,7 @@ Use a physical keyboard for custom save names and the in-game computer. The game
 
 To uninstall, remove `BepInEx/plugins/LongDrive.Controller`; optionally remove the mod config. Keep BepInEx if other mods need it.
 
-If the mod does not load, check the executable path, BepInEx installation, `HideManagerGameObject`, and Proton override. Look for **The Long Drive Controller 0.6.6** in `BepInEx/LogOutput.log`. If only XInput works, check that `TLDControllerSDL2.dll` is present and that the log does not report an SDL runtime failure. If icons are wrong, select Controller family manually or return it to Auto.
+If the mod does not load, check the executable path, BepInEx installation, `HideManagerGameObject`, and Proton override. Look for **The Long Drive Controller 0.6.7** in `BepInEx/LogOutput.log`. If only XInput works, check that `TLDControllerSDL2.dll` is present and that the log does not report an SDL runtime failure. If icons are wrong, select Controller family manually or return it to Auto.
 
 For support, include game/mod versions, OS/Proton, controller model/mode, Steam Input setup, the failed action, and the log. After reconnecting or changing contexts, release all controls to neutral before resuming gameplay.
 

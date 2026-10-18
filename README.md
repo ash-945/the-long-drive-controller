@@ -2,7 +2,7 @@
 
 Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), Xbox, PlayStation, and Nintendo controllers, Windows x64 and Linux running the Windows game under Proton. The original game assemblies and keyboard bindings are not modified on disk.
 
-## Development: 0.6.7
+## Release package: 0.6.7 beta
 
 Steering now approaches the stick target gradually, with a saved **Steering time to full lock** option (default 0.75 seconds; higher is slower). Full steering lock remains available when held. The existing sensitivity value is now labelled **Steering stick curve** because it changes response shape rather than turn rate. Native duplicate gamepad steering no longer bypasses these controls; keyboard steering remains available.
 
@@ -26,7 +26,7 @@ The development package includes a private SDL2 Windows x64 runtime and its lice
 - Object rotation defaults to 120 degrees/second before game weight/zoom effects, independently of mouse sensitivity. LB no longer slows every rotation.
 - Save/Load starts on Save when available, skips metadata fields, and offers RB to focus Save and LB to return to save slots. Confirmation dialogs keep their own selection. Text entry uses your physical keyboard; no on-screen keyboard opens.
 
-Steering stick sensitivity is adjustable in View → Start, from 0.25 to 2.00 (default 1.00). Lower values give finer small steering corrections; higher values turn sooner. Full stick travel always reaches full steering lock. It also applies to the optional stick pointer-steering mode.
+General settings has separate **Steering stick curve** (0.25–2.00, default 1.00) and **Steering time to full lock** (0.10–3.00 seconds, default 0.75). The curve shapes partial-stick input; higher time-to-lock values turn more gradually. Full stick still reaches full steering lock when held. Release and reversal are gradual too. Pointer steering uses the same rate. Existing saved curve values are preserved.
 
 An optional compact driving hint panel appears at the bottom while seated, covering steering, pedals, ignition, handbrake, clutch, shifting, lights, horn, and exit. It hides with the HUD, menus, sleep, death, and controller disconnection.
 

@@ -1,3 +1,24 @@
+0.6.7 BETA - GRADUAL STEERING
+- Controller steering approaches the stick target gradually instead of snapping
+  immediately. Holding full stick still reaches full lock; releasing or reversing
+  moves smoothly toward the new target.
+- General settings adds Steering time to full lock: 0.10-3.00 seconds, default
+  0.75 seconds from center to full lock. Higher values turn more slowly.
+- Renames the existing sensitivity label to Steering stick curve to distinguish
+  target shape from steering speed. Existing saved curve values are preserved.
+- Blocks duplicate native joystick steering bindings and Joy-axis steering-wheel
+  contributions while a mod controller is connected, so they cannot bypass the
+  ramp. Keyboard/mouse steering bindings remain available; native joystick
+  steering returns when the mod controller is disconnected.
+- Clears ramp state on disabled input, menu/focus changes and disconnects.
+- Pointer steering uses the new time-to-lock setting too. General defaults
+  restores 0.75 seconds. The General page now fits eleven settings.
+- 1,554 core checks pass, including timelines at 30/60/144 FPS. 172 native
+  input/UI/config checks pass under Proton, including an inactive fixture using
+  the actual DriveStuff method and saved steering time reload. All 81 parsed
+  sprite identities verify. This is not exhaustive vehicle-physics, hardware
+  or native Windows validation.
+
 0.6.6 BETA - CONTROLLER FAMILIES AND PREFERENCES
 - Adds DirectInput and HID controller input alongside XInput through a bundled
   private SDL2 Windows x64 runtime, used on Windows and under Linux/Proton.

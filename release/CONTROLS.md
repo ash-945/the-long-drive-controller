@@ -1,4 +1,4 @@
-# Controller reference — 0.6.6 beta
+# Controller reference — 0.6.7 beta
 
 The tables below describe default bindings. Gameplay assignments can be changed independently for on-foot/driving in the Bindings page of controller settings; current in-game hints follow your saved bindings.
 
@@ -58,7 +58,23 @@ LS and RS mean the left and right sticks; a stick click means pressing the stick
 | Contextual use / exit | X |
 | Select a specific gear | View → Gears |
 
-Native vehicle/transmission rules still apply. Small hints appear while seated and hide with the HUD and menus. Steering sensitivity and the Driving hint box on/off option are in General settings.
+Native vehicle/transmission rules still apply. Small hints appear while seated and hide with the HUD and menus. Steering time to full lock, Steering stick curve, and the Driving hint box toggle are in General settings.
+
+### Steering rate
+
+Holding full stick approaches full lock gradually. **Steering time to full lock**
+sets the center-to-lock time from 0.10 to 3.00 seconds (default 0.75); higher is
+slower. Partial-stick input approaches its smaller target, release returns toward
+center gradually, and full reversal takes about twice the center-to-lock time.
+**Steering stick curve** is the old sensitivity setting (0.25–2.00, default 1.00).
+It shapes the target separately; existing saved values remain valid. Both options
+save automatically. General defaults restores the default curve and 0.75-second
+rate. Pointer steering uses the time-to-lock setting too.
+
+While a mod controller is connected, duplicate native Joy-axis wheel input and
+joystick steering bindings are suppressed so they cannot bypass the ramp.
+Keyboard/mouse steering bindings remain available. Native joystick steering
+returns when the mod controller disconnects; native configuration is preserved.
 
 ## Menus and settings
 

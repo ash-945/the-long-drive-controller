@@ -1,5 +1,5 @@
 THE LONG DRIVE - CONTROLLER SUPPORT
-Version 0.6.6 beta | Game v2024.11.26b
+Version 0.6.7 beta | Game v2024.11.26b
 
 REQUIREMENTS
 - The Long Drive v2024.11.26b (tested build reports 2024.11.26b_test).
@@ -88,8 +88,21 @@ Driving hint box toggles the entire seated helper panel. General defaults
 restores Auto and enables driving hints. Settings save automatically to:
 BepInEx/config/ashley.thelongdrive.controller.cfg
 
-Steering sensitivity: 0.25-2.00, default 1.00. Lower is gentler around the
-center. Full stick travel always reaches full steering lock.
+STEERING
+Steering time to full lock: 0.10-3.00 seconds, default 0.75. Higher is slower.
+The wheels gradually approach the stick target. Full stick still reaches full
+lock when held. Release approaches center gradually; full left-to-right reversal
+takes about twice the center-to-lock time. Pointer steering uses this rate too.
+General defaults restores 0.75 seconds. The config entry is:
+  [Input] SteeringSecondsToFullLock
+
+Steering stick curve: 0.25-2.00, default 1.00. This is the former steering
+sensitivity setting; existing saved values are preserved. Lower values soften
+partial-stick input. This shapes the target and is separate from steering rate.
+Native Joy-axis wheel input and joystick steering bindings are ignored while
+a mod controller is connected to avoid duplicate input bypassing the ramp.
+Keyboard/mouse steering bindings remain available. Native joystick steering
+returns when the mod controller is disconnected. Native settings are not changed.
 
 MENUS AND TEXT ENTRY
 The controller windows use the game's textured menu panels with outlined
@@ -117,7 +130,7 @@ the mod's configuration file. Keep BepInEx if other mods depend on it.
 
 TROUBLESHOOTING
 No controller menu: check BepInEx/LogOutput.log for
-"Loading [The Long Drive Controller 0.6.6]".
+"Loading [The Long Drive Controller 0.6.7]".
 No BepInEx log: check loader installation and, on Proton, the winhttp override.
 Plugin loads but no controls: check device mode, focus, and the Chainloader
 setting above. DirectInput unavailable: check TLDControllerSDL2.dll is installed
