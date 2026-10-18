@@ -1,8 +1,23 @@
-# XInput controller reference — 0.5.5 beta
+# Controller reference — 0.6.7 beta
 
 The tables below describe default bindings. Gameplay assignments can be changed independently for on-foot/driving in the Bindings page of controller settings; current in-game hints follow your saved bindings.
 
-Xbox button names are used. LS and RS mean the left and right sticks; a stick click means pressing the stick inward. View may be labelled Back or Select on your controller.
+Xbox names are used in the tables. In-game icons follow the automatic or saved
+manual family selection. The equivalent controls are:
+
+| Xbox / table name | PlayStation | Nintendo |
+| --- | --- | --- |
+| A | Cross | A (right) |
+| B | Circle | B (lower) |
+| X | Square | X (upper) |
+| Y | Triangle | Y (left) |
+| LB / RB | L1 / R1 | L / R |
+| LT / RT | L2 / R2 | ZL / ZR |
+| View / Back | Select / Share | Minus |
+| Start | Start / Options | Plus |
+
+Nintendo follows printed letters, rather than Xbox face-button positions.
+LS and RS mean the left and right sticks; a stick click means pressing the stick inward. View may be labelled Back or Select on your controller.
 
 ## On foot
 
@@ -43,7 +58,23 @@ Xbox button names are used. LS and RS mean the left and right sticks; a stick cl
 | Contextual use / exit | X |
 | Select a specific gear | View → Gears |
 
-Native vehicle/transmission rules still apply. Small hints appear while seated and hide with the HUD and menus. Steering sensitivity can be adjusted in controller settings.
+Native vehicle/transmission rules still apply. Small hints appear while seated and hide with the HUD and menus. Steering time to full lock, Steering stick curve, and the Driving hint box toggle are in General settings.
+
+### Steering rate
+
+Holding full stick approaches full lock gradually. **Steering time to full lock**
+sets the center-to-lock time from 0.10 to 3.00 seconds (default 0.75); higher is
+slower. Partial-stick input approaches its smaller target, release returns toward
+center gradually, and full reversal takes about twice the center-to-lock time.
+**Steering stick curve** is the old sensitivity setting (0.25–2.00, default 1.00).
+It shapes the target separately; existing saved values remain valid. Both options
+save automatically. General defaults restores the default curve and 0.75-second
+rate. Pointer steering uses the time-to-lock setting too.
+
+While a mod controller is connected, duplicate native Joy-axis wheel input and
+joystick steering bindings are suppressed so they cannot bypass the ramp.
+Keyboard/mouse steering bindings remain available. Native joystick steering
+returns when the mod controller disconnects; native configuration is preserved.
 
 ## Menus and settings
 
@@ -59,7 +90,11 @@ Native vehicle/transmission rules still apply. Small hints appear while seated a
 
 In the action menu, LB/RB changes pages. A performs an action; hold A for supported continuous actions. The menu hides while holding and returns on release. X toggles supported holds; Y releases toggled holds. B or View closes. Survival is the first page and includes Defecate, which requires at least 30% bowel meter. Tools, Gears, Camera, and System contain other uncommon actions. Multiplayer and VR actions still require their native contexts.
 
-In controller settings, up/down selects and left/right adjusts. A increases or toggles, Y restores defaults, and B/Start/View closes. Values save automatically.
+In controller settings, up/down selects and left/right adjusts. A increases or toggles, Y restores defaults, and B/Start/View closes. Values save automatically. General includes Controller family (Auto, Xbox,
+PlayStation, Nintendo) and Driving hint box (On/Off). A manual family choice
+persists and overrides detection until Auto is selected again. It changes the
+icons without changing SDL input normalization. General defaults resets Auto
+and enables driving hints; saved bindings are separate.
 
 ## Save/Load, confirmations, and text entry
 
@@ -69,7 +104,7 @@ Opening the pause/title menu or returning from a submenu prefers Continue, or Ne
 
 The on-screen keyboard has been removed. Type custom save names and computer text with a physical keyboard. The game still generates a default new-save name. RS moves the in-game computer cursor; B or Start exits the computer.
 
-After reconnecting or changing contexts, release all controls to neutral before resuming gameplay. Controller prompts return to keyboard/mouse labels on disconnect. Free stick movement remains labelled LS/RS because the supplied stick sprites depict clicks.
+After reconnecting or changing contexts, release all controls to neutral before resuming gameplay. Controller prompts return to keyboard/mouse labels on disconnect. Free stick movement and directions use the supplied stick artwork.
 
 ## Rebinding
 

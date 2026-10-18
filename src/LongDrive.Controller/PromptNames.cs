@@ -9,7 +9,7 @@ namespace LongDrive.Controller
         private static inputscript.oneInput[] source;
         private static readonly Dictionary<inputscript.oneInput, GameAction> lookup = new Dictionary<inputscript.oneInput, GameAction>();
         private static bool lastConnected, lastDriving;
-        private static int lastRevision = -1;
+        private static int lastRevision = -1, lastGlyphRevision = -1;
 
         public static string Get(inputscript.oneInput input)
         {
@@ -29,9 +29,10 @@ namespace LongDrive.Controller
 
         public static void Refresh(Plugin plugin, bool force = false)
         {
-            if (!force && lastRevision == ActionCatalog.Bindings.Revision && lastConnected == plugin.ControllerConnected && lastDriving == plugin.Driving) return;
+            if (!force && lastGlyphRevision == ControllerGlyphs.Revision && lastRevision == ActionCatalog.Bindings.Revision && lastConnected == plugin.ControllerConnected && lastDriving == plugin.Driving) return;
             if (settingsscript.s == null || mainscript.s == null || !menuhandler.isStarted()) return;
             lastRevision = ActionCatalog.Bindings.Revision;
+            lastGlyphRevision = ControllerGlyphs.Revision;
             lastConnected = plugin.ControllerConnected;
             lastDriving = plugin.Driving;
             mainscript.s.RefreshHelpTexts();

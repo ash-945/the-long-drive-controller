@@ -41,3 +41,30 @@ Build and 1,420 core checks pass. On 2026-10-16, the end-user installation loade
 ## Menu update release (0.5.5)
 
 The user tested the final menu styling and navigation changes under Linux/Proton and approved packaging. The release keeps the tested DLL, with 1,436 core checks passing and no build warnings/errors. Changes include removal of the on-screen keyboard, Save/Load shortcuts and scoped confirmations, Continue-first top-level menus, and native textured panels with outlined text and blue focus borders. Native Windows and exhaustive device/activity coverage remain unverified.
+
+## 0.6.7 steering rate
+
+The old SteeringStickSensitivity setting remains compatible and is labelled
+Steering stick curve. It shapes the deadzone-filtered target but retains full
+lock. A separate SteeringSecondsToFullLock config value, also exposed in General,
+limits how quickly controller steering approaches that target. The default is
+0.75 seconds from center to full lock; range 0.10–3.00 seconds. Higher is slower.
+Release and reversals also approach their targets gradually. The ramp advances
+once per input sample/frame and clamps long frame deltas to avoid abrupt jumps.
+Context changes, disabled gameplay input, focus loss, menus and disconnects
+clear it. It follows the resolved steering bindings and leaves camera and
+walking input alone. Pointer steering uses the same time-to-lock rate.
+
+The game merges native GetAxis results with mod input and can add a separate
+native steering-wheel axis. While a mod controller is connected, native joystick
+steering bindings and the native Joy-axis steering-wheel contribution are ignored
+to prevent an unshaped duplicate from overriding the ramp. Keyboard/mouse
+steering bindings remain available. Native wheel/joystick steering returns when
+the mod's controller is disconnected. No native settings or bindings are saved
+or changed by these guards. Non-steering native inputs are unchanged.
+
+The 0.6.7 build passes 1,554 core checks and 172 native input/UI/config checks
+under Proton. The actual DriveStuff calculation was exercised in an inactive
+fixture with deterministic steering input; it preserved the gradual target,
+reached full lock, and centered on release. The guard count is one and the
+new setting survives config reload. Hands-on driving feel is still pending.

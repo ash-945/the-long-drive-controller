@@ -10,7 +10,7 @@ namespace LongDrive.Controller
         private static GUIStyle textStyle;
         public static void Draw(Plugin plugin)
         {
-            if (!plugin.ControllerConnected || !plugin.Driving || !plugin.InGameplay || plugin.CustomPanel ||
+            if (!plugin.ShowDrivingHints || !plugin.ControllerConnected || !plugin.Driving || !plugin.InGameplay || plugin.CustomPanel ||
                 mainscript.s == null || !mainscript.s.showcrosshair2 || mainscript.s.sleeping || mainscript.s.player.died) return;
             PanelStyle.Init();
             if (textStyle == null) { textStyle = new GUIStyle(PanelStyle.Text) { fontSize = 13 }; textStyle.normal.textColor = Color.white; }

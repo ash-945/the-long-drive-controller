@@ -33,7 +33,7 @@ namespace LongDrive.Controller
             Button = new GUIStyle(GUI.skin.button) { font = GameMenuSkin.Font, fontSize = 16, fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleLeft, padding = new RectOffset(22, 18, 7, 7) };
             Title.normal.textColor = Text.normal.textColor = GameMenuSkin.Ink;
             GameMenuSkin.ApplyButton(Button);
-            ActionButton = new GUIStyle(Button) { fontSize = 15, padding = new RectOffset(28, 24, 18, 12) };
+            ActionButton = new GUIStyle(Button) { fontSize = 15, alignment = TextAnchor.MiddleCenter, padding = new RectOffset(28, 28, 18, 12) };
         }
         public static Rect Begin(float width, float height)
         {

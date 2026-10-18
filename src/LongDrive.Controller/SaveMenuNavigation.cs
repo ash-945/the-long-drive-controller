@@ -12,6 +12,7 @@ namespace LongDrive.Controller
         private TMP_Text hintLabel;
         private Text legacyHint;
         private string original, marked;
+        private int hintRevision = -1;
         internal bool Active => screen != null && screen.isActiveAndEnabled;
         internal GameObject Scope => scope;
 
@@ -119,16 +120,18 @@ namespace LongDrive.Controller
             if (tmp != hintLabel || legacy != legacyHint)
             { RestoreHint(); hintLabel = tmp; legacyHint = legacy; }
             string current = hintLabel != null ? hintLabel.text : legacyHint.text;
-            if (current == marked) return;
-            original = current;
+            if (current == marked && hintRevision == ControllerGlyphs.Revision) return;
+            if (current != marked && !ControllerGlyphs.ContainsMarkup(current)) original = current;
+            else if (original == null) original = current;
+            hintRevision = ControllerGlyphs.Revision;
             marked = original + (hintLabel != null ? " <size=60%>" : " <size=16>") + ControllerGlyphs.Tmp("[RB: focus]") + "</size>";
             if (hintLabel != null) hintLabel.text = marked;
             else legacyHint.text = marked;
         }
         private void RestoreHint()
         {
-            if (hintLabel != null && hintLabel.text == marked) hintLabel.text = original;
-            if (legacyHint != null && legacyHint.text == marked) legacyHint.text = original;
+            if (hintLabel != null && (hintLabel.text == marked || hintLabel.text == ControllerGlyphs.Retarget(marked))) hintLabel.text = original;
+            if (legacyHint != null && (legacyHint.text == marked || legacyHint.text == ControllerGlyphs.Retarget(marked))) legacyHint.text = original;
             hintLabel = null; legacyHint = null; original = marked = null;
         }
         internal void Release() { RestoreHint(); screen = null; scope = confirmation = null; }

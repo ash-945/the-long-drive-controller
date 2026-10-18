@@ -1,0 +1,2 @@
+# Preserve upstream license and distribution notices verbatim, including whitespace.
+third_party/*.txt -whitespace

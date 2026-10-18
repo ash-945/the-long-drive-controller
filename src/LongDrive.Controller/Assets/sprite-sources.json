@@ -1,0 +1,326 @@
+{
+  "Xbox/A": {
+    "source": "Xbox Series/xbox_button_color_a_outline.png",
+    "sha256": "c4c41a54b9ad9f364be74aef75419b280f49674276276cbea44c49d8797aabba"
+  },
+  "Xbox/B": {
+    "source": "Xbox Series/xbox_button_color_b_outline.png",
+    "sha256": "3e6913b64635be618b8c3ed8d516dbf259616ccadb6157d2d33b7479fe30cba7"
+  },
+  "Xbox/X": {
+    "source": "Xbox Series/xbox_button_color_x_outline.png",
+    "sha256": "4560710e9c32139d1c54357c78c93a69447f31e429835900cc903744f8b486e4"
+  },
+  "Xbox/Y": {
+    "source": "Xbox Series/xbox_button_color_y_outline.png",
+    "sha256": "b226f3d2f0330732b3b61f9b94043c3f0a3402ed2e11bd87db06d499e4a46d45"
+  },
+  "Xbox/LB": {
+    "source": "Xbox Series/xbox_lb_outline.png",
+    "sha256": "b1c95a1576fa3284a3c2791a53f9d126a4e4cf9d66f5c05a40744a1a7b3baa4c"
+  },
+  "Xbox/RB": {
+    "source": "Xbox Series/xbox_rb_outline.png",
+    "sha256": "614914e9fd5e1a5615c8c94deed378516351140e1f38ddd02da768c1c7b0517e"
+  },
+  "Xbox/LT": {
+    "source": "Xbox Series/xbox_lt_outline.png",
+    "sha256": "2acc348855449d0ef23d0a4d74249cfe280cf936fcf33e3e66df7188d608c72a"
+  },
+  "Xbox/RT": {
+    "source": "Xbox Series/xbox_rt_outline.png",
+    "sha256": "c955c3db9519999d59d3f8fe146ed836f7344ac7165faa31fb536ad487a2f28e"
+  },
+  "Xbox/L3": {
+    "source": "Xbox Series/xbox_ls_outline.png",
+    "sha256": "ea1df79fd511918298782645ae015b2da22ef4f69526387c9d467eadf3aada79"
+  },
+  "Xbox/R3": {
+    "source": "Xbox Series/xbox_rs_outline.png",
+    "sha256": "bf1096e16876188431cb594d1d069a08e363d168863a335528955ddcea8c9a55"
+  },
+  "Xbox/Select": {
+    "source": "Xbox Series/xbox_button_view_outline.png",
+    "sha256": "f02e420cd758fc1d64005f5c2157a328547e1ba9244edd2a3112d99d3a7dc57d"
+  },
+  "Xbox/Start": {
+    "source": "Xbox Series/xbox_button_menu_outline.png",
+    "sha256": "4a0378365985510f798d67aad3738bb6553146b3093e1ae12a966b18bd59936a"
+  },
+  "Xbox/DPad_UP": {
+    "source": "Xbox Series/xbox_dpad_up_outline.png",
+    "sha256": "b9a2e343414fb25df5bdd145dceef22448eedc2fbfaf87f8fc5c82ae65cce52a"
+  },
+  "Xbox/DPad_Down": {
+    "source": "Xbox Series/xbox_dpad_down_outline.png",
+    "sha256": "c25ce9ad377a0d3f11f2886923106177d14148f10b558a6ce668393a43d15989"
+  },
+  "Xbox/DPad_Left": {
+    "source": "Xbox Series/xbox_dpad_left_outline.png",
+    "sha256": "9a745da25db1791460407cd343ad5420654d50805bf4a3b994903c16521b8a1a"
+  },
+  "Xbox/DPad_Right": {
+    "source": "Xbox Series/xbox_dpad_right_outline.png",
+    "sha256": "cd213fcdcd6f12045968509101fe80263b7e344aedc13b61eb5927f9f4e28a24"
+  },
+  "Xbox/LS": {
+    "source": "Xbox Series/xbox_stick_l.png",
+    "sha256": "68edebe98e5efdbfc800154bcc523e67c6b6812df39ee45cf5a6362d6d670861"
+  },
+  "Xbox/RS": {
+    "source": "Xbox Series/xbox_stick_r.png",
+    "sha256": "0b4b5433b6706aea900c26523b07ccf430a3d203407773552a1bda8c3d5ddfb7"
+  },
+  "Xbox/DPad": {
+    "source": "Xbox Series/xbox_dpad.png",
+    "sha256": "8a8443c22a3f210a2634eda9e4704780b41b6d96325ee786d632a534edbb0a90"
+  },
+  "Xbox/LS_Up": {
+    "source": "Xbox Series/xbox_stick_l_up.png",
+    "sha256": "fd3fc11c0aa84a26c26ecd9cf59f545b7500c819356193e73e96c051462b33ea"
+  },
+  "Xbox/LS_Down": {
+    "source": "Xbox Series/xbox_stick_l_down.png",
+    "sha256": "0adabdf37e08e280ec2921c30223bbdfc36fdb0d6a27298fa9b6cfe680fb0869"
+  },
+  "Xbox/LS_Left": {
+    "source": "Xbox Series/xbox_stick_l_left.png",
+    "sha256": "722e4b751fdc4dc22fadc845b0c6d83dd3dfda429c9ddb2a96c9292a3f26eee4"
+  },
+  "Xbox/LS_Right": {
+    "source": "Xbox Series/xbox_stick_l_right.png",
+    "sha256": "739306973d12bbf17d98f087319565c6a490522b9eccd7a717da02d1aa157fc0"
+  },
+  "Xbox/RS_Up": {
+    "source": "Xbox Series/xbox_stick_r_up.png",
+    "sha256": "e597eba5a1a6ef405633173abbb776943e9f85aad8f512dc80a980abdbd0af51"
+  },
+  "Xbox/RS_Down": {
+    "source": "Xbox Series/xbox_stick_r_down.png",
+    "sha256": "5a0f076217b36e87fe25a6cfd1365ee0a022da95e6f644faf3d3fd10cc295368"
+  },
+  "Xbox/RS_Left": {
+    "source": "Xbox Series/xbox_stick_r_left.png",
+    "sha256": "f599d0ef469ed77955c7de4276464453f0e7bf9f7953c701d786b97095712ce7"
+  },
+  "Xbox/RS_Right": {
+    "source": "Xbox Series/xbox_stick_r_right.png",
+    "sha256": "a7cca7c77a257d6fec2040725b80c31df8d619c3540981a6bac588764c55102f"
+  },
+  "PlayStation/A": {
+    "source": "PlayStation Series/playstation_button_color_cross_outline.png",
+    "sha256": "2049349d033137b7261d9b4cc162686394280409d9df1124b4a1c3312e07c2bc"
+  },
+  "PlayStation/B": {
+    "source": "PlayStation Series/playstation_button_color_circle_outline.png",
+    "sha256": "72a36239ee066bf79b68d26c9d92572cdcfdd484bff990811f042120bd91add5"
+  },
+  "PlayStation/X": {
+    "source": "PlayStation Series/playstation_button_color_square_outline.png",
+    "sha256": "657e2c2ee93f5c154d166a86bf976c5764b3bc44be034617e4c0e0e36440554b"
+  },
+  "PlayStation/Y": {
+    "source": "PlayStation Series/playstation_button_color_triangle_outline.png",
+    "sha256": "41bf8a6f1b3e94c72faba0e0c5420e41152a3e36e619bbf68c8e122df1da9303"
+  },
+  "PlayStation/LB": {
+    "source": "PlayStation Series/playstation_trigger_l1_alternative_outline.png",
+    "sha256": "d2c07db14b05271d265852e649b6d620797987bd8985842a67ab19b2340735e4"
+  },
+  "PlayStation/RB": {
+    "source": "PlayStation Series/playstation_trigger_r1_alternative_outline.png",
+    "sha256": "af6cb63caa6ed9efd9f644a5043387b670b6bf691ae22d8efb5e558fce740e63"
+  },
+  "PlayStation/LT": {
+    "source": "PlayStation Series/playstation_trigger_l2_outline.png",
+    "sha256": "50bfd53c85cfd3711daaf3a7bc18eb7753e35e38515c2bfae15e92e94f72d6fe"
+  },
+  "PlayStation/RT": {
+    "source": "PlayStation Series/playstation_trigger_r2_outline.png",
+    "sha256": "d0c4174cf93b7f61e1a1999fe4aaaf23cc9e24606ab6f4eabcd4fee9d3976ebd"
+  },
+  "PlayStation/L3": {
+    "source": "PlayStation Series/playstation_button_l3_outline.png",
+    "sha256": "9f1eac688e23564ae2632afcf8167613a1de8d1a980db918f9b0b23989f6f81c"
+  },
+  "PlayStation/R3": {
+    "source": "PlayStation Series/playstation_button_r3_outline.png",
+    "sha256": "c2e25caee90175fb11e19f5bce520929659d0e78fbeda927421440ed419c7870"
+  },
+  "PlayStation/Select": {
+    "source": "PlayStation Series/playstation3_button_select_outline.png",
+    "sha256": "0b8b4c7090c96f90e6afff56ae45953ccd98871b371d7e6b1229c828bfd03f50"
+  },
+  "PlayStation/Start": {
+    "source": "PlayStation Series/playstation3_button_start_outline.png",
+    "sha256": "c4dfa3869a2fcc28dfc2c8ff592f6ff5068d2ac65ce51059c4e99a92d126d22e"
+  },
+  "PlayStation/DPad_UP": {
+    "source": "PlayStation Series/playstation_dpad_up_outline.png",
+    "sha256": "5f2832b863f67ef35e6e9cf66b04c451aef7eeaf68be7c48f286e08c79b97058"
+  },
+  "PlayStation/DPad_Down": {
+    "source": "PlayStation Series/playstation_dpad_down_outline.png",
+    "sha256": "af74cef598dcbd5b1f9f8ef5c4568ec02840e4b38208775fe87243660c13016f"
+  },
+  "PlayStation/DPad_Left": {
+    "source": "PlayStation Series/playstation_dpad_left_outline.png",
+    "sha256": "fe542e08700720019af713fa3b4e339643f05a07d2f7fa1e3d43d89e2080b54c"
+  },
+  "PlayStation/DPad_Right": {
+    "source": "PlayStation Series/playstation_dpad_right_outline.png",
+    "sha256": "40ca274c2afe446b096aa3aa9b3b8d9980df4e533ee5ded9d0737d353bae9da3"
+  },
+  "PlayStation/LS": {
+    "source": "PlayStation Series/playstation_stick_l.png",
+    "sha256": "68edebe98e5efdbfc800154bcc523e67c6b6812df39ee45cf5a6362d6d670861"
+  },
+  "PlayStation/RS": {
+    "source": "PlayStation Series/playstation_stick_r.png",
+    "sha256": "0b4b5433b6706aea900c26523b07ccf430a3d203407773552a1bda8c3d5ddfb7"
+  },
+  "PlayStation/DPad": {
+    "source": "PlayStation Series/playstation_dpad.png",
+    "sha256": "f750067a14a4881485df3fee5377c8685ae7f519868841e59d320acdda075909"
+  },
+  "PlayStation/LS_Up": {
+    "source": "PlayStation Series/playstation_stick_l_up.png",
+    "sha256": "fd3fc11c0aa84a26c26ecd9cf59f545b7500c819356193e73e96c051462b33ea"
+  },
+  "PlayStation/LS_Down": {
+    "source": "PlayStation Series/playstation_stick_l_down.png",
+    "sha256": "0adabdf37e08e280ec2921c30223bbdfc36fdb0d6a27298fa9b6cfe680fb0869"
+  },
+  "PlayStation/LS_Left": {
+    "source": "PlayStation Series/playstation_stick_l_left.png",
+    "sha256": "722e4b751fdc4dc22fadc845b0c6d83dd3dfda429c9ddb2a96c9292a3f26eee4"
+  },
+  "PlayStation/LS_Right": {
+    "source": "PlayStation Series/playstation_stick_l_right.png",
+    "sha256": "739306973d12bbf17d98f087319565c6a490522b9eccd7a717da02d1aa157fc0"
+  },
+  "PlayStation/RS_Up": {
+    "source": "PlayStation Series/playstation_stick_r_up.png",
+    "sha256": "e597eba5a1a6ef405633173abbb776943e9f85aad8f512dc80a980abdbd0af51"
+  },
+  "PlayStation/RS_Down": {
+    "source": "PlayStation Series/playstation_stick_r_down.png",
+    "sha256": "5a0f076217b36e87fe25a6cfd1365ee0a022da95e6f644faf3d3fd10cc295368"
+  },
+  "PlayStation/RS_Left": {
+    "source": "PlayStation Series/playstation_stick_r_left.png",
+    "sha256": "f599d0ef469ed77955c7de4276464453f0e7bf9f7953c701d786b97095712ce7"
+  },
+  "PlayStation/RS_Right": {
+    "source": "PlayStation Series/playstation_stick_r_right.png",
+    "sha256": "a7cca7c77a257d6fec2040725b80c31df8d619c3540981a6bac588764c55102f"
+  },
+  "Nintendo/A": {
+    "source": "Nintendo Switch/switch_buttons_right_outline.png",
+    "sha256": "38f980aaace3e6f2db0780a5c5c17776dfa50ea7f7752b561cf4712bcbefe389"
+  },
+  "Nintendo/B": {
+    "source": "Nintendo Switch/switch_buttons_down_outline.png",
+    "sha256": "64b5b5bb0131d071cd22ccd02f7718d69df15915f2d24a317ac1be119485436b"
+  },
+  "Nintendo/X": {
+    "source": "Nintendo Switch/switch_buttons_up_outline.png",
+    "sha256": "34527ab1a2d9cea4624ab5e1f384dfcdd2bb0a9511665ca431ca48224ba33756"
+  },
+  "Nintendo/Y": {
+    "source": "Nintendo Switch/switch_buttons_left_outline.png",
+    "sha256": "41ad787e8775e6f42e4e61c8582eb68707cd418f5480f0dd468a8fc4b094c4cc"
+  },
+  "Nintendo/LB": {
+    "source": "Nintendo Switch/switch_button_l_outline.png",
+    "sha256": "b76350502c2006c06e6c85e2519a4693b68815b2f172feba7755ef7be267b767"
+  },
+  "Nintendo/RB": {
+    "source": "Nintendo Switch/switch_button_r_outline.png",
+    "sha256": "a87f416f1b57279935401feb07f0c79a36ac9383dff93939b77be0cc9ce26800"
+  },
+  "Nintendo/LT": {
+    "source": "Nintendo Switch/switch_button_zl_outline.png",
+    "sha256": "073e02834a0f87116e2090bd3d9aa746014e81115e203d691bcdf25ceab12b6f"
+  },
+  "Nintendo/RT": {
+    "source": "Nintendo Switch/switch_button_zr_outline.png",
+    "sha256": "be7ca9fb5a35aac4030f778c544505b047bc2a97ad5787e093c12674e9d07931"
+  },
+  "Nintendo/L3": {
+    "source": "Nintendo Switch/switch_stick_l.png",
+    "sha256": "68edebe98e5efdbfc800154bcc523e67c6b6812df39ee45cf5a6362d6d670861"
+  },
+  "Nintendo/R3": {
+    "source": "Nintendo Switch/switch_stick_r.png",
+    "sha256": "0b4b5433b6706aea900c26523b07ccf430a3d203407773552a1bda8c3d5ddfb7"
+  },
+  "Nintendo/Select": {
+    "source": "Nintendo Switch/switch_button_minus_outline.png",
+    "sha256": "2c4bb1edc6e41e72162096cd43a0739533fd611295929ad827f95b29cbaea266"
+  },
+  "Nintendo/Start": {
+    "source": "Nintendo Switch/switch_button_plus_outline.png",
+    "sha256": "79997005596819aa4dbc895c9f586f4281e61e87fcd994859c6144d4e9c3abd9"
+  },
+  "Nintendo/DPad_UP": {
+    "source": "Nintendo Switch/switch_dpad_up_outline.png",
+    "sha256": "fbbabb43a4f881b75e14fe5055bd11fc24a06252c28f37d29b9cc87c19f7903d"
+  },
+  "Nintendo/DPad_Down": {
+    "source": "Nintendo Switch/switch_dpad_down_outline.png",
+    "sha256": "884778aea216c157468b81f9a6c280532d89f0bd58d09f1f7542566318bad7ea"
+  },
+  "Nintendo/DPad_Left": {
+    "source": "Nintendo Switch/switch_dpad_left_outline.png",
+    "sha256": "38dd991ccc539318c8c8559dda84cfe876100a3eaa5984f11856078c3a8a7ba3"
+  },
+  "Nintendo/DPad_Right": {
+    "source": "Nintendo Switch/switch_dpad_right_outline.png",
+    "sha256": "4fd6bbd61f60003275ff742f712f78bd28e595458b926e576edfdcbe3628920b"
+  },
+  "Nintendo/LS": {
+    "source": "Nintendo Switch/switch_stick_l.png",
+    "sha256": "68edebe98e5efdbfc800154bcc523e67c6b6812df39ee45cf5a6362d6d670861"
+  },
+  "Nintendo/RS": {
+    "source": "Nintendo Switch/switch_stick_r.png",
+    "sha256": "0b4b5433b6706aea900c26523b07ccf430a3d203407773552a1bda8c3d5ddfb7"
+  },
+  "Nintendo/DPad": {
+    "source": "Nintendo Switch/switch_dpad.png",
+    "sha256": "c68b030f451e048c914b0b0f8f0685620bfaf7c61306998ff317ea3dc6e57df2"
+  },
+  "Nintendo/LS_Up": {
+    "source": "Nintendo Switch/switch_stick_l_up.png",
+    "sha256": "fd3fc11c0aa84a26c26ecd9cf59f545b7500c819356193e73e96c051462b33ea"
+  },
+  "Nintendo/LS_Down": {
+    "source": "Nintendo Switch/switch_stick_l_down.png",
+    "sha256": "0adabdf37e08e280ec2921c30223bbdfc36fdb0d6a27298fa9b6cfe680fb0869"
+  },
+  "Nintendo/LS_Left": {
+    "source": "Nintendo Switch/switch_stick_l_left.png",
+    "sha256": "722e4b751fdc4dc22fadc845b0c6d83dd3dfda429c9ddb2a96c9292a3f26eee4"
+  },
+  "Nintendo/LS_Right": {
+    "source": "Nintendo Switch/switch_stick_l_right.png",
+    "sha256": "739306973d12bbf17d98f087319565c6a490522b9eccd7a717da02d1aa157fc0"
+  },
+  "Nintendo/RS_Up": {
+    "source": "Nintendo Switch/switch_stick_r_up.png",
+    "sha256": "e597eba5a1a6ef405633173abbb776943e9f85aad8f512dc80a980abdbd0af51"
+  },
+  "Nintendo/RS_Down": {
+    "source": "Nintendo Switch/switch_stick_r_down.png",
+    "sha256": "5a0f076217b36e87fe25a6cfd1365ee0a022da95e6f644faf3d3fd10cc295368"
+  },
+  "Nintendo/RS_Left": {
+    "source": "Nintendo Switch/switch_stick_r_left.png",
+    "sha256": "f599d0ef469ed77955c7de4276464453f0e7bf9f7953c701d786b97095712ce7"
+  },
+  "Nintendo/RS_Right": {
+    "source": "Nintendo Switch/switch_stick_r_right.png",
+    "sha256": "a7cca7c77a257d6fec2040725b80c31df8d619c3540981a6bac588764c55102f"
+  }
+}

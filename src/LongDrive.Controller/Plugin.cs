@@ -6,13 +6,14 @@ using UnityEngine;
 
 namespace LongDrive.Controller
 {
-    [BepInPlugin(Id, "The Long Drive Controller", "0.5.5")]
+    [BepInPlugin(Id, "The Long Drive Controller", "0.6.7")]
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ashley.thelongdrive.controller";
         internal static Plugin Instance;
-        private readonly XInputPad device = new XInputPad();
+        private readonly ControllerHub device = new ControllerHub();
         private readonly InputGate gate = new InputGate();
+        private readonly SteeringResponse steeringResponse = new SteeringResponse();
         private PadState raw, previousRaw, current, previous;
         private int sampled = -1, blockUntil;
         private string context = "starting", lastContext;
@@ -22,8 +23,9 @@ namespace LongDrive.Controller
         internal readonly ActionState Actions = new ActionState();
         private readonly ActionMenu actionMenu = new ActionMenu();
         private readonly ControllerSettings controllerSettings = new ControllerSettings();
-        private ConfigEntry<float> deadzone, triggerThreshold, lookSpeed, pointerSpeed, manipulationSpeed, rotationSpeed, steeringSensitivity;
-        private ConfigEntry<bool> invertY;
+        private ConfigEntry<float> deadzone, triggerThreshold, lookSpeed, pointerSpeed, manipulationSpeed, rotationSpeed, steeringSensitivity, steeringSeconds;
+        private ConfigEntry<bool> invertY, showDrivingHints;
+        private ConfigEntry<ControllerFamilySelection> familySelection;
         private ConfigEntry<string> walkingBindings, drivingBindings;
         private bool reportedRuntime;
         private bool captureRequested;
@@ -47,24 +49,32 @@ namespace LongDrive.Controller
             rotationSpeed = Config.Bind("Input", "ObjectRotationDegreesPerSecond", 120f, new ConfigDescription("Held-object rotation speed before game weight/zoom modifiers. Separate from mouse and camera sensitivity.", new AcceptableValueRange<float>(15, 360)));
             pointerSpeed = Config.Bind("UI", "PointerSpeed", 850f, new ConfigDescription("Virtual cursor pixels per second.", new AcceptableValueRange<float>(100, 2000)));
             steeringSensitivity = Config.Bind("Input", "SteeringStickSensitivity", 1f, new ConfigDescription("Steering stick response: lower gives finer small corrections; higher responds sooner. Full stick travel always reaches full steering. Does not affect walking or camera sensitivity.", new AcceptableValueRange<float>(.25f, 2f)));
+            steeringSeconds = Config.Bind("Input", "SteeringSecondsToFullLock", SteeringResponse.DefaultSeconds,
+                new ConfigDescription("Minimum seconds from centered steering to full lock. Higher is slower; full lock remains available. Release and reversals also move gradually. Separate from the stick response curve.", new AcceptableValueRange<float>(.1f, 3f)));
             invertY = Config.Bind("Input", "InvertLookY", false, "Invert controller look independently of the mouse.");
+            familySelection = Config.Bind("UI", "ControllerFamily", ControllerFamilySelection.Auto,
+                "Button icon family: Auto, Xbox, PlayStation, or Nintendo. A manual choice overrides detection until Auto is selected.");
+            showDrivingHints = Config.Bind("UI", "ShowDrivingHints", true, "Show the controller hint box while driving.");
             walkingBindings = Config.Bind("Bindings", "OnFoot", "", "Saved controller bindings for on-foot gameplay. Edit using the Bindings page in controller settings.");
             drivingBindings = Config.Bind("Bindings", "Driving", "", "Saved controller bindings for driving. Edit using the Bindings page in controller settings.");
             if (!ActionCatalog.Bindings.TryLoad(walkingBindings.Value, false)) Logger.LogWarning("Invalid on-foot bindings; using defaults.");
             if (!ActionCatalog.Bindings.TryLoad(drivingBindings.Value, true)) Logger.LogWarning("Invalid driving bindings; using defaults.");
             menus = new MenuControls();
             ControllerGlyphs.Load(Logger);
-            Logger.LogInfo("Controller 0.5.5; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
+            RefreshControllerFamily();
+            Logger.LogInfo("Controller 0.6.7; game=" + Application.version + "; Unity=" + Application.unityVersion + "; OS=" + SystemInfo.operatingSystem);
             if (!supported) { Logger.LogError("Unsupported game version. Controller hooks disabled."); return; }
             patches = new Harmony(Id);
             patches.PatchAll(typeof(Plugin).Assembly);
             Logger.LogInfo("Controller routes: " + ActionCatalog.Count + "; prompt presentation call sites rewritten: " + PromptTextPatch.Replacements);
-            Logger.LogInfo("Installed input GetAxis/GetKey/GetKeyDown/GetKeyUp hooks.");
+            Logger.LogInfo("Installed input GetAxis/GetKey/GetKeyDown/GetKeyUp hooks; native steering duplicate guards=" + PointerDrivePatch.SteeringGuards);
         }
 
         internal bool Driving => mainscript.s != null && mainscript.s.player != null && mainscript.s.player.Car != null;
         internal bool InGameplay => context == "walking" || context == "driving";
         internal bool ControllerConnected => supported && raw.Connected;
+        internal bool ShowDrivingHints => showDrivingHints.Value;
+        private void RefreshControllerFamily() => ControllerGlyphs.SelectFamily(ControllerIdentity.Resolve(familySelection.Value, device.Family));
         internal bool CustomPanel => actionMenu.Open || controllerSettings.Open;
         private bool MenuOpen => !menuhandler.isStarted() || DataFromMenuScript.s == null || DataFromMenuScript.s.mainmenu || mainscript.s == null || mainscript.s.SomeMenuOpen();
 
@@ -74,12 +84,13 @@ namespace LongDrive.Controller
             sampled = Time.frameCount;
             if (!firstSample) { firstSample = true; Logger.LogInfo("First controller poll at frame " + Time.frameCount); }
             previousRaw = raw;
-            raw = device.Poll(deadzone.Value, triggerThreshold.Value);
+            raw = device.Poll(deadzone.Value, triggerThreshold.Value, message => Logger.LogInfo(message));
             if (raw.Connected != wasConnected)
             {
-                Logger.LogInfo(raw.Connected ? "Connected XInput slot " + device.Index + " via " + device.Backend : "Controller disconnected; clearing controller input.");
+                Logger.LogInfo(raw.Connected ? "Connected " + device.Description : "Controller disconnected; clearing controller input.");
                 wasConnected = raw.Connected;
             }
+            RefreshControllerFamily();
             previous = current;
             context = !supported ? "unsupported build" : !Application.isFocused ? "unfocused" :
                 inputscript.i != null && inputscript.i.usingComputer ? "computer" : MenuOpen ? "menu" : mainscript.s.SomeInputSelected() ? "text" : Driving ? "driving" : "walking";
@@ -120,6 +131,8 @@ namespace LongDrive.Controller
             var actionPad = current;
             Actions.Tick(actionPad, context, InGameplay && current.Connected && !CustomPanel, Time.unscaledTime,
                 InGameplay && raw.Connected && Application.isFocused ? actionMenu.HeldAction(raw) : null, steeringSensitivity.Value);
+            steeringResponse.Step(Actions.Value(GameAction.steerright) - Actions.Value(GameAction.steerleft),
+                steeringSeconds.Value, Time.unscaledDeltaTime, context == "driving" && current.Connected && !CustomPanel);
         }
 
         private void Update()
@@ -163,10 +176,13 @@ namespace LongDrive.Controller
                 { bindingCaptureAfter = 0; Capture("controller-bindings-gameplay.png"); }
             }
             if (context != "menu" && !CustomPanel) menus.Release();
-            if (!reportedRuntime && Time.realtimeSinceStartup > 10 && menuhandler.isStarted())
+            // Opt-in input/UI diagnostics need no loaded save or gameplay scene.
+            bool selfTest = Array.IndexOf(Environment.GetCommandLineArgs(), "--controller-self-test") >= 0;
+            if (!reportedRuntime && Time.realtimeSinceStartup > (selfTest ? 1 : 10) && (menuhandler.isStarted() || selfTest))
             {
                 reportedRuntime = true;
                 Logger.LogInfo("Runtime check: input=" + (inputscript.i != null) + "; EventSystem=" + (UnityEngine.EventSystems.EventSystem.current != null) + "; active Selectables=" + UnityEngine.UI.Selectable.allSelectablesArray.Length + "; hook calls axis/buttons/look=" + AxisCalls + "/" + ButtonCalls + "/" + LookCalls);
+                if (selfTest) ControllerDiagnostics.Run(Logger);
                 if (captureRequested)
                 {
                     ControllerGlyphs.Verify(Logger);
@@ -230,7 +246,7 @@ namespace LongDrive.Controller
             previousRaw = raw; menus.Release(); SuppressTransition();
         }
         internal bool UiDown(Buttons b) => Application.isFocused && raw.Held(b) && !previousRaw.Held(b);
-        internal int SettingCount => 8;
+        internal int SettingCount => 11;
         internal string SettingText(int index)
         {
             switch (index)
@@ -242,7 +258,11 @@ namespace LongDrive.Controller
                 case 4: return $"Stick deadzone:  {deadzone.Value:0.00}";
                 case 5: return $"Trigger deadzone:  {triggerThreshold.Value:0.00}";
                 case 6: return "Invert camera Y:  " + (invertY.Value ? "On" : "Off");
-                case 7: return $"Steering stick sensitivity:  {steeringSensitivity.Value:0.00}  (lower = gentler)";
+                case 7: return $"Steering stick curve:  {steeringSensitivity.Value:0.00}  (lower = gentler)";
+                case 8: return "Controller family:  " + (familySelection.Value == ControllerFamilySelection.Auto
+                    ? "Auto (" + device.Family + ")" : familySelection.Value.ToString());
+                case 9: return "Driving hint box:  " + (showDrivingHints.Value ? "On" : "Off");
+                case 10: return $"Steering time to full lock:  {steeringSeconds.Value:0.00} s  (higher = slower)";
                 default: return "";
             }
         }
@@ -258,13 +278,18 @@ namespace LongDrive.Controller
                 case 5: triggerThreshold.Value = Mathf.Clamp(triggerThreshold.Value + delta * .02f, 0, .5f); break;
                 case 6: invertY.Value = delta == 0 ? !invertY.Value : delta > 0; break;
                 case 7: steeringSensitivity.Value = Mathf.Clamp(steeringSensitivity.Value + delta * .1f, .25f, 2f); break;
+                case 8: familySelection.Value = ControllerIdentity.Cycle(familySelection.Value, delta); RefreshControllerFamily(); break;
+                case 9: showDrivingHints.Value = delta == 0 ? !showDrivingHints.Value : delta > 0; break;
+                case 10: steeringSeconds.Value = Mathf.Clamp(steeringSeconds.Value + delta * .1f, .1f, 3); break;
             }
         }
         internal void ResetControllerSettings()
         {
             lookSpeed.Value = 140; rotationSpeed.Value = 120; manipulationSpeed.Value = 3;
             pointerSpeed.Value = 850; deadzone.Value = .18f; triggerThreshold.Value = .08f;
-            invertY.Value = false; steeringSensitivity.Value = 1;
+            invertY.Value = false; steeringSensitivity.Value = 1; steeringSeconds.Value = SteeringResponse.DefaultSeconds;
+            familySelection.Value = ControllerFamilySelection.Auto; showDrivingHints.Value = true;
+            RefreshControllerFamily();
         }
         internal PadState ComputerCursorPad() { Sample(); return context == "computer" ? current : default; }
 
@@ -272,6 +297,7 @@ namespace LongDrive.Controller
         {
             blockUntil = Time.frameCount + 2;
             current = previous = default;
+            steeringResponse.Reset();
             // Rearm only after all controls are released, even if a delayed menu transition follows.
             gate.Filter(raw, "transition", false);
         }
@@ -284,8 +310,27 @@ namespace LongDrive.Controller
             if (!supported || (int)action < 0 || (int)action >= ActionCatalog.Count) return 0;
             // Right-stick camera/object input is added after the game's mouse sensitivity.
             if ((int)action >= 4 && (int)action <= 7) return 0;
+            if (action == inputscript.IN.steerleft) return Mathf.Max(0, -steeringResponse.Value);
+            if (action == inputscript.IN.steerright) return Mathf.Max(0, steeringResponse.Value);
             float value = Actions.Value((GameAction)action);
             return action == inputscript.IN.scrollup || action == inputscript.IN.scrolldown ? value * Time.unscaledDeltaTime : value;
+        }
+
+        internal float NativeSteeringKeys(inputscript.IN action)
+        {
+            // While the mod owns the pad, retain keyboard/mouse bindings but do
+            // not merge an unfiltered native joystick copy over the ramped axis.
+            var inputs = settingsscript.s == null ? null : settingsscript.s.S.inputs;
+            if (inputs == null || (int)action >= inputs.Length) return 0;
+            var keys = inputs[(int)action]?.keys;
+            float value = 0;
+            if (keys != null) foreach (var key in keys)
+            {
+                if (key == null || key.axis && SteeringResponse.IsJoystickAxis(key.inputAxis) ||
+                    !key.axis && key.key >= KeyCode.JoystickButton0 && key.key <= KeyCode.Joystick8Button19) continue;
+                value = Mathf.Max(value, key.GetF());
+            }
+            return value;
         }
 
         internal bool Button(inputscript.IN action, int edge)
@@ -320,7 +365,7 @@ namespace LongDrive.Controller
             if (!InGameplay || !Driving || !current.Connected || CustomPanel || !input.mouseSteer) return;
             float dt = Mathf.Min(Time.unscaledDeltaTime, .05f);
             float before = input.currentMouseSteer;
-            input.currentMouseSteer = Mathf.Clamp(before + PadMath.SteeringInput(Actions.Value(GameAction.lookright) - Actions.Value(GameAction.lookleft), steeringSensitivity.Value) * dt * 1.2f, -1, 1);
+            input.currentMouseSteer = Mathf.Clamp(before + PadMath.SteeringInput(Actions.Value(GameAction.lookright) - Actions.Value(GameAction.lookleft), steeringSensitivity.Value) * dt / steeringSeconds.Value, -1, 1);
             input.steer = Mathf.Clamp(input.steer + input.currentMouseSteer - before, -1, 1);
             if (input.mousePedal)
             {
@@ -349,6 +394,8 @@ namespace LongDrive.Controller
             Actions.Clear();
             menus?.Release();
             patches?.UnpatchSelf();
+            device.Dispose();
+            SdlNative.Dispose();
             ControllerGlyphs.Dispose();
             GameMenuSkin.Dispose();
             if (Instance == this) Instance = null;
@@ -363,7 +410,12 @@ namespace LongDrive.Controller
         private static void Postfix(inputscript.IN _input, ref float __result)
         {
             Plugin.AxisCalls++;
-            if (Plugin.Instance != null) __result = Mathf.Max(__result, Plugin.Instance.Axis(_input));
+            var plugin = Plugin.Instance;
+            if (plugin == null) return;
+            float controller = plugin.Axis(_input);
+            if (plugin.ControllerConnected && (_input == inputscript.IN.steerleft || _input == inputscript.IN.steerright))
+                __result = plugin.NativeSteeringKeys(_input);
+            __result = Mathf.Max(__result, controller);
         }
     }
     [HarmonyPatch(typeof(inputscript), "GetKey")]
@@ -389,6 +441,20 @@ namespace LongDrive.Controller
     [HarmonyPatch(typeof(inputscript), "DriveStuff")]
     internal static class PointerDrivePatch
     {
+        internal static int SteeringGuards;
+        internal static bool AllowNativeSteering(bool enabled) => SteeringResponse.AllowNativeAxis(enabled,
+            Plugin.Instance != null && Plugin.Instance.ControllerConnected, settingsscript.s?.S.CSSteer);
+        private static System.Collections.Generic.IEnumerable<CodeInstruction> Transpiler(System.Collections.Generic.IEnumerable<CodeInstruction> instructions)
+        {
+            var field = AccessTools.Field(typeof(settingsscript.setting), "CBenableSteer");
+            var guard = AccessTools.Method(typeof(PointerDrivePatch), nameof(AllowNativeSteering));
+            foreach (var instruction in instructions)
+            {
+                yield return instruction;
+                if (instruction.opcode == System.Reflection.Emit.OpCodes.Ldfld && Equals(instruction.operand, field))
+                { SteeringGuards++; yield return new CodeInstruction(System.Reflection.Emit.OpCodes.Call, guard); }
+            }
+        }
         private static void Postfix(inputscript __instance) { Plugin.Instance?.AddPointerDriving(__instance); }
     }
     [HarmonyPatch(typeof(UnityEngine.EventSystems.EventSystem), "Update")]

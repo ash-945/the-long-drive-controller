@@ -4,9 +4,9 @@
 
 **Version 0.6.7 beta • The Long Drive v2024.11.26b • Windows x64 and Linux/Proton**
 
-[Downloads on Nexus Mods](https://www.nexusmods.com/thelongdrive/mods/248) · [Installation guide](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/release/INSTALL.txt) · [Controls reference](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/release/CONTROLS.md)
+[Downloads on Nexus Mods](https://www.nexusmods.com/thelongdrive/mods/248) · [Installation guide](release/INSTALL.txt) · [Controls reference](release/CONTROLS.md)
 
-The source for 0.6.7 is on [feature/controller-families](https://github.com/ash-945/the-long-drive-controller/tree/feature/controller-families). The main branch currently retains the earlier implementation; use the linked branch when building the current version.
+The source for 0.6.7 is on the [main branch](https://github.com/ash-945/the-long-drive-controller/tree/main).
 
 ## Features
 
@@ -59,7 +59,7 @@ Nintendo uses its printed letters rather than Xbox face-button positions. The sh
 
 Open Controller settings → General for family selection, driving hints, sensitivity, and steering rate. **Steering time to full lock** ranges from 0.10 to 3.00 seconds, default 0.75. **Steering stick curve** ranges from 0.25 to 2.00, default 1.00; existing saved sensitivity values remain valid. General defaults restores Auto family, enabled driving hints, and default response settings without resetting bindings.
 
-LB/RB switches between General and Bindings. Bindings has separate walking/driving profiles, control capture, clear/reset, and occupied-binding confirmation. Start/View and menu navigation stay fixed for recovery. See the [complete controller reference](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/release/CONTROLS.md) for modifiers, inventory, action-menu controls, rebinding, Save/Load, and computer controls.
+LB/RB switches between General and Bindings. Bindings has separate walking/driving profiles, control capture, clear/reset, and occupied-binding confirmation. Start/View and menu navigation stay fixed for recovery. See the [complete controller reference](release/CONTROLS.md) for modifiers, inventory, action-menu controls, rebinding, Save/Load, and computer controls.
 
 ## Installation
 
@@ -72,7 +72,7 @@ Requires **The Long Drive v2024.11.26b** (tested build: `2024.11.26b_test`) and 
 
 For Steam/Proton, add `WINEDLLOVERRIDES="winhttp=n,b" %command%` to launch options, preserving existing wrappers and overrides. For Faugus or another Proton launcher, set the environment variable `WINEDLLOVERRIDES` to `winhttp=n,b` and select the executable in the modded game folder. No additional native Linux library is required. See the [BepInEx Proton guide](https://docs.bepinex.dev/articles/advanced/proton_wine.html).
 
-When updating, copy all files from the plugin folder and keep only one installed copy. Preserve your config and custom `gamecontrollerdb.txt`; neither is included in the download. Preferences save in `BepInEx/config/ashley.thelongdrive.controller.cfg`. To uninstall, remove the plugin folder; keep BepInEx if other mods need it. See [installation and troubleshooting](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/release/INSTALL.txt).
+When updating, copy all files from the plugin folder and keep only one installed copy. Preserve your config and custom `gamecontrollerdb.txt`; neither is included in the download. Preferences save in `BepInEx/config/ashley.thelongdrive.controller.cfg`. To uninstall, remove the plugin folder; keep BepInEx if other mods need it. See [installation and troubleshooting](release/INSTALL.txt).
 
 ## Verification and compatibility
 
@@ -84,6 +84,6 @@ For a bug report, include game/mod versions, OS/Proton, controller model and mod
 
 ## Source and development
 
-Build from [feature/controller-families](https://github.com/ash-945/the-long-drive-controller/tree/feature/controller-families). The repository includes C# source, supplied controller graphics, Python build/package tools, tests, and release documentation. Building requires Python 3, .NET SDK 8, the compatible game installation, and the official BepInEx loader. See [CONTRIBUTING.md](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/CONTRIBUTING.md) and [controller backend details](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/docs/CONTROLLER_FAMILIES.md).
+Build from the [main branch](https://github.com/ash-945/the-long-drive-controller/tree/main). The repository includes C# source, supplied controller graphics, Python build/package tools, tests, and release documentation. Building requires Python 3, .NET SDK 8, the compatible game installation, and the official BepInEx loader. See [CONTRIBUTING.md](CONTRIBUTING.md) and [controller backend details](docs/CONTROLLER_FAMILIES.md).
 
 Game files, decompiled source, local runtimes/tool caches, saves, user config, and generated downloads are not committed. Mod code uses the included [LICENSE](LICENSE). Supplied controller sprites retain their separate Creative Commons terms; bundled SDL2 includes its zlib license and distribution notice. BepInEx and HarmonyX are separate loader dependencies.

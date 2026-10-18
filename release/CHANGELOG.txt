@@ -1,3 +1,49 @@
+0.6.7 BETA - GRADUAL STEERING
+- Controller steering approaches the stick target gradually instead of snapping
+  immediately. Holding full stick still reaches full lock; releasing or reversing
+  moves smoothly toward the new target.
+- General settings adds Steering time to full lock: 0.10-3.00 seconds, default
+  0.75 seconds from center to full lock. Higher values turn more slowly.
+- Renames the existing sensitivity label to Steering stick curve to distinguish
+  target shape from steering speed. Existing saved curve values are preserved.
+- Blocks duplicate native joystick steering bindings and Joy-axis steering-wheel
+  contributions while a mod controller is connected, so they cannot bypass the
+  ramp. Keyboard/mouse steering bindings remain available; native joystick
+  steering returns when the mod controller is disconnected.
+- Clears ramp state on disabled input, menu/focus changes and disconnects.
+- Pointer steering uses the new time-to-lock setting too. General defaults
+  restores 0.75 seconds. The General page now fits eleven settings.
+- 1,554 core checks pass, including timelines at 30/60/144 FPS. 172 native
+  input/UI/config checks pass under Proton, including an inactive fixture using
+  the actual DriveStuff method and saved steering time reload. All 81 parsed
+  sprite identities verify. This is not exhaustive vehicle-physics, hardware
+  or native Windows validation.
+
+0.6.6 BETA - CONTROLLER FAMILIES AND PREFERENCES
+- Adds DirectInput and HID controller input alongside XInput through a bundled
+  private SDL2 Windows x64 runtime, used on Windows and under Linux/Proton.
+- Automatically selects Xbox, PlayStation or Nintendo button graphics.
+  Unknown XInput uses Xbox; unknown DirectInput/HID uses PlayStation.
+- Includes 81 supplied sprites with refreshed Xbox art, stick movement and
+  direction icons, and family-aware native prompts, Controls rows and menus.
+- Corrected Nintendo printed-letter face mappings and sprite positions.
+- Scoped the 8BitDo Xbox-mode exception to its tested device ID so unknown
+  DirectInput modes receive the PlayStation fallback.
+- General settings adds a saved family override: Auto/Xbox/PlayStation/Nintendo.
+  Manual choices override detection across reconnects and restarts.
+- Driving hint box can be disabled in General settings. Preferences persist;
+  General defaults restores Auto and enables hints without resetting bindings.
+- Uncommon-action cards center their text and icons. Both controller menus
+  darken textured button backgrounds for contrast with outlined pale text.
+- Preserves existing controller bindings, sensitivity, and menu navigation.
+- Includes SDL2 license/distribution notices. Install/update the whole plugin
+  folder, not only the managed DLL.
+- 1,525 core checks pass on 0.6.6. The 0.6.5 runtime passed 159 native input,
+  UI and config checks, with all 81 sprite identities verified under Proton.
+  User confirmed Nintendo/DirectInput behavior and 0.6.5 preferences/layout.
+  The final 0.6.6 darkening is build-checked; visual approval is still pending.
+  Native Windows and genuine Sony-controller hardware remain unverified.
+
 0.5.5 BETA - MENU STYLING AND NAVIGATION
 - Controller windows use the game's native textured panels and buttons.
 - Uncommon actions and controller settings use inset, outlined lettering.

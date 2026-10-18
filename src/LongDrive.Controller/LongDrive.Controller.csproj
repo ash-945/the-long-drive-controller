@@ -5,7 +5,7 @@
     <NoStdLib>true</NoStdLib>
     <LangVersion>latest</LangVersion>
     <AssemblyName>LongDrive.Controller</AssemblyName>
-    <Version>0.5.5</Version>
+    <Version>0.6.7</Version>
     <GameDir Condition="'$(GameDir)' == ''">$(TLD_GAME_DIR)</GameDir>
     <ManagedDir>$(GameDir)/TheLongDrive_Data/Managed</ManagedDir>
     <LoaderDir>$(MSBuildProjectDirectory)/../../.tools/bepinex/BepInEx/core</LoaderDir>
@@ -13,6 +13,8 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets/Xbox/*.png" LogicalName="LongDrive.Controller.Xbox.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Assets/PlayStation/*.png" LogicalName="LongDrive.Controller.PlayStation.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Assets/Nintendo/*.png" LogicalName="LongDrive.Controller.Nintendo.%(Filename)%(Extension)" />
     <Reference Include="$(ManagedDir)/mscorlib.dll" Private="false" />
     <Reference Include="$(ManagedDir)/netstandard.dll" Private="false" />
     <Reference Include="$(ManagedDir)/System.dll" Private="false" />

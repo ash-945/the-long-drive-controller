@@ -15,13 +15,16 @@ namespace LongDrive.Controller
     {
         private static readonly Dictionary<string, string> Names = new Dictionary<string, string>
         {
+            ["LS"] = "LS", ["RS"] = "RS", ["D-pad"] = "DPad",
+            ["LS Up"] = "LS_Up", ["LS Down"] = "LS_Down", ["LS Left"] = "LS_Left", ["LS Right"] = "LS_Right",
+            ["RS Up"] = "RS_Up", ["RS Down"] = "RS_Down", ["RS Left"] = "RS_Left", ["RS Right"] = "RS_Right",
             ["A"] = "A", ["B"] = "B", ["X"] = "X", ["Y"] = "Y",
             ["LB"] = "LB", ["RB"] = "RB", ["LT"] = "LT", ["RT"] = "RT",
             ["LS Click"] = "L3", ["RS Click"] = "R3", ["LS click"] = "L3", ["RS click"] = "R3",
             ["L3"] = "L3", ["R3"] = "R3", ["View"] = "Select", ["Back"] = "Select", ["Select"] = "Select", ["Start"] = "Start",
             ["D-pad Up"] = "DPad_UP", ["D-pad Down"] = "DPad_Down", ["D-pad Left"] = "DPad_Left", ["D-pad Right"] = "DPad_Right"
         };
-        private static readonly Regex Pattern = new Regex(@"(?<![A-Za-z0-9_])(?:D-pad Right|D-pad Down|D-pad Left|D-pad Up|LS Click|RS Click|LS click|RS click|Select|Start|View|Back|LB|RB|LT|RT|L3|R3|A|B|X|Y)(?![A-Za-z0-9_])");
+        private static readonly Regex Pattern = new Regex(@"(?<![A-Za-z0-9_])(?:LS Right|LS Down|LS Left|LS Up|RS Right|RS Down|RS Left|RS Up|D-pad Right|D-pad Down|D-pad Left|D-pad Up|LS Click|RS Click|LS click|RS click|Select|Start|View|Back|LB|RB|LT|RT|L3|R3|LS|RS|D-pad|A|B|X|Y)(?![A-Za-z0-9_])");
         private static readonly Dictionary<string, GlyphRun[]> Cache = new Dictionary<string, GlyphRun[]>();
         public static GlyphRun[] Parse(string text)
         {

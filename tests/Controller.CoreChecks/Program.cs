@@ -17,6 +17,7 @@ internal static class Program
     }
     private static void Main(string[] args)
     {
+        SteeringChecks.Run(Check);
         Check(Marshal.SizeOf<RawPad>() == 12 && Marshal.SizeOf<RawState>() == 16, "XInput native struct layout");
         Check(PadMath.Axis(short.MinValue) == -1 && PadMath.Axis(short.MaxValue) == 1, "asymmetric signed stick endpoints");
         PadMath.Stick(2000, 2000, .18f, out var x, out var y);
@@ -187,6 +188,7 @@ internal static class Program
         Check(!latch.Held(GameAction.looklean) && latch.Value(GameAction.looklean) == 0, "context transition clears held modifiers");
         BindingChecks.Run(Check);
         MenuFocusChecks.Run(Check);
+        ControllerFamilyChecks.Run(Check);
         if (args.Length < 1) throw new Exception("Pass the installed game's Assembly-CSharp.dll to verify the actual action inventory.");
         using var stream = File.OpenRead(args[0]);
         using var pe = new PEReader(stream);
