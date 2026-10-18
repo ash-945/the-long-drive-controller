@@ -17,6 +17,7 @@ internal static class Program
     }
     private static void Main(string[] args)
     {
+        SteeringChecks.Run(Check);
         Check(Marshal.SizeOf<RawPad>() == 12 && Marshal.SizeOf<RawState>() == 16, "XInput native struct layout");
         Check(PadMath.Axis(short.MinValue) == -1 && PadMath.Axis(short.MaxValue) == 1, "asymmetric signed stick endpoints");
         PadMath.Stick(2000, 2000, .18f, out var x, out var y);

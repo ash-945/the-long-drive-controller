@@ -9,6 +9,7 @@
     <Compile Include="../../src/LongDrive.Controller/SdlInputMath.cs" Link="SdlInputMath.cs" />
     <Compile Include="../../src/LongDrive.Controller/GlyphTokens.cs" Link="GlyphTokens.cs" />
     <Compile Include="../../src/LongDrive.Controller/MenuFocus.cs" Link="MenuFocus.cs" />
+    <Compile Include="../../src/LongDrive.Controller/SteeringResponse.cs" Link="SteeringResponse.cs" />
     <Compile Include="../../src/LongDrive.Controller/Pad.cs" Link="Pad.cs" />
     <Compile Include="../../src/LongDrive.Controller/BindingHints.cs" Link="BindingHints.cs" />
     <Compile Include="../../src/LongDrive.Controller/Bindings.cs" Link="Bindings.cs" />

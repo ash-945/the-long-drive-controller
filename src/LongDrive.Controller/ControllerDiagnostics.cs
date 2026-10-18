@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using BepInEx.Logging;
 using BepInEx.Configuration;
+using HarmonyLib;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -47,10 +48,73 @@ namespace LongDrive.Controller
                 VerifySwitching();
                 VerifyLabels();
                 VerifySavedPreferences();
+                VerifyGameSteering();
+                Require(PointerDrivePatch.SteeringGuards == 1, "Native steering duplicate guard installed in actual DriveStuff method");
                 log.LogInfo("Controller diagnostics PASS: " + checks + " native virtual-input and UI-family checks; no gameplay input generated.");
             }
             catch (Exception ex) { log.LogError("Controller diagnostics FAILED after " + checks + " checks: " + ex); }
         }
+        private static inputscript steeringFixture;
+        private static float steeringFixtureValue;
+        [HarmonyPriority(Priority.Last)]
+        private static void SupplyFixtureAxis(inputscript __instance, inputscript.IN _input, ref float __result)
+        {
+            if (__instance != steeringFixture) return;
+            __result = _input == inputscript.IN.steerright ? Mathf.Max(0, steeringFixtureValue) :
+                _input == inputscript.IN.steerleft ? Mathf.Max(0, -steeringFixtureValue) : 0;
+        }
+        private static void VerifyGameSteering()
+        {
+            // Exercise the real DriveStuff implementation on an inactive component.
+            // Only this fixture's getter is supplied synthetic input. A private copy
+            // of native settings is restored before returning; no live input changes.
+            Require(settingsscript.s != null && settingsscript.s.S != null && mainscript.s != null, "Native steering fixture prerequisites");
+            var originalSettings = settingsscript.s.S;
+            var originalInput = inputscript.i;
+            var hook = new Harmony("ashley.thelongdrive.controller.steering-fixture");
+            GameObject root = null;
+            UnityEngine.UI.Text[] labels = { mainscript.s.menu.TSteer, mainscript.s.menu.TThrottle,
+                mainscript.s.menu.TBrake, mainscript.s.menu.TClutch, mainscript.s.menu.THandBrake };
+            var captions = new string[labels.Length];
+            for (int i = 0; i < labels.Length; i++) captions[i] = labels[i] != null ? labels[i].text : null;
+            try
+            {
+                settingsscript.s.S = JsonUtility.FromJson<settingsscript.setting>(JsonUtility.ToJson(originalSettings));
+                settingsscript.s.S.CBenableSteer = false;
+                root = new GameObject("Inactive steering method fixture"); root.SetActive(false);
+                steeringFixture = root.AddComponent<inputscript>();
+                Require(inputscript.i == originalInput, "Inactive fixture does not replace live input singleton");
+                hook.Patch(AccessTools.Method(typeof(inputscript), "GetAxis"), postfix:
+                    new HarmonyMethod(AccessTools.Method(typeof(ControllerDiagnostics), nameof(SupplyFixtureAxis))) { priority = Priority.Last });
+                var ramp = new SteeringResponse();
+                float Apply(float target)
+                {
+                    steeringFixtureValue = ramp.Step(target, .75f, 1f / 60, true);
+                    steeringFixture.DriveStuff();
+                    return steeringFixture.steer;
+                }
+                float first = Apply(1);
+                Require(first > 0 && first < .03f, "Real DriveStuff receives gradual first full-stick frame");
+                for (int i = 1; i < 15; i++) Apply(1);
+                Require(Mathf.Abs(steeringFixture.steer - 1f / 3) < .0001f, "Real DriveStuff reaches one-third steering after quarter second");
+                for (int i = 15; i < 60; i++) Apply(1);
+                Require(Mathf.Abs(steeringFixture.steer - 1) < .0001f, "Real DriveStuff reaches full steering when held");
+                float reversal = Apply(-1);
+                Require(reversal > .95f, "Real DriveStuff cannot instantly reverse full steering");
+                for (int i = 1; i < 120; i++) Apply(-1);
+                Require(Mathf.Abs(steeringFixture.steer + 1) < .0001f, "Real DriveStuff reaches opposite lock gradually");
+                for (int i = 0; i < 120; i++) Apply(0);
+                Require(Mathf.Abs(steeringFixture.steer) < .0001f, "Real DriveStuff fully centers after release");
+            }
+            finally
+            {
+                hook.UnpatchSelf(); settingsscript.s.S = originalSettings; inputscript.i = originalInput;
+                steeringFixture = null; steeringFixtureValue = 0;
+                for (int i = 0; i < labels.Length; i++) if (labels[i] != null) labels[i].text = captions[i];
+                if (root != null) UnityEngine.Object.Destroy(root);
+            }
+        }
+
         private static void VerifySavedPreferences()
         {
             string path = Path.Combine(Path.GetTempPath(), "tld-controller-preferences-" + Guid.NewGuid().ToString("N") + ".cfg");
@@ -61,11 +125,14 @@ namespace LongDrive.Controller
                     var config = new ConfigFile(path, false);
                     var family = config.Bind("UI", "ControllerFamily", ControllerFamilySelection.Auto);
                     var hints = config.Bind("UI", "ShowDrivingHints", true);
+                    var steeringTime = config.Bind("Input", "SteeringSecondsToFullLock", SteeringResponse.DefaultSeconds);
                     Require(config.SaveOnConfigSet, "Preference changes save automatically");
-                    family.Value = choice; hints.Value = false;
+                    family.Value = choice; hints.Value = false; steeringTime.Value = 1.5f;
                     var restarted = new ConfigFile(path, false);
                     var savedFamily = restarted.Bind("UI", "ControllerFamily", ControllerFamilySelection.Auto);
                     var savedHints = restarted.Bind("UI", "ShowDrivingHints", true);
+                    var savedSteeringTime = restarted.Bind("Input", "SteeringSecondsToFullLock", SteeringResponse.DefaultSeconds);
+                    Require(savedSteeringTime.Value == 1.5f, "Steering time-to-lock survives restart");
                     Require(savedFamily.Value == choice && !savedHints.Value, "Family and hidden driving hints survive config restart: " + choice);
                     foreach (ControllerFamily detected in Enum.GetValues(typeof(ControllerFamily)))
                         Require(ControllerIdentity.Resolve(savedFamily.Value, detected) == ControllerIdentity.Resolve(choice, detected), "Saved override resolves against new detected " + detected);

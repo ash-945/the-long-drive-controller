@@ -97,3 +97,28 @@ See [CONTROLLER_FAMILIES.md](CONTROLLER_FAMILIES.md) for backend, identity, UI c
 ## 0.6.1 Nintendo face buttons
 
 Nintendo input follows printed letters across gameplay, menus, binding capture, and sprites: A right confirms, B lower cancels, X upper, Y left. Core checks cover all four translations, unchanged Xbox/PlayStation layout, simultaneous face buttons, modifiers, and neutral. Native diagnostics expect Nintendo letters from the actual physical positions. Retest on the connected Nintendo-mode controller.
+
+## 0.6.7 gradual steering
+
+1,554 core checks pass, including steering timelines at 30/60/144 FPS, full lock,
+partial targets, reversal, centering, stall bounds, reset/rearm, and native-axis
+ownership policy. The Proton diagnostic run passes 172 native input/UI/config
+checks and verifies 81 parsed sprite identities. The native guard is installed
+once in the actual DriveStuff method. The saved time-to-lock config reloads.
+An inactive inputscript fixture, private settings copy, and temporary fixture-only
+axis getter exercise the game's real DriveStuff without submitting live gameplay
+input: first full-stick output is small, quarter-second output is one-third,
+held input reaches full lock, reversal stays gradual, and release reaches center.
+The fixture restores settings, input singleton, native diagnostic labels and hooks.
+This tests the native steering calculation, not vehicle physics or driving feel.
+
+For manual review, use General -> Steering time to full lock (default 0.75 s).
+Hold full left/right and watch gradual steering reach full lock; release and
+reverse. Compare 0.25 s with 1.50 s. Higher must visibly slow the movement.
+The existing saved sensitivity is labelled Steering stick curve; compare curve
+values separately using partial stick travel. Confirm keyboard steering still
+responds normally, including with a controller connected; check focus loss,
+pause, reconnect, changed steering bindings, and native joystick-axis duplication.
+General contains eleven settings; verify the last row and footer remain readable.
+Pointer-steering uses the same time-to-lock rate. Vehicle handling, every native
+binding combination, and native Windows hardware remain hands-on validation limits.

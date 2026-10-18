@@ -2,13 +2,15 @@
 
 Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), Xbox, PlayStation, and Nintendo controllers, Windows x64 and Linux running the Windows game under Proton. The original game assemblies and keyboard bindings are not modified on disk.
 
-## Release package: 0.6.6 beta
+## Development: 0.6.7
 
-Controller settings now include a saved **Controller family** choice (Auto, Xbox, PlayStation, Nintendo) and a **Driving hint box** toggle. Manual family choices take priority over detection until Auto is restored. The uncommon-actions buttons center their text and icons. Both controller menus use darker button backgrounds for more readable pale lettering.
+Steering now approaches the stick target gradually, with a saved **Steering time to full lock** option (default 0.75 seconds; higher is slower). Full steering lock remains available when held. The existing sensitivity value is now labelled **Steering stick curve** because it changes response shape rather than turn rate. Native duplicate gamepad steering no longer bypasses these controls; keyboard steering remains available.
+
+Controller settings also include a saved **Controller family** choice (Auto, Xbox, PlayStation, Nintendo) and a **Driving hint box** toggle. Manual family choices take priority over detection until Auto is restored. The uncommon-actions buttons center their text and icons. Both controller menus use darker button backgrounds for more readable pale lettering.
 
 Adds DirectInput/HID controller input, automatic Xbox/PlayStation/Nintendo sprite selection, and updated Xbox art. All 81 supplied sprites share one UI path, including existing native labels when changing controllers. Unknown devices use Xbox for XInput and PlayStation for DirectInput. PlayStation Cross confirms menus; Nintendo uses printed A to confirm and B to cancel. Nintendo A/B and X/Y mappings and sprites follow their printed letters.
 
-The 0.6.6 package includes a private SDL2 Windows x64 runtime and its license; extract the whole plugin folder. No additional Linux library is needed under Proton. See [controller families and verification](docs/CONTROLLER_FAMILIES.md) for detection, mapping overrides, tests, and hardware checks still pending. The tested 0.5.5 release remains available on Nexus.
+The development package includes a private SDL2 Windows x64 runtime and its license; extract the whole plugin folder. No additional Linux library is needed under Proton. See [controller families and verification](docs/CONTROLLER_FAMILIES.md) for detection, mapping overrides, tests, and hardware checks still pending. The tested 0.5.5 release remains available on Nexus.
 
 ## Earlier Nexus release
 
@@ -80,7 +82,7 @@ Configuration is saved in `BepInEx/config/ashley.thelongdrive.controller.cfg` in
 
 ## Verification and limits
 
-Version 0.6.6 passes 1,525 core checks. The 0.6.5 runtime passed 159 native input/UI/config checks and all 81 sprite identity checks under Proton; the user confirmed its preferences and layout. Nintendo and generic DirectInput mode corrections were tested interactively. The final 0.6.6 background darkening is build-checked. Native Windows and exhaustive device/activity coverage remain unverified.
+Version 0.6.7 passes 1,554 core checks. The 0.6.5 runtime passed 159 native input/UI/config checks and all 81 sprite identity checks under Proton; the user confirmed its preferences and layout. Nintendo and generic DirectInput mode corrections were tested interactively. The final 0.6.6 background darkening is build-checked. Version 0.6.7 also passes 172 native input/UI/config checks, including an isolated test of the real game steering method; a fresh driving-feel test is pending. Native Windows and exhaustive device/activity coverage remain unverified.
 
 The core checks compare all action names/ordinals with the actual installed game's metadata and exercise action edges, menu queues, modifiers, toggle behavior, safe input gating, trigger independence, and rotation rate calculations. Runtime testing confirms Proton loading, controller detection, rewritten prompt paths, and rendered controller panels. See [testing](docs/TESTING.md), [integration details](docs/COMPATIBILITY.md), and [action inventory](docs/ACTIONS.md).
 

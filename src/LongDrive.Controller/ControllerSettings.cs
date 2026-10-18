@@ -100,10 +100,10 @@ namespace LongDrive.Controller
                 ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 96, 870, 35), "[D-pad / LS] select and adjust    [A] increase / toggle    [Y] defaults", PanelStyle.Text);
                 for (int i = 0; i < plugin.SettingCount; i++)
                 {
-                    float y = area.y + 140 + i * 36;
-                    if (PanelStyle.Choice(new Rect(area.x + 24, y, 700, 32), plugin.SettingText(i), selected == i)) selected = i;
-                    if (PanelStyle.Choice(new Rect(area.x + 736, y, 70, 32), "-", false)) { selected = i; plugin.AdjustSetting(i, -1); }
-                    if (PanelStyle.Choice(new Rect(area.x + 818, y, 70, 32), "+", false)) { selected = i; plugin.AdjustSetting(i, 1); }
+                    float y = area.y + 140 + i * 32;
+                    if (PanelStyle.Choice(new Rect(area.x + 24, y, 700, 28), plugin.SettingText(i), selected == i)) selected = i;
+                    if (PanelStyle.Choice(new Rect(area.x + 736, y, 70, 28), "-", false)) { selected = i; plugin.AdjustSetting(i, -1); }
+                    if (PanelStyle.Choice(new Rect(area.x + 818, y, 70, 28), "+", false)) { selected = i; plugin.AdjustSetting(i, 1); }
                 }
                 ControllerGlyphs.Label(new Rect(area.x + 24, area.y + 535, 870, 60), "Settings save automatically. Sprint: " + ActionCatalog.Hint(GameAction.run, false) + ".\nCrouch: " + ActionCatalog.Hint(GameAction.duck, false) + ". [B / Start / View] closes.", PanelStyle.Text);
             }
