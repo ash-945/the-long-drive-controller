@@ -1,88 +1,89 @@
-# The Long Drive — XInput Controller Support
+# The Long Drive — Controller Support
 
-Targets **The Long Drive v2024.11.26b** (`2024.11.26b_test`), XInput controllers, Windows x64 and Linux running the Windows game under Proton. The original game assemblies and keyboard bindings are not modified on disk.
+**Xbox, PlayStation, and Nintendo controller support for gameplay, driving, and menus.** Supports XInput, DirectInput, and HID controllers, with automatic button icons and a saved manual family override.
 
-## Current release
+**Version 0.6.7 beta • The Long Drive v2024.11.26b • Windows x64 and Linux/Proton**
 
-**0.5.5 beta** adds native menu styling, inset text with thin black outlines, thicker royal-blue focus borders, and improved Save/Load, pause/title, and exit-confirmation navigation. The on-screen keyboard has been removed; text entry uses a physical keyboard. All 1,436 core checks pass, and the final build was tested and approved under Linux/Proton.
+[Downloads on Nexus Mods](https://www.nexusmods.com/thelongdrive/mods/248) · [Installation guide](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/release/INSTALL.txt) · [Controls reference](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/release/CONTROLS.md)
+
+The source for 0.6.7 is on [feature/controller-families](https://github.com/ash-945/the-long-drive-controller/tree/feature/controller-families). The main branch currently retains the earlier implementation; use the linked branch when building the current version.
 
 ## Features
 
-- Sprint toggles with LS click while moving, and switches off when movement stops, crouching, entering another context, or disconnecting.
-- Crouch toggles with B. Click again to stand. LB+B remains lean and does not toggle crouch.
-- All 68 named game actions are reachable through direct controls or the View action menu. The menu contains only uncommon actions. Hold A for continuous actions, or use X to toggle a hold.
-- Interaction prompts, vehicle help, and the Controls page display Xbox button sprites where available while a controller is connected. The normal keyboard/mouse labels return when it disconnects.
-- The controller settings screen exposes camera, object rotation, object movement/lean, menu pointer speed, deadzones, inversion, and separate on-foot/driving bindings. Values save automatically.
-- Object rotation defaults to 120 degrees/second before game weight/zoom effects, independently of mouse sensitivity. LB no longer slows every rotation.
-- Save/Load starts on Save when available, skips metadata fields, and offers RB to focus Save and LB to return to save slots. Confirmation dialogs keep their own selection. Text entry uses your physical keyboard; no on-screen keyboard opens.
+- **Three controller families:** automatically identifies Xbox, PlayStation, and Nintendo devices and selects matching icons throughout interaction prompts, vehicle help, native Controls rows, and custom controller menus. Includes 81 supplied sprites and refreshed Xbox artwork.
+- **Manual family selection:** General settings offers Auto, Xbox, PlayStation, and Nintendo. A manual choice saves and overrides detection across restarts and reconnections. Selecting Auto restores detection.
+- **Gradual steering:** the wheels approach the stick target over time, with full lock still available when held. Steering time to full lock defaults to 0.75 seconds; higher values turn more slowly. Steering stick curve separately shapes partial-stick input. Both settings save automatically.
+- **Gameplay and object handling:** analog movement, camera, pedals and steering, plus pickup, movement, rotation, mounting, detachment, and object-distance adjustment. Object rotation has its own speed setting.
+- **Controller menus:** D-pad/left-stick navigation, a right-stick virtual pointer, scrolling, blue focus borders, and darker native textured buttons with outlined text. Uncommon-action captions and their icons are centered.
+- **Editable bindings:** all 68 named game actions have controller routes. Separate on-foot/driving profiles accept buttons, triggers, stick directions, and combinations of up to three controls. Hints follow saved bindings.
+- **Toggle sprint and crouch:** sprint stops when movement stops. The uncommon-actions menu covers survival, tools, direct gears, camera, and system actions.
+- **Optional driving hints:** the seated helper panel can be disabled in General settings without hiding other interaction prompts.
+- **Save/Load navigation:** sensible default selections, RB to focus Save, LB to return to slots, and confirmations that prefer No. Custom text uses a physical keyboard; there is no on-screen keyboard.
 
-Steering stick sensitivity is adjustable in View → Start, from 0.25 to 2.00 (default 1.00). Lower values give finer small steering corrections; higher values turn sooner. Full stick travel always reaches full steering lock. It also applies to the optional stick pointer-steering mode.
+## Controller families
 
-A compact driving hint panel appears at the bottom while seated, covering steering, pedals, ignition, handbrake, clutch, shifting, lights, horn, and exit. It hides with the HUD, menus, sleep, death, and controller disconnection.
+Known controllers are identified through vendor information, device names, and SDL controller type. Unknown XInput controllers use Xbox icons; unknown DirectInput/HID controllers use PlayStation icons. A manual family choice takes priority over both.
 
-## Controls
+Steam Input or another mapper can expose a physical controller as a virtual Xbox device. Use the manual family option if the resulting icons do not match your controller. The option changes icons; SDL continues to normalize physical input. Unusual DirectInput layouts may need a custom SDL mapping in `gamecontrollerdb.txt` beside the plugin.
 
-| Action | Controller |
+The default controls below use these equivalent buttons:
+
+| Xbox | PlayStation | Nintendo |
+| --- | --- | --- |
+| A | Cross | A — right |
+| B | Circle | B — lower |
+| X | Square | X — upper |
+| Y | Triangle | Y — left |
+| LB / RB | L1 / R1 | L / R |
+| LT / RT | L2 / R2 | ZL / ZR |
+| View / Back | Select / Share | Minus |
+| Start | Start / Options | Plus |
+
+Nintendo uses its printed letters rather than Xbox face-button positions. The shared PlayStation artwork uses Select/Start icons. LS/RS mean the left/right sticks; a click means pressing the stick inward.
+
+## Quick controls
+
+| Action | Default Xbox names |
 | --- | --- |
 | Move / look | LS / RS |
-| Sprint toggle / crouch toggle / jump | LS click / B / A |
-| Use, enter, exit / pick up or drop | X / Y |
-| Equip or recenter / mount or detach part | RS click / RB |
-| Primary / secondary action or move object | RT / LT |
-| Rotate held object | Hold LB+RB and move RS |
-| Reload or adjust / push | LB+X / LB+A |
-| Lean / attach with glue / aim | LB+B / LB+Y / LB+RS click |
-| Object distance or scroll adjustment | LB+D-pad up/down |
-| Inventory slots 1 / 2 / 3 / 4 | D-pad up / right / down / left |
-| Temporary run modifier for compound actions | Hold LB+LS click |
-| Steer / throttle / brake while driving | LS / RT / LT |
-| Handbrake toggle / ignition | A / B while driving |
-| Shift down / up / clutch | LB / RB / LS click while driving |
-| Lights / horn / scroll while driving | D-pad up / down / right-left |
-| Pause / resume | Start |
-| Uncommon actions | View (Back) |
-| Controller settings | View, then Start; or View while the game's Settings screen is open |
-| Menu selection / confirm / back | D-pad or LS / A / B |
-| Virtual menu pointer / click / scroll | RS / A / LT-RT |
+| Sprint / crouch / jump | LS click / B / A |
+| Use, enter, exit / pick up, drop | X / Y |
+| Primary / secondary | RT / LT |
+| Rotate held object | Hold LB + RB and move RS |
+| Steer / throttle / brake | LS / RT / LT |
+| Handbrake / ignition | A / hold B while driving |
+| Shift down / up / clutch | LB / RB / LS click |
+| Pause / uncommon actions | Start / View |
+| Controller settings | View, then Start; or View while native Settings is open |
+| Menu select / confirm / cancel | D-pad or LS / A / B |
 
-Survival is page 1; Tools is page 2. Survival includes Defecate, which requires at least 30% bowel meter and uses the native game action.
+Open Controller settings → General for family selection, driving hints, sensitivity, and steering rate. **Steering time to full lock** ranges from 0.10 to 3.00 seconds, default 0.75. **Steering stick curve** ranges from 0.25 to 2.00, default 1.00; existing saved sensitivity values remain valid. General defaults restores Auto family, enabled driving hints, and default response settings without resetting bindings.
 
-The menu hides during an A hold and returns on release. In the action menu, use LB/RB to switch pages, D-pad/LS to select, A to perform an action (hold A for continuous actions; release to stop), X to toggle supported holds, and Y to release all held actions. B or View closes it. Actions still obey native restrictions: direct gears require the appropriate transmission settings, voice/chat requires a multiplayer session, and VR recenter requires VR.
-
-In controller settings, up/down selects a value and left/right adjusts it. A increases or toggles; Y restores defaults; B, Start, or View closes. The screen does not require neutral sticks to reopen. Gameplay still requires neutral after a context change or reconnect to prevent accidental actions.
-
-The settings window has **Sensitivity** and **Bindings** pages; switch with LB/RB or the tabs. On Bindings, X switches on-foot/driving profiles, LT/RT changes action categories, and D-pad/LS selects an action. Press A, release all controls, press a button/trigger/stick direction or up to three controls together, then release to save. Start cancels capture; View closes the window. B can be assigned during capture. Occupied bindings require confirmation before swapping; unbound actions transfer their former control as Unbound. RS click clears the selected binding; Y asks before resetting the current profile. Mouse buttons are available for tabs, rebind, clear, confirm, and cancel. Changes save automatically and update interaction prompts, native Controls rows, action labels, and driving hints immediately. Gameplay waits for neutral after edits. Clicking a native Controls binding row opens its entry in this page.
-
-In Save/Load, RB focuses Save and LB returns to the save slots. A activates the selected native control; it does not bypass overwrite confirmation. Read-only details and screenshot paths are excluded from controller navigation. D-pad/LS can leave the save-name field, and B cancels a confirmation before leaving the screen. Typing save names and computer text uses a physical keyboard. The game still generates a default save name, so a new save does not require typing. RS can still move the in-game computer cursor; B or Start leaves the computer.
+LB/RB switches between General and Bindings. Bindings has separate walking/driving profiles, control capture, clear/reset, and occupied-binding confirmation. Start/View and menu navigation stay fixed for recovery. See the [complete controller reference](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/release/CONTROLS.md) for modifiers, inventory, action-menu controls, rebinding, Save/Load, and computer controls.
 
 ## Installation
 
-Requires **BepInEx 5.4.23.5 Windows x64**, installed separately on Windows and Linux/Proton. Download it from the [official BepInEx release](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.5).
+Requires **The Long Drive v2024.11.26b** (tested build: `2024.11.26b_test`) and **[BepInEx 5.4.23.5 Windows x64](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.5)**, installed separately. Use the Windows loader and included Windows SDL2 runtime on Windows and Linux/Proton.
 
-1. Install BepInEx beside the `TheLongDrive.exe` you launch. On Proton, configure the override below first. Launch once to generate configuration, then close the game.
-2. In `BepInEx/config/BepInEx.cfg`, set `HideManagerGameObject = true` under `[Chainloader]`.
-3. Extract the mod download into that game folder. The plugin belongs at `BepInEx/plugins/LongDrive.Controller/LongDrive.Controller.dll`.
-4. Connect an XInput controller and launch. Avoid simultaneous controller-to-keyboard mappings that cause duplicate input.
+1. Close the game. Install BepInEx beside the `TheLongDrive.exe` you actually launch. On Proton, configure the override below before the first launch.
+2. Launch once to generate configuration, then close the game. In `BepInEx/config/BepInEx.cfg`, set `HideManagerGameObject = true` under `[Chainloader]`.
+3. Extract the mod download into that game folder. Copy the **whole** `BepInEx/plugins/LongDrive.Controller` folder, including `LongDrive.Controller.dll`, `TLDControllerSDL2.dll`, and SDL license notices. The managed DLL alone is insufficient for DirectInput support.
+4. Connect your controller and launch. Release controls to neutral after reconnecting or leaving menus before resuming gameplay.
 
-On Steam with Proton, add `WINEDLLOVERRIDES="winhttp=n,b" %command%` to the launch options, preserving existing wrappers and overrides. In Faugus or another Proton launcher, set the environment variable `WINEDLLOVERRIDES` to `winhttp=n,b` and select the executable in the modded game folder. See the [official Proton setup guide](https://docs.bepinex.dev/articles/advanced/proton_wine.html).
+For Steam/Proton, add `WINEDLLOVERRIDES="winhttp=n,b" %command%` to launch options, preserving existing wrappers and overrides. For Faugus or another Proton launcher, set the environment variable `WINEDLLOVERRIDES` to `winhttp=n,b` and select the executable in the modded game folder. No additional native Linux library is required. See the [BepInEx Proton guide](https://docs.bepinex.dev/articles/advanced/proton_wine.html).
 
-Configuration is saved in `BepInEx/config/ashley.thelongdrive.controller.cfg` inside your game installation. See the [installation and troubleshooting guide](release/INSTALL.txt) and [controller reference](release/CONTROLS.md) for details. Source checkouts need to be built before installation; generated downloads are not committed to this repository.
+When updating, copy all files from the plugin folder and keep only one installed copy. Preserve your config and custom `gamecontrollerdb.txt`; neither is included in the download. Preferences save in `BepInEx/config/ashley.thelongdrive.controller.cfg`. To uninstall, remove the plugin folder; keep BepInEx if other mods need it. See [installation and troubleshooting](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/release/INSTALL.txt).
 
-## Verification and limits
+## Verification and compatibility
 
-Version 0.5.5 passes 1,436 automated checks and has been tested interactively under Linux/Proton, including the menu styling and navigation updates. Native Windows and exhaustive device/activity coverage remain unverified.
+Version 0.6.7 passes **1,554 core checks**, **172 native input/UI/config checks under Proton**, and verification of all **81 parsed sprite identities**. Steering checks cover multiple frame rates and an inactive fixture using the game's actual steering calculation. The controller modes and menu preferences have been tested interactively with an 8BitDo controller in Xbox, Nintendo, and generic DirectInput modes.
 
-The core checks compare all action names/ordinals with the actual installed game's metadata and exercise action edges, menu queues, modifiers, toggle behavior, safe input gating, trigger independence, and rotation rate calculations. Runtime testing confirms Proton loading, controller detection, rewritten prompt paths, and rendered controller panels. See [testing](docs/TESTING.md), [integration details](docs/COMPATIBILITY.md), and [action inventory](docs/ACTIONS.md).
+Native Windows hardware and genuine Sony hardware have not been independently verified. Vehicle handling, multiplayer/VR contexts, every controller/USB/Bluetooth combination, and third-party mod menus are not exhaustively tested. Native keyboard/mouse controls remain available; duplicate native joystick steering is suppressed while a mod controller is connected so it cannot bypass the steering ramp.
 
-Every named action has an implementation route; individual activities, multiplayer/VR, native Windows, and every menu/device combination still require hands-on validation. Developer-only/debug shortcuts outside the game's 68 bindable actions are not part of this mapping. The 16 supplied Xbox PNGs are embedded in the plugin and appear inline in interaction prompts, Controls rows, and custom panels. Stick movement remains text because the supplied stick images depict clicks. Arbitrary third-party mod menus are not yet covered. The Bindings page supports all 68 named game actions, including analog directions and combinations of up to three controls. Start/View and menu-navigation buttons remain fixed for recovery.
+For a bug report, include game/mod versions, OS/Proton, controller model and mode, Steam Input setup, the failed action, and `BepInEx/LogOutput.log`. If icons are wrong, check Controller family; if only XInput works, check the bundled SDL runtime and its log messages.
 
-For problems, collect `BepInEx/LogOutput.log` and describe the exact control/context. View is available for menu recovery even while the gameplay neutral gate is blocked. Remove the plugin DLL to disable the mod; keep BepInEx if other mods need it.
+## Source and development
 
-## Development
+Build from [feature/controller-families](https://github.com/ash-945/the-long-drive-controller/tree/feature/controller-families). The repository includes C# source, supplied controller graphics, Python build/package tools, tests, and release documentation. Building requires Python 3, .NET SDK 8, the compatible game installation, and the official BepInEx loader. See [CONTRIBUTING.md](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/CONTRIBUTING.md) and [controller backend details](https://github.com/ash-945/the-long-drive-controller/blob/feature/controller-families/docs/CONTROLLER_FAMILIES.md).
 
-The repository contains the C# plugin, controller graphics, Python build/package tools, and automated core checks. Building requires Python 3, .NET SDK 8, a compatible game installation, and the official BepInEx loader. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and build commands.
-
-BepInEx and HarmonyX are separate dependencies: [BepInEx](https://github.com/BepInEx/BepInEx), [HarmonyX](https://github.com/BepInEx/HarmonyX).
-
-## Releases
-At nexusmods: https://www.nexusmods.com/thelongdrive/mods/248
+Game files, decompiled source, local runtimes/tool caches, saves, user config, and generated downloads are not committed. Mod code uses the included [LICENSE](LICENSE). Supplied controller sprites retain their separate Creative Commons terms; bundled SDL2 includes its zlib license and distribution notice. BepInEx and HarmonyX are separate loader dependencies.
