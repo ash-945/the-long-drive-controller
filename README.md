@@ -24,22 +24,7 @@ The source for 0.6.7 is on the [main branch](https://github.com/ash-945/the-long
 
 Known controllers are identified through vendor information, device names, and SDL controller type. Unknown XInput controllers use Xbox icons; unknown DirectInput/HID controllers use PlayStation icons. A manual family choice takes priority over both.
 
-Steam Input or another mapper can expose a physical controller as a virtual Xbox device. Use the manual family option if the resulting icons do not match your controller. The option changes icons; SDL continues to normalize physical input. Unusual DirectInput layouts may need a custom SDL mapping in `gamecontrollerdb.txt` beside the plugin.
-
-The default controls below use these equivalent buttons:
-
-| Xbox | PlayStation | Nintendo |
-| --- | --- | --- |
-| A | Cross | A — right |
-| B | Circle | B — lower |
-| X | Square | X — upper |
-| Y | Triangle | Y — left |
-| LB / RB | L1 / R1 | L / R |
-| LT / RT | L2 / R2 | ZL / ZR |
-| View / Back | Select / Share | Minus |
-| Start | Start / Options | Plus |
-
-Nintendo uses its printed letters rather than Xbox face-button positions. The shared PlayStation artwork uses Select/Start icons. LS/RS mean the left/right sticks; a click means pressing the stick inward.
+Steam Input or another mapper can expose a physical controller as a virtual Xbox device. Unusual DirectInput layouts may need a custom SDL mapping in `gamecontrollerdb.txt` beside the plugin.
 
 ## Quick controls
 
@@ -70,7 +55,7 @@ Requires **The Long Drive v2024.11.26b** (tested build: `2024.11.26b_test`) and 
 3. Extract the mod download into that game folder. Copy the **whole** `BepInEx/plugins/LongDrive.Controller` folder, including `LongDrive.Controller.dll`, `TLDControllerSDL2.dll`, and SDL license notices. The managed DLL alone is insufficient for DirectInput support.
 4. Connect your controller and launch. Release controls to neutral after reconnecting or leaving menus before resuming gameplay.
 
-For Steam/Proton, add `WINEDLLOVERRIDES="winhttp=n,b" %command%` to launch options, preserving existing wrappers and overrides. For Faugus or another Proton launcher, set the environment variable `WINEDLLOVERRIDES` to `winhttp=n,b` and select the executable in the modded game folder. No additional native Linux library is required. See the [BepInEx Proton guide](https://docs.bepinex.dev/articles/advanced/proton_wine.html).
+For Steam/Proton, add `WINEDLLOVERRIDES="winhttp=n,b" %command%` to launch options, preserving existing wrappers and overrides. No additional native Linux library is required. See the [BepInEx Proton guide](https://docs.bepinex.dev/articles/advanced/proton_wine.html).
 
 When updating, copy all files from the plugin folder and keep only one installed copy. Preserve your config and custom `gamecontrollerdb.txt`; neither is included in the download. Preferences save in `BepInEx/config/ashley.thelongdrive.controller.cfg`. To uninstall, remove the plugin folder; keep BepInEx if other mods need it. See [installation and troubleshooting](release/INSTALL.txt).
 
